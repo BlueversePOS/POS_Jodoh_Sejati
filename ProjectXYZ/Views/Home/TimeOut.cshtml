@@ -1,0 +1,91 @@
+﻿
+@{
+    ViewBag.Title = "TimeOut";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Cache-control" content="public">
+    <meta http-equiv="Cache-control" content="private">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-store">
+    <title>Select Company</title>
+    <meta name="description" content="Official website of PT Artha Global Portal Admin">
+    <meta name="keywords" content="Artha Infotama">
+    <meta name="author" content="Teguh Karyadi">
+    <link rel="icon" href="~/Content/adminlte/dist/img/logoartha2.png" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/Content/adminlte/plugins/fontawesome-free/css/all.min.css">
+    <!-- icheck bootstrap -->
+    <link rel="stylesheet" href="~/Content/adminlte/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/Content/adminlte/dist/css/adminlte.min.css">
+    <!-- Alert Style -->
+    <link rel="stylesheet" href="~/Content/adminlte/plugins/sweetalert/sweetalert.css">
+</head>
+<body class="hold-transition login-page">
+    <div class="login-box">
+        <!-- /.login-logo -->
+        <div class="card card-outline card-primary">
+            <div class="card-header text-center">
+                <div class="card-img pb-0">
+                    <img src="~/Content/adminlte/dist/img/PowerOperation_Logo.png" class="card-img" alt="PORTAL ADMIN" />
+                </div>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm("Logout", "Home", FormMethod.Post, new { @id = "myForm" }))
+                {
+                    <section class="content-header mycontent-header">
+                        @if (ViewBag.LoginErrorMassage != null)
+                        {
+                            <h2 style="text-align: center">@ViewBag.LoginErrorMassage</h2>
+                        }
+                        else
+                        {
+                            <h2 style="text-align: center">
+                                NoAccess
+                                <br />
+                                Please contact your administrator.
+                            </h2>
+                        }
+                    </section>
+                    <br />
+                    <div class="form-group row">
+                        <div class="col-sm-12" style="width: 100%;">
+                            <button class="form-control btn input-lg btn-primary" type="submit" style="align-self: center;">
+                                <b>Back To Login</b>
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+    </div>
+
+    <div class="modal" id="loading" style="display: none">
+        <div class="center-block loading-img">
+            <img alt="" src="~/Content/adminlte/dist/icon/loader2.gif" style="height:10vh; width: 10vw; margin-left: 50%; margin-top: 20%;" />
+        </div>
+    </div>
+
+    <!-- /.login-box -->
+    <!-- jQuery -->
+    <script src="~/Content/adminlte/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="~/Content/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="~/Content/adminlte/dist/js/adminlte.min.js"></script>
+    <!-- Swall -->
+    <script src="~/Content/adminlte/plugins/sweetalert/sweetalert.min.js"></script>
+    <script type="text/javascript">
+        var rootUrl = '@Url.Content("~")';
+    </script>
+</body>
+</html>

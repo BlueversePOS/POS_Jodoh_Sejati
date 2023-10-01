@@ -1,0 +1,48 @@
+﻿
+@{
+    ViewBag.Title = "Maintenance Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Maintenance</title>
+</head>
+<body>
+    <section class="content-header pt-5">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-12 text-center">
+                    <img src="~/Content/adminlte/img/AccessDenied.png" alt="Access Denied" class="img-responsive sizefull img-thumbnail">
+                </div>
+                <div class="col-md-12 col-sm-12 col-12 text-center">
+                    <h1 style="color: #021F61; font-weight: bolder;">Access Denied</h1>
+                    @if (ViewBag.MsgPage != null)
+                    {
+                        <h2>@ViewBag.MsgPage</h2>
+                    }
+                    else
+                    {
+                        <p class="col-md-12 col-sm-12 col-12">
+                            Sorry, you are allowed to access this Page.
+                            You have to subscribe this page for access
+                        </p>
+                    }
+                </div>
+                <div class="col-md-12 col-sm-12 col-12 text-center">
+                    <button id="btncontact" class="btn btn-primary form-control" type="button" style="width: 20rem;" onclick="location.href='@Url.Action("Index", "General/RequestSupport")'">
+                        Contact Our Support
+                    </button>
+                </div>
+                <div class="col-md-12 col-sm-12 col-12 text-center">
+                    <button id="btndashboard" class="btn btn-default form-control" type="button" style="width: 20rem;" onclick="location.href='@Url.Action("Dashboardv3", "Dashboard")'">
+                        Back to Dashboard
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

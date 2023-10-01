@@ -1,0 +1,90 @@
+﻿
+@{
+    ViewBag.Title = "Produk";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Produk</title>
+    <style>
+        .breadcrumb-item + .nav-item::before {
+            content: ">";
+        }
+
+        .textblue {
+            color: rgb(2, 31, 97);
+            font-weight: 700;
+        }
+
+        .bgblue {
+            background-color: rgb(2, 31, 97);
+        }
+
+        .box {
+            width: 10%;
+            display: inline;
+            text-align: center;
+            color: white;
+        }
+
+        .txtbox {
+            width: 85%;
+            margin-left: 5%;
+        }
+
+        a.btnSide:hover {
+            background-color: red;
+            height: 30px;
+        }
+    </style>
+</head>
+<body>
+    <section class="content" style="overflow: auto;">
+        <div class="card container-fluid" style="background: none; box-shadow: none !important;">
+            <div class="card-body col-12">
+                <div class="col-12">
+                    <div class="col-lg-4 col-md-6 col-12 hdr">
+                        <label class="col-form-label text-red font-primary pb-0 sizeFont1">Seru Terus Bareng Telkomsel Prabayar !</label>
+                        <label class="col-form-label font-primary pt-0 sizeFont4">
+                            Seru-seruan terus dengan beragam pilihan paket Telkomsel PraBayar
+                        </label>
+                    </div>
+                    <div class="col-12 cb pt-4 row ml-0">
+                        <div class="pr-lg-4 pr-2">
+                            <input type="checkbox" id="chkAll" /> All
+                        </div>
+                        <div class="pr-lg-4 pr-2">
+                            <input type="checkbox" id="chkPulsa" /> Pulsa
+                        </div>
+                        <div class="pr-lg-4 pr-2">
+                            <input type="checkbox" id="chkInet" /> Internet
+                        </div>
+                        <div class="pr-lg-4 pr-2">
+                            <input type="checkbox" id="chkVoice" /> Voice &amp; SMS
+                        </div>
+                    </div>
+                    <div class="col-12 listProduk pt-4">
+                        <div class="col-12 p-0 bg-red" style="border-radius: 10px 10px 10px 10px;">
+                            <div class="col-12 row ml-0 mr-0">
+                                <div class="col-1 mt-4 mb-4 ml-4">
+                                    <img src="~/Content/icons/Globe.svg" alt="Product" style="opacity: 1; float: none;" />
+                                </div>
+                                <div class="col-3 mt-4 mb-4">
+                                    <label class="col-form-label font-primary pt-0 sizeFont4">Keterangan</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
+
+@section Scripts
+{
+    <script src="~/Lib/Produk.js"></script>
+}

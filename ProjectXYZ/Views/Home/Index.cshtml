@@ -1,0 +1,152 @@
+﻿@model CMS.Models.UserAccount
+@{
+    ViewBag.Title = "Login";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Cache-control" content="public">
+    <meta http-equiv="Cache-control" content="private">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-store">
+    <title>Login</title>
+    <meta name="description" content="Project XYZ - Web">
+    <meta name="keywords" content="Project XYZ">
+    <meta name="author" content="XYZ">
+    <link rel="icon" href="~/Content/adminlte/dist/img/logoartha2.png" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/Content/adminlte/plugins/fontawesome-free/css/all.min.css">
+    <!-- icheck bootstrap -->
+    <link rel="stylesheet" href="~/Content/adminlte/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/Content/adminlte/dist/css/adminlte.min.css">
+    <!-- Alert Style -->
+    <link rel="stylesheet" href="~/Content/adminlte/plugins/sweetalert/sweetalert.css">
+
+    <style>
+        .input-login {
+            border: 0 !important;
+            border-bottom: 1px solid #747474 !important;
+            outline: none;
+        }
+    </style>
+</head>
+<body class="hold-transition login-page">
+    <div class="login-box">
+        <!-- /.login-logo -->
+        <div class="card card-outline card-primary">
+            <div class="card-header text-center">
+                <div class="card-img pb-0">
+                    @*<img src="~/Content/adminlte/dist/img/PowerOperation_Logo.png" class="card-img" alt="PORTAL ADMIN" />*@
+                </div>
+            </div>
+            <div class="card-body">
+                <label class="login-box-msg text-left p-0">Sign in to your account</label>
+
+                @using (Html.BeginForm("LoginAction", "Home", FormMethod.Post, new { @id = "formlogin" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true)
+                    <div class="input-group pt-5">
+                        @Html.TextBoxFor(Model => Model.username,
+                        new
+                        {
+                            @class = "w-100 input-login",
+                            @placeholder = "Email",
+                            @id = "email",
+                            @tabindex = "1",
+                            Type = "text",
+                            autocomplete = "off"
+                        })
+                    </div>
+                    <span class="text-danger msg-email" style="display:none;">Please Input Your Email</span>
+                    <div class="input-group pt-5">
+                        @Html.TextBoxFor(Model => Model.password,
+                        new
+                        {
+                            @class = "w-100 input-login",
+                            @placeholder = "Password",
+                            @id = "password",
+                            @tabindex = "2",
+                            Type = "password"
+                        })
+                    </div>
+                    <span class="text-danger msg-password" style="display:none;">Please Input Your Password</span>
+                    @*<div class="captcha" style="display: none">
+                <div class="row mt-3">
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+                        <img id="captcha_img" src="@Url.Action("GetCaptchaImage", "Home")" title="click for refresh" />
+                    </div>
+                </div>
+                <div class="input-group mt-3">
+                    <input id="captcha_text" name="captcha_text" class="col-12 col-sm-12 col-md-12 col-lg-12"
+                           type="text" placeholder="Write above text or click image for refresh." maxlength="4" required tabindex="3" />
+                </div>
+                <span class="text-danger msg-box" style="display:none;">Write Your Captcha</span>
+            </div>*@
+                    <div class="row mt-3">
+                        <div class="col-lg-6 col-md-6 col-12">
+                            <div class="icheck-primary">
+                                @Html.CheckBoxFor(model => model.remember, new
+                                {
+                                    @type = "checkbox",
+                                    @id = "remember",
+                                    @name = "remember",
+                                    @tabindex = "3"
+                                })
+                                @*<input type="checkbox" id="remember">*@
+                                <label for="remember" style="font-weight: normal;">
+                                    Remember Me
+                                </label>
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-lg-6 col-md-6 col-12">
+                            <button type="submit" id="btnLogin" class="btn btn-primary btn-block" tabindex="4">Sign In</button>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <div class="row mt-0 mb-3">
+                        <div class="col-12 text-danger" id="errormessage"></div>
+                    </div>
+                }
+
+                <p class="mb-1">
+                    <a href="forgot-password.html" tabindex="5">Forgot Password ?</a>
+                </p>
+                <p class="mb-1">
+                    <a href="#" tabindex="6">Sign Up ?</a>
+                </p>
+                @*<p class="mb-0">
+            <a href="register.html" class="text-center">Register</a>
+        </p>*@
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+    </div>
+
+    <div class="modal" id="loading" style="display: none">
+        <div class="center-block loading-img">
+            <img alt="" src="~/Content/adminlte/dist/icon/loader2.gif" style="height:10vh; width: 10vw; margin-left: 50%; margin-top: 20%;" />
+        </div>
+    </div>
+
+    <!-- /.login-box -->
+    <!-- jQuery -->
+    <script src="~/Content/adminlte/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="~/Content/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="~/Content/adminlte/dist/js/adminlte.min.js"></script>
+    <!-- Swall -->
+    <script src="~/Content/adminlte/plugins/sweetalert/sweetalert.min.js"></script>
+    <script type="text/javascript">
+        var rootUrl = '@Url.Content("~")';
+    </script>
+    <script src="~/lib/Login.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+CREATE OR ALTER proc [dbo].[CMS_Planned_GetDataList]
+(
+ @USERID varchar(30)
+)
+AS
+BEGIN 
+	select distinct *,
+	CASE 
+	WHEN CMS_ORDER_TYPE=1 THEN 'SO'
+	WHEN CMS_ORDER_TYPE=2 THEN 'NSO'
+	WHEN CMS_ORDER_TYPE=3 THEN 'RENTAL'
+	ELSE '' END CMS_ORDER_TXT
+	from CMS01131007C3
+	WHERE RTRIM(CRUSRID)=RTRIM(@USERID)
+END
+/*
+exec [CMS_Planned_GetDataList] 'teg01'
+*/
+GO

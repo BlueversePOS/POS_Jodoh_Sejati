@@ -1,0 +1,80 @@
+﻿<div class="sidebar">
+    <a class="brand-link">
+        @*<img src="~/Content/adminlte/dist/img/logoartha2.png" alt="Logo" class="brand-image img-circle elevation-3" style="margin-left: 5px;" />*@
+        <p class="brand-text font-weight-light">
+            <img src="~/Content/adminlte/dist/img/PowerOperation_Logo.png" alt="PowerOperation" class="brand-image ml-0" style="opacity: 1;" />
+        </p>
+    </a>
+
+    <div class="mt-2 py-0 d-flex">
+        <div class="info">
+            <a class="d-block">
+                <pre class="py-0 ml-3 px-1 text-decoration-none">Main Navigation</pre>
+            </a>
+        </div>
+    </div>
+    <div class="form-inline">
+        <div class="input-group ml-2" data-widget="sidebar-search">
+            <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+            <div class="input-group-append">
+                <button class="btn btn-sidebar">
+                    <i class="fa fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <nav class="mt-1">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <li class="nav-item nav-item2 @Html.IsSelected(controller: "Dashboard")">
+                <a href="@Url.Action("Index", "Dashboard", new { area="" })" class="nav-link">
+                    <img src="~/Content/adminlte/dist/icons/Dashboard.svg" style="padding: 2px 2px;" />
+                    <p>Dashboard</p>
+                </a>
+            </li>
+            <li class="nav-item nav-item2 @Html.IsSelected(controller: "Contract")">
+                <a href="@Url.Action("Index", "Contract", new { area="Transactions" })" class="nav-link">
+                    <img src="~/Content/adminlte/dist/icons/window-restore.svg" class="fa fa-window-restore" style="padding: 2px 2px;" />
+                    <p>Contract</p>
+                </a>
+            </li>
+            <li class="nav-item nav-item2 @Html.IsSelected(controller: "SalesOrder")">
+                <a href="@Url.Action("Index", "SalesOrder", new { area="SalesOrder" })" class="nav-link">
+                    <img src="~/Content/adminlte/dist/icons/window-restore.svg" class="fa fa-window-restore" style="padding: 2px 2px;" />
+                    <p>Sales Order</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link nav-link2">
+                    <img src="~/Content/adminlte/dist/icon/list.svg" style="padding: 2px 2px;" />
+                    <p class="text-blue">Master<i class="fas fa-angle-left right"></i></p>
+                </a>
+                <ul class="nav nav-treeview ul-padd">
+                    <li class="nav-item @Html.IsSelected(controller: "UserRole")">
+                        <a href="@Url.Action("Index", "UserRole" , new { area="Master" })" class="nav-link">
+                            <img src="~/Content/adminlte/dist/icons/Sub-menu.svg" style="padding: 2px 2px;" />
+                            <p>User Role</p>
+                        </a>
+                    </li>
+                    <li class="nav-item @Html.IsSelected(controller: "MenuList")">
+                        <a href="@Url.Action("Index", "MenuList" , new { area="Master" })" class="nav-link">
+                            <img src="~/Content/adminlte/dist/icons/Sub-menu.svg" style="padding: 2px 2px;" />
+                            <p>Menu List</p>
+                        </a>
+                    </li>
+                    <li class="nav-item @Html.IsSelected(controller: "Navigation")">
+                        <a href="@Url.Action("Maintenance", "Navigation" , new { area="" })" class="nav-link">
+                            <img src="~/Content/adminlte/dist/icons/Sub-menu.svg" style="padding: 2px 2px;" />
+                            <p>Address</p>
+                        </a>
+                    </li>
+                    <li class="nav-item @Html.IsSelected(controller: "Navigation")">
+                        <a href="@Url.Action("Maintenance", "Navigation" , new { area="" })" class="nav-link">
+                            <img src="~/Content/adminlte/dist/icons/Sub-menu.svg" style="padding: 2px 2px;" />
+                            <p>School</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</div>

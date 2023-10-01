@@ -1,0 +1,69 @@
+﻿
+@{
+    ViewBag.Title = "Account";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Account</title>
+    <style>
+        .breadcrumb-item + .nav-item::before {
+            content: ">";
+        }
+
+        .small-box.text-center {
+            box-shadow: 0 0 0;
+        }
+    </style>
+</head>
+<body>
+    <section class="content">
+        <div class="card container-fluid" style="background: none; box-shadow: none !important;">
+            <div class="card-body">
+                <div class="card col-lg-6 col-md-12 col-12">
+                    <div class="card-body text-center">
+                        <div class="col-12">
+                            <div class="form-group" style="margin: 1rem 0 1rem 0;">
+                                <label class="form-label" for="ACCOUNT_NAME">Business Name</label>
+                                <input type="text" class="form-input" id="ACCOUNT_NAME" />
+                            </div>
+                            <div class="form-group" style="margin: 1rem 0 1rem 0;">
+                                <label class="form-label" for="ACCOUNT_EMAIL">Email</label>
+                                <input type="email" class="form-input" id="ACCOUNT_EMAIL" />
+                            </div>
+                            <div class="form-group" style="margin: 1rem 0 1rem 0;">
+                                <label class="form-label" for="ACCOUNT_PASSWORD">Password</label>
+                                <input type="password" class="form-input" id="ACCOUNT_PASSWORD" />
+                            </div>
+                            <div class="form-group" style="margin: 1rem 0 1rem 0;">
+                                <div class="form-group m-0 col-12 p-0">
+                                    <label class="form-label" for="ACCOUNT_CURRENCY">Currency</label>
+                                    <select class="form-input" id="ACCOUNT_CURRENCY"></select>
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin: 1rem 0 1rem 0;">
+                                <div class="form-group m-0 col-12 p-0">
+                                    <label class="form-label" for="ACCOUNT_TIMEZONE">Timezone</label>
+                                    <select class="form-input" id="ACCOUNT_TIMEZONE"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-12 col-12 p-0" style="border-top: 1px solid lightgray;">
+                    <div class="col-12 p-0 row ml-0 mr-0 mt-3" style="justify-content: right;">
+                        <button type="button" class="btn btn-primary" id="btnSave" style="width: 120px;">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
+
+@section Scripts
+{
+    <script src="~/Areas/Account/Lib/Account.js"></script>
+}

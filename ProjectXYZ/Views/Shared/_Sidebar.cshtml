@@ -1,0 +1,181 @@
+﻿<div class="sidebar">
+    <nav>
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <li class="nav-item nav-item2 MENU @Html.IsSelected(controller: "Account")" id="Owner">
+                <a href="@Url.Action("Index", "Account", new { area="Account" })" class="nav-link w-100">
+                    <div class="col-12 row m-0 p-0" style="align-items: center;">
+                        <div class="col-2">
+                            <i class="fa fa-user-circle fa-2x" style="color: gray;"></i>
+                        </div>
+                        <div class="col-9 p-0">
+                            <p>Owner</p>
+                            <span>emailowner@amail.com</span>
+                        </div>
+                        <div class="col-1 p-0">
+                            <i class="fas fa-angle-left right"></i>
+                        </div>
+                    </div>
+                </a>
+            </li>
+            <li class="nav-item nav-item2 MENU @Html.IsSelected(controller: "Reports")" id="Reports">
+                <a href="@Url.Action("Index", "Reports", new { area="" })" class="nav-link w-100">
+                    <div class="col-12 row m-0 p-0" style="align-items: center;">
+                        <div class="col-2">
+                            <img src="~/Content/icons/report.png" width="32" height="32" style="padding: 2px 2px;" />
+                        </div>
+                        <div class="col-9 p-0">
+                            <p>Reports</p>
+                        </div>
+                        <div class="col-1 p-0">
+                            <i class="fas fa-angle-left right"></i>
+                        </div>
+                    </div>
+                </a>
+            </li>
+            <li class="nav-item MENU">
+                <a href="#" class="nav-link w-100 PARENTID" id="Items">
+                    <div class="col-12 row m-0 p-0" style="align-items: center;">
+                        <div class="col-2">
+                            <img src="~/Content/icons/shopping-bag.png" width="32" height="32" style="padding: 2px 2px;" />
+                        </div>
+                        <div class="col-9 p-0">
+                            <p>Items</p>
+                        </div>
+                        <div class="col-1 p-0">
+                            <i class="fas fa-angle-left right"></i>
+                        </div>
+                    </div>
+                </a>
+                <ul class="nav nav-treeview ul-padd">
+                    <li class="nav-item WINDOWNAME @Html.IsSelected(controller: "ItemList")" id="ItemList">
+                        <a href="@Url.Action("Index", "ItemList" , new { area="Items" })" class="nav-link pl-5 pt-2 w-100">
+                            <p>Item List</p>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="nav nav-treeview ul-padd">
+                    <li class="nav-item WINDOWNAME @Html.IsSelected(controller: "Categories")" id="Categories">
+                        <a href="@Url.Action("Index", "Categories" , new { area="Items" })" class="nav-link pl-5 pt-2 w-100">
+                            <p>Categories</p>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="nav nav-treeview ul-padd">
+                    <li class="nav-item WINDOWNAME @Html.IsSelected(controller: "Discounts")" id="Discounts">
+                        <a href="@Url.Action("Index", "Discounts" , new { area="Items" })" class="nav-link pl-5 pt-2 w-100">
+                            <p>Discounts</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item nav-item2 MENU">
+                <a href="#" class="nav-link w-100 PARENTID" id="INV_Management">
+                    <div class="col-12 row m-0 p-0" style="align-items: center;">
+                        <div class="col-2">
+                            <img src="~/Content/icons/inventory-management.png" width="32" height="32" style="padding: 2px 2px;" />
+                        </div>
+                        <div class="col-9 p-0">
+                            <p>Inventory Management</p>
+                        </div>
+                        <div class="col-1 p-0">
+                            <i class="fas fa-angle-left right"></i>
+                        </div>
+                    </div>
+                </a>
+                <ul class="nav nav-treeview ul-padd">
+                    <li class="nav-item WINDOWNAME @Html.IsSelected(controller: "TransferItem")" id="TransferItem">
+                        <a href="@Url.Action("Index", "TransferItem" , new { area="Inventory" })" class="nav-link pl-5 pt-2 w-100">
+                            <p>Transfer Item</p>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="nav nav-treeview ul-padd">
+                    <li class="nav-item WINDOWNAME @Html.IsSelected(controller: "StockAdjustment")" id="StockAdjustment">
+                        <a href="@Url.Action("Index", "StockAdjustment" , new { area="Inventory" })" class="nav-link pl-5 pt-2 w-100">
+                            <p>Stock Adjustments</p>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="nav nav-treeview ul-padd">
+                    <li class="nav-item WINDOWNAME @Html.IsSelected(controller: "InvCounts")" id="InvCounts">
+                        <a href="@Url.Action("Index", "InvCounts" , new { area="Inventory" })" class="nav-link pl-5 pt-2 w-100">
+                            <p>Inventory Counts</p>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="nav nav-treeview ul-padd">
+                    <li class="nav-item WINDOWNAME @Html.IsSelected(controller: "InvHistory")" id="InvHistory">
+                        <a href="@Url.Action("Index", "InvHistory" , new { area="Inventory" })" class="nav-link pl-5 pt-2 w-100">
+                            <p>Inventory History</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item MENU">
+                <a href="#" class="nav-link w-100 PARENTID" id="Employees">
+                    <div class="col-12 row m-0 p-0" style="align-items: center;">
+                        <div class="col-2">
+                            <img src="~/Content/icons/employees.png" width="32" height="32" style="padding: 2px 2px;" />
+                        </div>
+                        <div class="col-9 p-0">
+                            <p>Employees</p>
+                        </div>
+                        <div class="col-1 p-0">
+                            <i class="fas fa-angle-left right"></i>
+                        </div>
+                    </div>
+                </a>
+                <ul class="nav nav-treeview ul-padd">
+                    <li class="nav-item WINDOWNAME @Html.IsSelected(controller: "Employees")" id="Employees">
+                        <a href="@Url.Action("Index", "Employees" , new { area="Employees" })" class="nav-link pl-5 pt-2 w-100">
+                            <p>Employee List</p>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="nav nav-treeview ul-padd">
+                    <li class="nav-item WINDOWNAME @Html.IsSelected(controller: "AccessRights")" id="AccessRights">
+                        <a href="@Url.Action("Index", "AccessRights" , new { area="Employees" })" class="nav-link pl-5 pt-2 w-100">
+                            <p>Access Rights</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item nav-item2 MENU @Html.IsSelected(controller: "Customer")" id="Customers">
+                <a href="@Url.Action("Index", "Customer", new { area="Customer" })" class="nav-link w-100">
+                    <div class="col-12 row m-0 p-0" style="align-items: center;">
+                        <div class="col-2">
+                            <img src="~/Content/icons/customers.png" width="32" height="32" style="padding: 2px 2px;" />
+                        </div>
+                        <div class="col-10 p-0">
+                            <p>Customers</p>
+                        </div>
+                    </div>
+                </a>
+            </li>
+            <li class="nav-item nav-item2 MENU @Html.IsSelected(controller: "Settings")" id="Settings">
+                <a href="@Url.Action("Index", "Settings", new { area="Setting" })" class="nav-link w-100">
+                    <div class="col-12 row m-0 p-0" style="align-items: center;">
+                        <div class="col-2">
+                            <img src="~/Content/icons/setting.png" width="32" height="32" style="padding: 2px 2px;" />
+                        </div>
+                        <div class="col-10 p-0">
+                            <p>Settings</p>
+                        </div>
+                    </div>
+                </a>
+            </li>
+            <li class="nav-item nav-item2 MENU @Html.IsSelected(controller: "SignOut")" id="SignOut">
+                <a href="@Url.Action("Index", "SignOut", new { area="" })" class="nav-link w-100">
+                    <div class="col-12 row m-0 p-0" style="align-items: center;">
+                        <div class="col-2">
+                            <img src="~/Content/icons/sign-out.png" width="32" height="32" style="padding: 2px 2px;" />
+                        </div>
+                        <div class="col-10 p-0">
+                            <p>Sign Out</p>
+                        </div>
+                    </div>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>

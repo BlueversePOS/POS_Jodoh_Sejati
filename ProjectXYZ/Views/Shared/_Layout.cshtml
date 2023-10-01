@@ -1,0 +1,178 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+    <title>@ViewBag.Title - Blueverse</title>
+    @*<link rel="icon" href="~/Content/adminlte/dist/img/logoartha2.ico" />*@
+    <link rel="stylesheet" href="~/Content/adminlte/plugins/fontawesome-free/css/all.min.css" />
+    <link rel="stylesheet" href="~/Content/adminlte/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css" />
+    <link rel="stylesheet" href="~/Content/adminlte/plugins/icheck-bootstrap/icheck-bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Content/adminlte/plugins/jqvmap/jqvmap.min.css" />
+    <link rel="stylesheet" href="~/Content/adminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css" />
+    <link rel="stylesheet" href="~/Content/adminlte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css" />
+    <link rel="stylesheet" href="~/Content/adminlte/plugins/datatables-buttons/css/buttons.bootstrap4.min.css" />
+    <link rel="stylesheet" href="~/Content/adminlte/vendor/bootstrap-icons/bootstrap-icons.css" />
+    <link rel="stylesheet" href="~/Content/adminlte/dist/css/adminlte.min.css?v=3.2.0" />
+    <link rel="stylesheet" href="~/Content/adminlte/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css" />
+    <link rel="stylesheet" href="~/Content/adminlte/plugins/overlayScrollbars/css/OverlayScrollbars.min.css" />
+    <link rel="stylesheet" href="~/Content/adminlte/plugins/daterangepicker/daterangepicker.css" />
+    <link rel="stylesheet" href="~/Content/adminlte/plugins/summernote/summernote-bs4.min.css" />
+    <link rel="stylesheet" href="~/Content/adminlte/plugins/phone/css/intlTelInput.css" />
+    <link rel="stylesheet" href="~/Content/adminlte/plugins/select2/css/select2.min.css" />
+    <link rel="stylesheet" href="~/Content/adminlte/plugins/sweetalert/sweetalert.css" />
+    <link rel="stylesheet" href="~/Content/adminlte/dist/css/AI.css" />
+
+    <style>
+        .content::-webkit-scrollbar {
+            display: none;
+        }
+
+            .content {
+                overflow: -moz-scrollbars-none;
+                -ms-overflow-style: none;
+            }
+    </style>
+</head>
+<body class="hold-transition skin-blue-light sidebar-mini">
+    <div class="modal fade centered-modal" id="loadMe" tabindex="-1" role="dialog" aria-labelledby="loadMeLabel">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <div class="loader"></div>
+                    <div clas="loader-txt">
+                        <p id="idMessage"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="wrapper bg-layout">
+        <div class="preloader flex-column justify-content-center align-items-center">
+            @*<img class="animation__shake" src="~/Content/adminlte/img/logoartha3.png" alt="Logo" height="160" width="160">*@
+            <input type="hidden" id="LATITUDE" value="@ViewBag.LATITUDE" />
+            <input type="hidden" id="LONGITUDE" value="@ViewBag.LONGITUDE" />
+            <input type="hidden" id="VENDORID" value="@ViewBag.VENDORID" />
+            <input type="hidden" id="USERNAME" value="@ViewBag.USERNAME" />
+            <input type="hidden" id="USER" value="@ViewBag.USER" />
+            <input type="hidden" id="dafor" value="@ViewBag.FORMATDATE" />
+        </div>
+        <div class="col-12 p-0">
+            @Html.Partial("_Header")
+            <div class="content-wrapper bg-transparent">
+                @RenderBody()
+            </div>
+            @Html.Partial("_Footer")
+            @Html.Partial("_Aside")
+        </div>
+        <aside class="main-sidebar fixed-sidebar sidebar-light-primary elevation-4">
+            @Html.Partial("_Sidebar")
+        </aside>
+        <!-- Add the sidebar's background. This div must be placed immediately after the control sidebar -->
+        @*<div class="control-sidebar-bg"></div>*@
+        <aside class="control-sidebar control-sidebar-dark"></aside>
+    </div>
+
+    <script type="text/javascript">
+		var rootUrl = '@Url.Content("~")';
+    </script>
+
+    @Scripts.Render("~/bundles/jquery")
+    @*@Scripts.Render("~/bundles/lib")*@
+    @RenderSection("scripts", required: false)
+
+    <script src="~/Content/adminlte/plugins/jquery/jquery.min.js"></script>
+    <script src="~/Content/adminlte/plugins/jquery-ui/jquery-ui.min.js"></script>
+    <script>
+        $.widget.bridge('uibutton', $.ui.button)
+    </script>
+    <script src="~/Content/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/Content/adminlte/plugins/chart.js/Chart.min.js"></script>
+    <script src="~/Content/adminlte/plugins/sparklines/sparkline.js"></script>
+    <script src="~/Content/adminlte/plugins/jqvmap/jquery.vmap.min.js"></script>
+    <script src="~/Content/adminlte/plugins/jqvmap/maps/jquery.vmap.usa.js"></script>
+    <script src="~/Content/adminlte/plugins/jquery-knob/jquery.knob.min.js"></script>
+    <script src="~/Content/adminlte/plugins/moment/moment.min.js"></script>
+    <script src="~/Content/adminlte/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/Content/adminlte/plugins/daterangepicker/daterangepicker.js"></script>
+    <script src="~/Content/adminlte/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="~/Content/adminlte/plugins/summernote/summernote-bs4.min.js"></script>
+    <script src="~/Content/adminlte/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+    <script src="~/Content/adminlte/plugins/select2/js/select2.full.min.js"></script>
+    <script src="~/Content/adminlte/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/Content/adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/Content/adminlte/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/Content/adminlte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <script src="~/Content/adminlte/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="~/Content/adminlte/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+    <script src="~/Content/adminlte/plugins/jszip/jszip.min.js"></script>
+    <script src="~/Content/adminlte/plugins/pdfmake/pdfmake.min.js"></script>
+    <script src="~/Content/adminlte/plugins/pdfmake/vfs_fonts.js"></script>
+    <script src="~/Content/adminlte/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+    <script src="~/Content/adminlte/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+    <script src="~/Content/adminlte/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+    <script src="~/Content/adminlte/plugins/sweetalert/sweetalert.min.js"></script>
+    <script src="~/Content/adminlte/dist/js/adminlte.js?v=3.2.0"></script>
+    <script src="~/Content/adminlte/dist/js/Session-time-out.js"></script>
+    <script src="~/Content/adminlte/dist/js/Session.js"></script>
+    <script src="~/Content/adminlte/dist/js/SetMenu.js"></script>
+</body>
+</html>
+
+<script language="JavaScript">
+    window.onload = function () {
+        document.addEventListener("contextmenu", function (e) {
+            e.preventDefault();
+        }, false);
+        document.addEventListener("keydown", function (e) {
+            //document.onkeydown = function(e) {
+            // "I" key
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 73) {
+                disabledEvent(e);
+            }
+            // "J" key
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 74) {
+                disabledEvent(e);
+            }
+            // "S" key + macOS
+            if (e.keyCode == 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
+                disabledEvent(e);
+            }
+            // "U" key
+            if (e.ctrlKey && e.keyCode == 85) {
+                disabledEvent(e);
+            }
+            // "F12" key
+            if (event.keyCode == 123) {
+                disabledEvent(e);
+            }
+        }, false);
+        function disabledEvent(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            } else if (window.event) {
+                window.event.cancelBubble = true;
+            }
+            e.preventDefault();
+            return false;
+        }
+
+        document.body.style.zoom = 1.0
+    }
+
+    //$("#pushMenu").on("click", function () {
+    //    try {
+    //        var sidebar = $(".main-sidebar").is(":visible");
+    //        $(".main-sidebar").hide();
+    //        if (!sidebar) {
+    //            $(".main-sidebar").show();
+    //        }
+    //    } catch (err) {
+    //        swal({ type: "error", title: "Error", text: err.message });
+    //    }
+    //});
+//edit: removed ";" from last "}" because of javascript error
+</script>

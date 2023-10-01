@@ -1,0 +1,97 @@
+﻿
+@{
+    ViewBag.Title = "Inventory History";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Inventory History</title>
+    <style>
+        .breadcrumb-item + .nav-item::before {
+            content: ">";
+        }
+
+        .box {
+            width: 10%;
+            display: inline;
+            text-align: center;
+            color: white;
+        }
+
+        .small-box.text-center {
+            box-shadow: 0 0 0;
+        }
+    </style>
+</head>
+<body>
+    <section class="content">
+        <div class="card container-fluid" style="background: none; box-shadow: none !important;">
+            <div class="card-body">
+                <div class="col-lg-11 col-md-12 col-12 p-0 row m-0">
+                    <div class="col-lg-4 col-md-6 col-12 pl-0">
+                        <div id="reportrange" class="form-control w-100 text-center" style="background: #fff; cursor: pointer; padding: 6px 10px; border: 1px solid #ccc;">
+                            <i class="far fa-calendar-alt" style="float: left; padding-top: 4px;"></i>&nbsp;
+                            <span></span>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-6 col-12 pl-0 pt-lg-0 pt-md-1 pt-2">
+                        <select class="form-control select2" id="stores">
+                            <option value="">All stores</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-md-6 col-12 pl-0 pt-lg-0 pt-md-1 pt-2">
+                        <select class="form-control select2" id="sites">
+                            <option value="">All sites</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-md-6 col-12 pl-0 pt-lg-0 pt-md-1 pt-2">
+                        <select class="form-control select2" id="employees">
+                            <option value="">All employees</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-md-6 col-12 pl-0 pt-lg-0 pt-md-1 pt-2">
+                        <select class="form-control select2" id="reason">
+                            <option value="">All reasons</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body col-lg-11 col-md-12 col-12">
+                <div class="card">
+                    <div class="card-header border-0 ui-sortable-handle">
+                        <h3 class="card-title">
+                            EXPORT
+                        </h3>
+                        <i class="fa fa-search text-gray" style="float: right;"></i>
+                    </div>
+                    <div class="card-body">
+                        <div class="dt-responsive table-responsive">
+                            <table id="table_invhistory" class="table table-hover wrap">
+                                <thead>
+                                    <tr>
+                                        <th style="vertical-align:middle;">Date</th>
+                                        <th style="vertical-align:middle;">Item</th>
+                                        <th style="vertical-align:middle;">Store</th>
+                                        <th style="vertical-align:middle;">Site</th>
+                                        <th style="vertical-align:middle;">Employee</th>
+                                        <th style="vertical-align:middle;">Reason</th>
+                                        <th style="vertical-align:middle;">Adjusment</th>
+                                        <th style="vertical-align:middle;">Stock after</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
+
+@section Scripts
+{
+    <script src="~/Areas/Inventory/Lib/InvHistory.js"></script>
+}

@@ -1,0 +1,179 @@
+USE [E_MKA]
+GO
+/****** Object:  Table [dbo].[PWO0103200800]    Script Date: 24/05/2023 10:28:27 AM ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[PWO0103200800]') AND type in (N'U'))
+DROP TABLE [dbo].[PWO0103200800]
+GO
+/****** Object:  Table [dbo].[PWO0103200500]    Script Date: 24/05/2023 10:28:27 AM ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[PWO0103200500]') AND type in (N'U'))
+DROP TABLE [dbo].[PWO0103200500]
+GO
+/****** Object:  Table [dbo].[PWO0103200400]    Script Date: 24/05/2023 10:28:27 AM ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[PWO0103200400]') AND type in (N'U'))
+DROP TABLE [dbo].[PWO0103200400]
+GO
+/****** Object:  Table [dbo].[PWO0103200300]    Script Date: 24/05/2023 10:28:27 AM ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[PWO0103200300]') AND type in (N'U'))
+DROP TABLE [dbo].[PWO0103200300]
+GO
+/****** Object:  Table [dbo].[PWO0103200200]    Script Date: 24/05/2023 10:28:27 AM ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[PWO0103200200]') AND type in (N'U'))
+DROP TABLE [dbo].[PWO0103200200]
+GO
+/****** Object:  Table [dbo].[PWO0103200100]    Script Date: 24/05/2023 10:28:27 AM ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[PWO0103200100]') AND type in (N'U'))
+DROP TABLE [dbo].[PWO0103200100]
+GO
+/****** Object:  Table [dbo].[PWO0103200100]    Script Date: 24/05/2023 10:28:27 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PWO0103200100](
+	[User_ID_PWO] [int] NOT NULL,
+	[EmailAPI] [char](201) NOT NULL,
+	[PasswordAPI] [char](255) NOT NULL,
+	[ActivateAPI] [tinyint] NOT NULL,
+	[DisableAPI] [tinyint] NOT NULL,
+	[CREATDDT] [datetime] NOT NULL,
+	[CRUSRID] [char](15) NOT NULL,
+	[MODIFDT] [datetime] NOT NULL,
+	[MDFUSRID] [char](15) NOT NULL,
+	[DEX_ROW_ID] [int] IDENTITY(1,1) NOT NULL,
+ CONSTRAINT [PKPWO0103200100] PRIMARY KEY CLUSTERED 
+(
+	[User_ID_PWO] ASC,
+	[EmailAPI] ASC,
+	[ActivateAPI] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[PWO0103200200]    Script Date: 24/05/2023 10:28:27 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PWO0103200200](
+	[Token_ID_PWO] [int] NOT NULL,
+	[User_ID_PWO] [int] NOT NULL,
+	[TOKENTYPE] [char](13) NOT NULL,
+	[ISSUEDON] [datetime] NOT NULL,
+	[EXPIREDON] [datetime] NOT NULL,
+	[JWTTOKEN] [char](501) NOT NULL,
+	[DEX_ROW_ID] [int] IDENTITY(1,1) NOT NULL,
+ CONSTRAINT [PKPWO0103200200] PRIMARY KEY CLUSTERED 
+(
+	[Token_ID_PWO] ASC,
+	[User_ID_PWO] ASC,
+	[TOKENTYPE] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[PWO0103200300]    Script Date: 24/05/2023 10:28:27 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PWO0103200300](
+	[USERIDPWO] [int] NOT NULL,
+	[BANKID] [char](201) NOT NULL,
+	[CLIENTID] [char](255) NOT NULL,
+	[CLIENTSECRET] [char](255) NOT NULL,
+	[ACTIVEAPI] [tinyint] NOT NULL,
+	[DISABLEAPI] [tinyint] NOT NULL,
+	[WRITE] [tinyint] NOT NULL,
+	[CREATDDT] [datetime] NOT NULL,
+	[CRUSRID] [char](15) NOT NULL,
+	[MODIFDT] [datetime] NOT NULL,
+	[MDFUSRID] [char](15) NOT NULL,
+	[DEX_ROW_ID] [int] IDENTITY(1,1) NOT NULL
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[PWO0103200400]    Script Date: 24/05/2023 10:28:27 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PWO0103200400](
+	[TOKENIDPWO] [int] NOT NULL,
+	[USERIDPWO] [int] NOT NULL,
+	[TOKENTYPE] [char](13) NOT NULL,
+	[TOKENTYPE2] [char](13) NOT NULL,
+	[ISSUEDON] [datetime] NOT NULL,
+	[EXPIREDON] [datetime] NOT NULL,
+	[JWTTOKEN] [char](501) NOT NULL,
+	[DEX_ROW_ID] [int] IDENTITY(1,1) NOT NULL,
+ CONSTRAINT [PKPWO0103200400] PRIMARY KEY CLUSTERED 
+(
+	[TOKENIDPWO] ASC,
+	[USERIDPWO] ASC,
+	[TOKENTYPE] ASC,
+	[TOKENTYPE2] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[PWO0103200500]    Script Date: 24/05/2023 10:28:27 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PWO0103200500](
+	[url] [char](255) NOT NULL,
+	[Header_1] [char](151) NOT NULL,
+	[Header_2] [char](151) NOT NULL,
+	[Header_3] [char](151) NOT NULL,
+	[Header_4] [char](151) NOT NULL,
+	[Header_5] [char](151) NOT NULL,
+	[Body] [varchar](max) NULL,
+	[http_code] [smallint] NOT NULL,
+	[msg] [char](255) NOT NULL,
+	[USERID] [char](15) NOT NULL,
+	[INTERID] [char](5) NOT NULL,
+	[calledfrom] [char](51) NOT NULL,
+	[logdate] [datetime] NOT NULL,
+	[logtime] [datetime] NOT NULL,
+	[DEX_ROW_ID] [int] IDENTITY(1,1) NOT NULL,
+	[apiresult] [text] NOT NULL,
+ CONSTRAINT [PKPWO0103200500] PRIMARY KEY NONCLUSTERED 
+(
+	[DEX_ROW_ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[PWO0103200800]    Script Date: 24/05/2023 10:28:27 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PWO0103200800](
+	[MethodName] [varchar](max) NULL,
+	[email] [varchar](max) NULL,
+	[LogDateTime] [datetime] NULL,
+	[Message] [varchar](max) NULL,
+	[DEX_ROW_ID] [int] IDENTITY(1,1) NOT NULL,
+ CONSTRAINT [PKPWO0103200800] PRIMARY KEY NONCLUSTERED 
+(
+	[DEX_ROW_ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[PWO0103200100]  WITH CHECK ADD CHECK  ((datepart(hour,[CREATDDT])=(0) AND datepart(minute,[CREATDDT])=(0) AND datepart(second,[CREATDDT])=(0) AND datepart(millisecond,[CREATDDT])=(0)))
+GO
+ALTER TABLE [dbo].[PWO0103200100]  WITH CHECK ADD CHECK  ((datepart(hour,[MODIFDT])=(0) AND datepart(minute,[MODIFDT])=(0) AND datepart(second,[MODIFDT])=(0) AND datepart(millisecond,[MODIFDT])=(0)))
+GO
+ALTER TABLE [dbo].[PWO0103200200]  WITH CHECK ADD CHECK  ((datepart(hour,[EXPIREDON])=(0) AND datepart(minute,[EXPIREDON])=(0) AND datepart(second,[EXPIREDON])=(0) AND datepart(millisecond,[EXPIREDON])=(0)))
+GO
+ALTER TABLE [dbo].[PWO0103200200]  WITH CHECK ADD CHECK  ((datepart(hour,[ISSUEDON])=(0) AND datepart(minute,[ISSUEDON])=(0) AND datepart(second,[ISSUEDON])=(0) AND datepart(millisecond,[ISSUEDON])=(0)))
+GO
+ALTER TABLE [dbo].[PWO0103200300]  WITH CHECK ADD  CONSTRAINT [CK__PWO010320__CREAT__687431B7] CHECK  ((datepart(hour,[CREATDDT])=(0) AND datepart(minute,[CREATDDT])=(0) AND datepart(second,[CREATDDT])=(0) AND datepart(millisecond,[CREATDDT])=(0)))
+GO
+ALTER TABLE [dbo].[PWO0103200300] CHECK CONSTRAINT [CK__PWO010320__CREAT__687431B7]
+GO
+ALTER TABLE [dbo].[PWO0103200300]  WITH CHECK ADD  CONSTRAINT [CK__PWO010320__MODIF__696855F0] CHECK  ((datepart(hour,[MODIFDT])=(0) AND datepart(minute,[MODIFDT])=(0) AND datepart(second,[MODIFDT])=(0) AND datepart(millisecond,[MODIFDT])=(0)))
+GO
+ALTER TABLE [dbo].[PWO0103200300] CHECK CONSTRAINT [CK__PWO010320__MODIF__696855F0]
+GO
+ALTER TABLE [dbo].[PWO0103200500]  WITH CHECK ADD CHECK  ((datepart(hour,[logdate])=(0) AND datepart(minute,[logdate])=(0) AND datepart(second,[logdate])=(0) AND datepart(millisecond,[logdate])=(0)))
+GO
+ALTER TABLE [dbo].[PWO0103200500]  WITH CHECK ADD CHECK  ((datepart(day,[logtime])=(1) AND datepart(month,[logtime])=(1) AND datepart(year,[logtime])=(1900)))
+GO

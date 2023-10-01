@@ -1,0 +1,133 @@
+﻿
+@{
+    ViewBag.Title = "Categories";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Categories</title>
+    <style>
+        .breadcrumb-item + .nav-item::before {
+            content: ">";
+        }
+
+        .small-box.text-center {
+            box-shadow: 0 0 0;
+        }
+
+        .shapes {
+            width: 50px;
+            height: 50px;
+            background-color: lightgray;
+        }
+
+        .burst {
+            background-color: lightgray;
+            width: 45px;
+            height: 45px;
+            position: relative;
+            text-align: center;
+        }
+
+            .burst:before,
+            .burst:after {
+                background-color: lightgray;
+                border: 1px solid lightgray;
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 45px;
+                width: 45px;
+            }
+
+            .burst:before {
+                transform: rotate(30deg);
+            }
+
+            .burst:after {
+                transform: rotate(60deg);
+            }
+
+        .trapezoid1 {
+            border-top: 0;
+            border-bottom: 25px solid lightgray;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            height: 0;
+            width: 56px;
+        }
+
+        .trapezoid2 {
+            border-top: 25px solid lightgray;
+            border-bottom: 0;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            height: 0;
+            width: 56px;
+            transform: rotate(0deg);
+        }
+    </style>
+</head>
+<body>
+    <section class="content">
+        <div class="card container-fluid" style="background: none; box-shadow: none !important;">
+            <div class="card-body">
+                <div class="card listCategories">
+                    <div class="card-header border-0">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-12 col-12">
+                                <div class="col-12">
+                                    <button type="button" class="btn btn-primary col-lg-4 col-md-6 col-12" id="btnAddCategories"> + ADD CATEGORY</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="dt-responsive table-responsive">
+                            <table id="table_categories" class="table table-hover wrap">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" style="vertical-align:middle; width: 1px;"><input type="checkbox" id="cbAll" /></th>
+                                        <th class="text-left" style="vertical-align:middle;">Name</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card addCategories">
+                    <div class="card-header border-0 pb-0">
+                        <div class="row">
+                            <button type="button" class="btn text-blue" id="btnBack">Back</button>
+                        </div>
+                    </div>
+                    <div class="card-body pt-0">
+                        <div class="form-group">
+                            <label class="form-label" for="CATEGORY_NAME">Category name</label>
+                            <input type="text" class="form-input" id="CATEGORY_NAME" />
+                        </div>
+                        <div class="col-12 row pl-0 pr-0 pt-3 m-0">
+                            <div class="shapes bg-gray-light mr-4 mb-3"></div>
+                            <div class="shapes bg-red mr-4 mb-3"></div>
+                            <div class="shapes bg-pink mr-4 mb-3"></div>
+                            <div class="shapes bg-orange mr-4 mb-3"></div>
+                            <div class="shapes bg-yellow mr-4 mb-3"></div>
+                            <div class="shapes bg-green mr-4 mb-3"></div>
+                            <div class="shapes bg-blue mr-4 mb-3"></div>
+                            <div class="shapes bg-purple mr-4 mb-3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
+
+@section Scripts
+{
+    <script src="~/Areas/Items/Lib/Categories.js"></script>
+}

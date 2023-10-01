@@ -1,0 +1,99 @@
+﻿
+@{
+    ViewBag.Title = "Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css">
+    <link rel="stylesheet" href="~/Content/adminlte/files/bower_components/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/Content/adminlte/dist/css/main.css">
+    <link rel="stylesheet" href="~/Content/adminlte/dist/css/util.css">
+    <title>NoAccess</title>
+
+    <style>
+        .myForm {
+            padding: 50px;
+            margin: 0;
+        }
+
+        .icon {
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .input-group-addon {
+            background-color: white;
+        }
+
+        .panel-primary {
+            -webkit-box-shadow: 5px 10px 6px 0px #777;
+            -moz-box-shadow: 5px 10px 6px 0px #777;
+            box-shadow: 5px 10px 6px 0px #777;
+        }
+
+        .panel-footer {
+            text-align: center;
+        }
+
+        .container {
+            padding-left: 280px;
+            padding-right: 280px;
+            position: center;
+        }
+
+        .panel-heading {
+        }
+
+        .panel-footer > a {
+            font-family: Arial;
+            font-size: small;
+            color: black;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body class="hold-transition">
+    <div class="container-login100" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(255, 255, 255, 0.5)); background-repeat: no-repeat; background-size: cover;">
+        <div class="wrap-login100 height-control">
+            <div class="panel-group" style="min-width: 200px;">
+                <div class="panel panel-primary" style="border:none;">
+                    <div class="panel-heading" style="text-align:center; padding-top:20px; padding-bottom:20px; background-color:#00acd6;"><h3 style="font-weight:bold;">NO ACCESS</h3></div>
+                    <div class="panel-body" style="padding:0; margin:0; align-content: center;">
+                        <div class="col-lg-12" style="text-align:center; padding-top:20px; padding-bottom:20px;">
+                            @using (Html.BeginForm("Logout", "Home", FormMethod.Post, new { @class = "myForm" }))
+                            {
+                                <section class="content-header mycontent-header">
+                                    @if (ViewBag.Message != null)
+                                    {
+                                        <h2>@ViewBag.Message</h2>
+                                    }
+                                    else
+                                    {
+                                        <h2>NoAccess<br />Please contact your administrator.</h2>
+                                    }
+                                </section>
+                                <br />
+                                <div class="form-group row">
+                                    <div class="col-sm-12" style="width: 100%;">
+                                        <button class="pull-right form-control btn input-lg btn-info" type="submit" style="align-self: center;">
+                                            <b>L O G O U T</b>
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <b>&copy; Copyright 2020. </b><a href="https://www.openmyportal.com/" target="_blank"><b>PT Artha Global Portal</b></a><b>.</b> All Rights Reserved.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

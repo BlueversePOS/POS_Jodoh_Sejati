@@ -1,0 +1,369 @@
+﻿
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Dashboard</title>
+    <style>
+        .breadcrumb-item + .nav-item::before {
+            content: ">";
+        }
+
+        .small-box.text-center {
+            box-shadow: 0 0 0;
+        }
+
+        .shapes {
+            width: 50px;
+            height: 50px;
+            background-color: lightgray;
+        }
+
+        .burst {
+            background-color: lightgray;
+            width: 45px;
+            height: 45px;
+            position: relative;
+            text-align: center;
+        }
+            .burst:before,
+            .burst:after {
+                background-color: lightgray;
+                border: 1px solid lightgray;
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 45px;
+                width: 45px;
+            }
+            .burst:before {
+                transform: rotate(30deg);
+            }
+            .burst:after {
+                transform: rotate(60deg);
+            }
+
+        .trapezoid1 {
+            border-top: 0;
+            border-bottom: 25px solid lightgray;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            height: 0;
+            width: 56px;
+        }
+
+        .trapezoid2 {
+            border-top: 25px solid lightgray;
+            border-bottom: 0;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            height: 0;
+            width: 56px;
+            transform: rotate(0deg);
+        }
+    </style>
+</head>
+<body>
+    <section class="content">
+        <div class="card container-fluid" style="background: none; box-shadow: none !important;">
+            <div class="card-body items">
+                <div class="card">
+                    <div class="card-header border-0">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-12 col-12">
+                                <div class="col-12 form-group row">
+                                    <button type="button" class="btn btn-primary col-4" id="btnAddItems"> + ADD ITEM</button>
+                                    <button type="button" class="btn btn-default col-4 border-0" id="btnImport">IMPORT</button>
+                                    <button type="button" class="btn btn-default col-4 border-0" id="btnExport">EXPORT</button>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-12 col-12 row m-0 p-0" style="justify-content: right;">
+                                <div class="col-5">
+                                    <span class="col-12 pr-0" style="font-size: 10pt; color: darkgrey;">Category</span>
+                                    <div class="row m-0">
+                                        <select class="form-control select2" id="FILTER_CATEGORY"></select>
+                                    </div>
+                                </div>
+                                <div class="col-5">
+                                    <span class="col-12 pr-0" style="font-size: 10pt; color: darkgrey;">Stock alert</span>
+                                    <div class="row m-0">
+                                        <select class="form-control select2" id="FILTER_STOCK"></select>
+                                    </div>
+                                </div>
+                                <div class="col-2 pt-4 text-right">
+                                    <button class="btn" style="opacity: 0.75; height: 36px !important;" id="FILTER_SEARCH">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="dt-responsive table-responsive">
+                            <table id="table_items" class="table table-hover wrap">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" style="vertical-align:middle; width: 1px;"><input type="checkbox" id="cbAll" /></th>
+                                        <th class="text-left" style="vertical-align:middle;">Item name</th>
+                                        <th class="text-left" style="vertical-align:middle;">Category</th>
+                                        <th class="text-right" style="vertical-align:middle;">Price</th>
+                                        <th class="text-right" style="vertical-align:middle;">Cost</th>
+                                        <th class="text-right" style="vertical-align:middle;">Margin</th>
+                                        <th class="text-right" style="vertical-align:middle;">In stock</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card col-lg-10 col-md-12 col-12">
+                    <div class="card-body">
+                        <div class="col-12 p-0">
+                            <form action="" class="form">
+                                <div class="col-12 row p-0">
+                                    <div class="col-lg-6 col-12 pl-0 pr-lg-1 pr-0">
+                                        <div class="form-group">
+                                            <label class="form-label" for="NAME">Name</label>
+                                            <input id="NAME" class="form-input" type="text" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-12 pr-0 pl-lg-1 pl-0">
+                                        <div class="form-group">
+                                            <label class="form-label" for="CATEGORY">Category</label>
+                                            <select class="form-input" id="CATEGORY"></select>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 p-0">
+                                        <div class="form-group">
+                                            <label class="form-label" for="DESCRIPTION">Description</label>
+                                            <input type="text" class="form-input" id="DESCRIPTION" />
+                                        </div>
+                                    </div>
+                                    <div class="col-12 pl-0 pr-0 pt-4">
+                                        <input type="checkbox" class="mt-3" id="FOR_SALE" />
+                                        <span class="pl-4">The item is available for sale</span>
+                                    </div>
+                                    <div class="col-12 pl-0 pr-0 pt-4">
+                                        <span class="pr-4">Sold by</span>
+                                        <input type="radio" class="mt-3" id="RB_EACH" />
+                                        <span class="pr-4">Each</span>
+                                        <input type="radio" class="mt-3" id="RB_WEIGHT" />
+                                        <span class="pr-4">Weight/Volume</span>
+                                    </div>
+                                    <div class="col-lg-6 col-12 pl-0 pr-lg-1 pr-0 pt-4">
+                                        <div class="form-group">
+                                            <label class="form-label" for="PRICE">Price</label>
+                                            <input id="PRICE" class="form-input" type="text" name="number" />
+                                            <span style="font-size: 8pt; color: darkgrey">Leave the field blank to indicate the price upon sale</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-12 pr-0 pl-lg-1 pl-0 pt-4">
+                                        <div class="form-group">
+                                            <label class="form-label" for="COST">Cost</label>
+                                            <input id="COST" class="form-input" type="text" name="number" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-12 pl-0 pr-lg-1 pr-0 pt-2">
+                                        <div class="form-group">
+                                            <label class="form-label" for="SKU">SKU</label>
+                                            <input id="SKU" class="form-input" type="text" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-12 pr-0 pl-lg-1 pl-0 pt-2">
+                                        <div class="form-group">
+                                            <label class="form-label" for="BARCODE">Barcode</label>
+                                            <input id="BARCODE" class="form-input" type="text" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="card col-lg-10 col-md-12 col-12">
+                    <div class="card-header border-0">
+                        <div class="row">
+                            <h5>Inventory</h5>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="col-12 p-0">
+                            <form action="" class="form">
+                                <div class="col-12 row p-0" style="justify-content: space-between;">
+                                    <span class="col-form-label col-11" for="COMPOSITE_ITEM">Composite item</span>
+                                    <label class="switch mt-2">
+                                        <input type="checkbox" class="cbINV" id="COMPOSITE_ITEM" name="composite" value="0">
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <div class="col-12 invToggle composite">
+                                        <div class="form-group mt-2 mb-2">
+                                            <label class="form-label" for="ITEM_SEARCH">Item Search</label>
+                                            <input type="text" class="form-input" id="ITEM_SEARCH" />
+                                        </div>
+                                        <div class="dt-responsive table-responsive">
+                                            <table id="table_composite" class="table table-hover wrap">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-left" style="vertical-align:middle; width: 70%;">Component</th>
+                                                        <th class="text-left" style="vertical-align:middle;">Quantity</th>
+                                                        <th class="text-right" style="vertical-align:middle;">Cost</th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <span class="col-form-label col-11" for="TRACK_STOCK">Track stock</span>
+                                    <label class="switch mt-2">
+                                        <input type="checkbox" class="cbINV" id="TRACK_STOCK" name="trackstock" value="0">
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <div class="col-12 p-0 row m-0 invToggle trackstock">
+                                        <div class="col-lg-6 col-md-6 col-12">
+                                            <div class="form-group">
+                                                <label class="form-label" for="IN_STOCK">In stock</label>
+                                                <input type="text" class="form-input" id="IN_STOCK" />
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-12">
+                                            <div class="form-group">
+                                                <label class="form-label" for="LOW_STOCK">Low stock</label>
+                                                <input type="text" class="form-input" id="LOW_STOCK" />
+                                                <span style="font-size: 9pt;">Item quantity at which you will be notified about low stock</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="card col-lg-10 col-md-12 col-12">
+                    <div class="card-header border-0">
+                        <div class="row">
+                            <h5>Variants</h5>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="col-12 p-0">
+                            <form action="" class="form">
+                                <div class="col-12 row p-0">
+                                    <span class="col-form-label col-12">Use variants if an item has different sizes, colors or other options</span>
+                                    <button type="button" class="btn text-success" id="addVariant"><i class="fa fa-plus-circle"></i> ADD VARIANTS</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="card col-lg-10 col-md-12 col-12">
+                    <div class="card-header border-0">
+                        <div class="row">
+                            <h5>Taxes</h5>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="col-12 p-0">
+                            <form action="" class="form">
+                                <div class="col-12 row p-0" style="justify-content: space-between;">
+                                    <span class="col-form-label col-11" for="PPN_10">PPN 10% (10 %)</span>
+                                    <label class="switch mt-2">
+                                        <input type="checkbox" id="PPN_10" value="0">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="card col-lg-10 col-md-12 col-12">
+                    <div class="card-header border-0">
+                        <div class="row">
+                            <h5>Representation on POS</h5>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="col-12 p-0">
+                            <form action="" class="form">
+                                <div class="col-12 row p-0" style="justify-content: space-between;">
+                                    <div class="col-lg-8 col-md-12 col-12 p-0">
+                                        <input type="radio" class="mt-3" id="RB_COLORSHAPE" />
+                                        <span class="pl-3">Color and shape</span>
+                                        <div class="col-12 row pl-0 pr-0 pt-3 m-0">
+                                            <div class="shapes bg-gray-light mr-4 mb-3"></div>
+                                            <div class="shapes bg-red mr-4 mb-3"></div>
+                                            <div class="shapes bg-pink mr-4 mb-3"></div>
+                                            <div class="shapes bg-orange mr-4 mb-3"></div>
+                                            <div class="shapes bg-yellow mr-4 mb-3"></div>
+                                            <div class="shapes bg-green mr-4 mb-3"></div>
+                                            <div class="shapes bg-blue mr-4 mb-3"></div>
+                                            <div class="shapes bg-purple mr-4 mb-3"></div>
+                                        </div>
+                                        <div class="col-12 row pl-0 pr-0 pt-3 m-0">
+                                            <div class="shapes mr-4 mb-3"></div>
+                                            <div class="shapes mr-4 mb-3" style="border-radius: 50%;"></div>
+                                            <div class="burst mr-4 mb-3"></div>
+                                            <div class="mr-4 mb-3">
+                                                <div class="trapezoid1"></div>
+                                                <div class="trapezoid2"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-12 col-12 p-0">
+                                        <input type="radio" class="mt-3" id="RB_IMAGE" />
+                                        <span class="pl-3">Image</span>
+                                        <div class="col-12 pl-0 pr-0 pt-3">
+                                            <div class="form-control DTLIMG no-padding" style="width: 180px; height: 100%;">
+                                                <div class="col-lg-12 pickfoto" style="padding-top: 160px;">
+                                                    <a class="glyphicon glyphicon-camera" style="width: 40px; height: 40px;"></a>
+                                                    <input type="file" name="uploadFoto" id="uploadFoto" style="display:none;" />
+                                                    <input type="text" id="pathFoto" hidden />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-10 col-md-12 col-12 p-0" style="border-top: 1px solid lightgray;">
+                    <div class="col-12 p-0 row ml-0 mr-0 mt-3" style="justify-content: right;">
+                        <button type="button" class="btn btn-default mr-2" style="width: 120px;">Cancel</button>
+                        <button type="button" class="btn btn-primary" style="width: 120px;">Save</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body import">
+                <div class="card col-lg-8 col-md-12 col-12">
+                    <div class="card-body">
+                        <h5>Import Items</h5>
+                        <span style="font-size: 10pt"><a href="#" class="text-green">Download the template file</a> and fill in with the items information.</span>
+                        <div class="col-12 p-0 row m-0 bg-gray-light" style="height: 120px; place-content: center;">
+                            <i class="fas fa-file-alt fa-2x pr-2" style="align-self: center;"></i>
+                            <span>
+                                Drag and drop your file here
+                                <br />
+                                <a href="attachfile_file" class="text-green">or select it on the computer</a>
+                            </span>
+                            <input type="file" name="attachfile_file" id="attachfile_file" style="display:none;" />
+                        </div>
+                        <div class="col-12 p-0 row ml-0 mr-0 mt-2" style="justify-content: right;">
+                            <span type="button" class="pr-3">Cancel</span>
+                            <span type="button" disabled>Upload</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
+
+@section Scripts
+{
+    <script src="~/Areas/Items/Lib/ItemList.js"></script>
+}

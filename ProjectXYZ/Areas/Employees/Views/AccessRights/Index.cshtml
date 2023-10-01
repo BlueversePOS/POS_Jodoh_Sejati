@@ -1,0 +1,232 @@
+﻿
+@{
+    ViewBag.Title = "Employee List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Employee List</title>
+    <style>
+        .breadcrumb-item + .nav-item::before {
+            content: ">";
+        }
+
+        .small-box.text-center {
+            box-shadow: 0 0 0;
+        }
+
+        .shapes {
+            width: 32px;
+            height: 32px;
+            background-color: lightgray;
+        }
+
+        .shapes2 {
+            width: 160px;
+            height: 160px;
+        }
+    </style>
+</head>
+<body>
+    <section class="content">
+        <div class="card container-fluid" style="background: none; box-shadow: none !important;">
+            <div class="card-body">
+                <div class="card listRole col-lg-8 col-md-12 col-12">
+                    <div class="card-header border-0">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="col-12">
+                                    <button type="button" class="btn btn-primary col-lg-4 col-md-6 col-12" id="btnAddRole"> + ADD ROLE</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="dt-responsive table-responsive">
+                            <table id="table_access" class="table table-hover wrap">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" style="vertical-align:middle; width: 1px;"><input type="checkbox" id="cbAll" /></th>
+                                        <th class="text-left" style="vertical-align: middle; width: 50%;">Role</th>
+                                        <th class="text-left" style="vertical-align: middle; width: 30%;">Access</th>
+                                        <th class="text-left" style="vertical-align: middle;">Employees</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="addRole col-lg-6 col-md-12 col-12">
+                    <div class="card">
+                        <div class="card-body pt-0">
+                            <div class="form-group">
+                                <label class="form-label" for="ACCESS_NAME">Name</label>
+                                <input type="text" class="form-input" id="ACCESS_NAME" />
+                            </div>
+                            <div class="row col-12 p-0" style="margin: 1rem 0 1rem 0;">
+                                <i class="fas fa-mobile-alt text-blue text-left col-1 p-0" style="align-self: center;"></i>
+                                <div class="col-9 p-0">
+                                    <label class="col-form-label">POS</label>
+                                    <br />
+                                    <span style="font-size: 9pt;">Employees can log in to the app using personal PIN code</span>
+                                </div>
+                                <div class="col-2 p-0 text-right">
+                                    <label class="switch mt-2" for="ACCESS_POS">
+                                        <input type="checkbox" id="ACCESS_POS" value="0">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
+                                    <div class="col-1 p-0">
+                                        <input type="checkbox" class="cbPOS text-left" id="accept_payments" />
+                                    </div>
+                                    <span class="col-11 p-0">Access payments</span>
+                                </div>
+                                <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
+                                    <div class="col-1 p-0">
+                                        <input type="checkbox" class="cbPOS text-left" id="apply_discount" />
+                                    </div>
+                                    <span class="col-11 p-0">Apply discounts with restricted access</span>
+                                </div>
+                                <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
+                                    <div class="col-1 p-0">
+                                        <input type="checkbox" class="cbPOS text-left" id="change_taxes" />
+                                    </div>
+                                    <span class="col-11 p-0">Change taxes in a sale</span>
+                                </div>
+                                <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
+                                    <div class="col-1 p-0">
+                                        <input type="checkbox" class="cbPOS text-left" id="view_receipt" />
+                                    </div>
+                                    <span class="col-11 p-0">View all receipts</span>
+                                </div>
+                                <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
+                                    <div class="col-1 p-0">
+                                        <input type="checkbox" class="cbPOS text-left" id="reprintresend_receipt" />
+                                    </div>
+                                    <span class="col-11 p-0">Reprint and resend receipt</span>
+                                </div>
+                                <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
+                                    <div class="col-1 p-0">
+                                        <input type="checkbox" class="cbPOS text-left" id="view_shiftreport" />
+                                    </div>
+                                    <span class="col-11 p-0">View shift report</span>
+                                </div>
+                                <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
+                                    <div class="col-1 p-0">
+                                        <input type="checkbox" class="cbPOS text-left" id="manage_items" />
+                                    </div>
+                                    <span class="col-11 p-0">Manage items</span>
+                                </div>
+                                <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
+                                    <div class="col-1 p-0">
+                                        <input type="checkbox" class="cbPOS text-left" id="view_costitems" />
+                                    </div>
+                                    <span class="col-11 p-0">View cost of items</span>
+                                </div>
+                                <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
+                                    <div class="col-1 p-0">
+                                        <input type="checkbox" class="cbPOS text-left" id="change_setting" />
+                                    </div>
+                                    <span class="col-11 p-0">Change setting</span>
+                                </div>
+                                <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
+                                    <div class="col-1 p-0">
+                                        <input type="checkbox" class="cbPOS text-left" id="access_livechat" />
+                                    </div>
+                                    <span class="col-11 p-0">Access to live chat support</span>
+                                </div>
+                            </div>
+                            <div class="row col-12 p-0" style="margin: 1rem 0 1rem 0;">
+                                <i class="fas fa-chart-area text-blue text-left col-1 p-0" style="align-self: center;"></i>
+                                <div class="col-9 p-0">
+                                    <label class="col-form-label">Back Office</label>
+                                    <br />
+                                    <span style="font-size: 9pt;">Employees can log in to the back office using their email and password</span>
+                                </div>
+                                <div class="col-2 p-0 text-right">
+                                    <label class="switch mt-2" for="ACCESS_BACKOFFICE">
+                                        <input type="checkbox" id="ACCESS_BACKOFFICE" value="0">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
+                                    <div class="col-1 p-0">
+                                        <input type="checkbox" class="cbBOFF text-left" id="view_sreport" />
+                                    </div>
+                                    <span class="col-11 p-0">View sales report</span>
+                                </div>
+                                <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
+                                    <div class="col-1 p-0">
+                                        <input type="checkbox" class="cbBOFF text-left" id="manage_items" />
+                                    </div>
+                                    <span class="col-11 p-0">Manage items</span>
+                                </div>
+                                <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
+                                    <div class="col-1 p-0">
+                                        <input type="checkbox" class="cbBOFF text-left" id="view_costitems" />
+                                    </div>
+                                    <span class="col-11 p-0">View cost of items</span>
+                                </div>
+                                <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
+                                    <div class="col-1 p-0">
+                                        <input type="checkbox" class="cbBOFF text-left" id="manage_employees" />
+                                    </div>
+                                    <span class="col-11 p-0">Manage employees</span>
+                                </div>
+                                <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
+                                    <div class="col-1 p-0">
+                                        <input type="checkbox" class="cbBOFF text-left" id="manage_customers" />
+                                    </div>
+                                    <span class="col-11 p-0">Manage customers</span>
+                                </div>
+                                <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
+                                    <div class="col-1 p-0">
+                                        <input type="checkbox" class="cbBOFF text-left" id="accept_payments" />
+                                    </div>
+                                    <span class="col-11 p-0">Edit general setting</span>
+                                </div>
+                                <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
+                                    <div class="col-1 p-0">
+                                        <input type="checkbox" class="cbBOFF text-left" id="accept_payments" />
+                                    </div>
+                                    <span class="col-11 p-0">Manage payment types</span>
+                                </div>
+                                <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
+                                    <div class="col-1 p-0">
+                                        <input type="checkbox" class="cbBOFF text-left" id="accept_payments" />
+                                    </div>
+                                    <span class="col-11 p-0">Manage taxes</span>
+                                </div>
+                                <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
+                                    <div class="col-1 p-0">
+                                        <input type="checkbox" class="cbBOFF text-left" id="accept_payments" />
+                                    </div>
+                                    <div class="col-11 p-0">
+                                        <span>Manage POS devices</span>
+                                        <br />
+                                        <span style="font-size: 9pt;">This permission also allows to sign into POS using email and password</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 p-0" style="border-top: 1px solid lightgray;">
+                        <div class="col-12 p-0 row ml-0 mr-0 mt-3" style="justify-content: right;">
+                            <button type="button" class="btn btn-default mr-2" id="btnCancel" style="width: 120px;">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="btnSave" style="width: 120px;">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
+
+@section Scripts
+{
+    <script src="~/Areas/Employees/Lib/AccessRights.js"></script>
+}
