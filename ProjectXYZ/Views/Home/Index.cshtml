@@ -1,4 +1,4 @@
-﻿@model CMS.Models.UserAccount
+﻿@model ProjectXYZ.Models.UserAccount
 @{
     ViewBag.Title = "Login";
 }
@@ -32,6 +32,10 @@
             border-bottom: 1px solid #747474 !important;
             outline: none;
         }
+
+        span.text-danger {
+            font-size: 12px;
+        }
     </style>
 </head>
 <body class="hold-transition login-page">
@@ -51,7 +55,7 @@
                     @Html.AntiForgeryToken()
                     @Html.ValidationSummary(true)
                     <div class="input-group pt-5">
-                        @Html.TextBoxFor(Model => Model.username,
+                        @Html.TextBoxFor(Model => Model.EmailAddress,
                         new
                         {
                             @class = "w-100 input-login",
@@ -64,7 +68,7 @@
                     </div>
                     <span class="text-danger msg-email" style="display:none;">Please Input Your Email</span>
                     <div class="input-group pt-5">
-                        @Html.TextBoxFor(Model => Model.password,
+                        @Html.TextBoxFor(Model => Model.PASSWORD,
                         new
                         {
                             @class = "w-100 input-login",
@@ -75,18 +79,6 @@
                         })
                     </div>
                     <span class="text-danger msg-password" style="display:none;">Please Input Your Password</span>
-                    @*<div class="captcha" style="display: none">
-                <div class="row mt-3">
-                    <div class="col-12 col-sm-12 col-md-12 col-lg-12">
-                        <img id="captcha_img" src="@Url.Action("GetCaptchaImage", "Home")" title="click for refresh" />
-                    </div>
-                </div>
-                <div class="input-group mt-3">
-                    <input id="captcha_text" name="captcha_text" class="col-12 col-sm-12 col-md-12 col-lg-12"
-                           type="text" placeholder="Write above text or click image for refresh." maxlength="4" required tabindex="3" />
-                </div>
-                <span class="text-danger msg-box" style="display:none;">Write Your Captcha</span>
-            </div>*@
                     <div class="row mt-3">
                         <div class="col-lg-6 col-md-6 col-12">
                             <div class="icheck-primary">
@@ -97,7 +89,6 @@
                                     @name = "remember",
                                     @tabindex = "3"
                                 })
-                                @*<input type="checkbox" id="remember">*@
                                 <label for="remember" style="font-weight: normal;">
                                     Remember Me
                                 </label>
@@ -105,7 +96,7 @@
                         </div>
                         <!-- /.col -->
                         <div class="col-lg-6 col-md-6 col-12">
-                            <button type="submit" id="btnLogin" class="btn btn-primary btn-block" tabindex="4">Sign In</button>
+                            <button type="submit" id="btnLogin" class="btn btn-primary btn-block" tabindex="4">SIGN IN</button>
                         </div>
                         <!-- /.col -->
                     </div>
@@ -118,11 +109,8 @@
                     <a href="forgot-password.html" tabindex="5">Forgot Password ?</a>
                 </p>
                 <p class="mb-1">
-                    <a href="#" tabindex="6">Sign Up ?</a>
+                    <a href="@Url.Action("SignUp", "Home" , new { area="" })" tabindex="6">Sign Up ?</a>
                 </p>
-                @*<p class="mb-0">
-            <a href="register.html" class="text-center">Register</a>
-        </p>*@
             </div>
             <!-- /.card-body -->
         </div>

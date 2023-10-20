@@ -20,6 +20,22 @@ namespace ProjectXYZAPI.Model
         public string SessionID { get; set; }
     }
 
+    public class UserLogin
+    {
+        public string EmailAddress { get; set; }
+        public string PASSWORD { get; set; }
+    }
+
+    public class UserAccount
+    {
+        public string UserID { get; set; }
+        public string EmailAddress { get; set; }
+        public string PASSWORD { get; set; }
+        public string Business_Name { get; set; }
+        public string Currency { get; set; }
+        public string Country { get; set; }
+    }
+
     public class UploadFile
     {
         public IFormFile file { set; get; }

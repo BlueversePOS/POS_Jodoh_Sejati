@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace CMS
+namespace ProjectXYZ
 {
     public static class HMTLHelperExtensions
     {

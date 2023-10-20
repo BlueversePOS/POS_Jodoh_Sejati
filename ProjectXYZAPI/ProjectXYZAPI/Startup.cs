@@ -205,12 +205,14 @@ namespace ProjectXYZAPI
         {
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
 
-            string decryptPass = FunctionHelper.Decrypt(DBConfigPwd);
+            //string decryptPass = FunctionHelper.Decrypt(DBConfigPwd);
+
+            db = string.IsNullOrEmpty(db) ? DBConfigDB : db;
 
             builder.DataSource = DBConfigDS;
             builder.InitialCatalog = db;
             builder.UserID = DBConfigUser;
-            builder.Password = decryptPass;
+            builder.Password = DBConfigPwd;
 
             return builder.ConnectionString;
         }

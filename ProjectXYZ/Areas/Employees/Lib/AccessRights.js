@@ -33,10 +33,31 @@
                 lengthMenu: [[10, 25, 50], [10, 25, 50]],
                 responsive: true,
                 searchable: true,
-                data: dtValues,
+                ajax: {
+                    type: "GET",
+                    url: rootUrl + 'Employees/AccessRights/GetAccessRight',
+                    "datatype": "json",
+                    error: function (xhr) {
+                        if (xhr.status != "200") {
+                            var doc = $.parseHTML(xhr.responseText);
+                            if (!emptyStr(doc)) {
+                                var titleNode = doc.filter(function (node) {
+                                    return node.localName === "title";
+                                });
+                                var msg = titleNode[0].textContent;
+                                swal("Error", "Error : " + msg, "error");
+                            }
+                            else {
+                                if (xhr.statusText.toUpperCase().trim() != "OK") {
+                                    swal({ type: "error", title: "Error", text: xhr.statusText });
+                                }
+                            }
+                        }
+                    }
+                },
                 columns: [
                     {
-                        data: 'ID',
+                        data: 'Role_ID',
                         orderable: false,
                         render: function (data, type, row) {
                             var ID = emptyStr(data) ? "" : data;
@@ -44,7 +65,7 @@
                         }
                     },
                     {
-                        data: 'ACCESS_NAME',
+                        data: 'Role_Name',
                         className: 'no-wrap',
                         render: function (data, type, row) {
                             var values = "";
@@ -59,26 +80,9 @@
                             return values;
                         }
                     },
+                    { data: 'Access' },
                     {
-                        data: 'ACCESS_POS',
-                        render: function (data, type, row) {
-                            var values = "";
-                            var dtVal1 = emptyStr(data) ? 0 : data;
-                            var dtVal2 = emptyStr(row.ACCESS_BACKOFFICE) ? 0 : row.ACCESS_BACKOFFICE;
-                            if (dtVal1 == 1) {
-                                values = "Back office";
-                            }
-                            if (dtVal2 == 1) {
-                                values = "POS";
-                            }
-                            if (dtVal1 == 1 && dtVal2 == 1) {
-                                values = "Back office and POS";
-                            }
-                            return values;
-                        }
-                    },
-                    {
-                        data: 'ACCESS_EMPLOYEES',
+                        data: 'Access_Employee',
                         className: 'text-right'
                     }
                 ],

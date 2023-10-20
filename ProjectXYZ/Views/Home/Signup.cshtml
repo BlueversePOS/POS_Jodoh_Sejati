@@ -1,0 +1,144 @@
+﻿@model ProjectXYZ.Models.UserAccount
+@{
+    ViewBag.Title = "Sign Up";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Cache-control" content="public">
+    <meta http-equiv="Cache-control" content="private">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-store">
+    <title>Sign Up</title>
+    <meta name="description" content="Project XYZ - Web">
+    <meta name="keywords" content="Project XYZ">
+    <meta name="author" content="XYZ">
+    <link rel="icon" href="~/Content/adminlte/dist/img/logoartha2.png" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/Content/adminlte/plugins/fontawesome-free/css/all.min.css">
+    <!-- icheck bootstrap -->
+    <link rel="stylesheet" href="~/Content/adminlte/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/Content/adminlte/dist/css/adminlte.min.css">
+    <!-- Alert Style -->
+    <link rel="stylesheet" href="~/Content/adminlte/plugins/sweetalert/sweetalert.css">
+
+    <style>
+        .input-login {
+            border: 0 !important;
+            border-bottom: 1px solid #747474 !important;
+            outline: none;
+        }
+
+        span.text-danger{
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body class="hold-transition login-page">
+    <div class="login-box">
+        <!-- /.login-logo -->
+        <div class="card card-outline card-primary">
+            <div class="card-header text-center">
+                <div class="card-img pb-0">
+                    @*<img src="~/Content/adminlte/dist/img/PowerOperation_Logo.png" class="card-img" alt="PORTAL ADMIN" />*@
+                </div>
+            </div>
+            <div class="card-body">
+                <label class="login-box-msg text-left p-0">Create Your Account</label>
+
+                @using (Html.BeginForm("SignUpUser", "Home", FormMethod.Post, new { @id = "formsignup" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true)
+                    <div class="input-group pt-5">
+                        @Html.TextBoxFor(Model => Model.EmailAddress,
+                        new
+                        {
+                            @class = "w-100 input-login",
+                            @placeholder = "Email",
+                            @id = "email",
+                            @tabindex = "1",
+                            Type = "text",
+                            autocomplete = "off"
+                        })
+                    </div>
+                    <span class="text-danger msg-email" style="display:none;">Please Input Your Email</span>
+                    <div class="input-group pt-5">
+                        @Html.TextBoxFor(Model => Model.PASSWORD,
+                        new
+                        {
+                            @class = "w-100 input-login",
+                            @placeholder = "Password",
+                            @id = "password",
+                            @tabindex = "2",
+                            Type = "password"
+                        })
+                    </div>
+                    <span class="text-danger msg-password" style="display:none;">Please Input Your Password</span>
+                    <div class="input-group pt-5">
+                        @Html.TextBoxFor(Model => Model.Business_Name,
+                        new
+                        {
+                            @class = "w-100 input-login",
+                            @placeholder = "Business name",
+                            @id = "Business_Name",
+                            @tabindex = "3",
+                            Type = "text",
+                            autocomplete = "off"
+                        })
+                    </div>
+                    <span class="text-danger msg-Business_Name" style="display:none;">Please Input Your Business name</span>
+                    <div class="input-group pt-5">
+                        @Html.DropDownListFor(Model => Model.Country, ViewBag.Countries as IEnumerable<SelectListItem>, "Select Country", 
+                        new
+                        {
+                            @class = "w-100 input-login",
+                            @id = "Country",
+                            @tabindex = "4"
+                        })
+                    </div>
+                    <span class="text-danger msg-Country" style="display:none;">Please Choose Your Country</span>
+                    <div class="row pt-3">
+                        <div class="col-12">
+                            <button type="submit" id="btnSignUp" class="btn btn-primary btn-block" tabindex="5">SIGN UP</button>
+                        </div>
+                    </div>
+                    <div class="row mt-0 mb-3">
+                        <div class="col-12 text-danger" id="errormessage"></div>
+                    </div>
+                }
+
+                <p class="pb-1">
+                    <span>Already have an account? <a href="@Url.Action("Index", "Home" , new { area="" })" tabindex="6">Sign in</a></span>
+                </p>
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+    </div>
+
+    <div class="modal" id="loading" style="display: none">
+        <div class="center-block loading-img">
+            <img alt="" src="~/Content/adminlte/dist/icon/loader2.gif" style="height:10vh; width: 10vw; margin-left: 50%; margin-top: 20%;" />
+        </div>
+    </div>
+
+    <!-- /.login-box -->
+    <!-- jQuery -->
+    <script src="~/Content/adminlte/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="~/Content/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="~/Content/adminlte/dist/js/adminlte.min.js"></script>
+    <!-- Swall -->
+    <script src="~/Content/adminlte/plugins/sweetalert/sweetalert.min.js"></script>
+    <script type="text/javascript">
+        var rootUrl = '@Url.Content("~")';
+    </script>
+    <script src="~/lib/SignUp.js"></script>
+</body>
+</html>

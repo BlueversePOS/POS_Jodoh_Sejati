@@ -4,18 +4,33 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace CMS.Models
+namespace ProjectXYZ.Models
 {
-    public class UserAccount
+    public class UserLogin
     {
         [Required(ErrorMessage = "The Email is required.")]
-        public string username { get; set; } = string.Empty;
+        public string EmailAddress { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "The Password is required.")]
         [DataType(DataType.Password)]
-        public string password { get; set; } = string.Empty;
+        public string PASSWORD { get; set; } = string.Empty;
         public bool remember { get; set; }
-        public string clientcaptcha { get; set; }
+    }
+
+    public class UserAccount
+    {
+        public string UserID { get; set; } = string.Empty;
+        [Required(ErrorMessage = "The Email is required.")]
+        public string EmailAddress { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "The Password is required.")]
+        [DataType(DataType.Password)]
+        public string PASSWORD { get; set; } = string.Empty;
+        public bool remember { get; set; }
+        [Required(ErrorMessage = "The Business Name is required.")]
+        public string Business_Name { get; set; } = string.Empty;
+        public string Currency { get; set; } = string.Empty;
+        public string Country { get; set; } = string.Empty;
     }
 
     public class PortalActivity

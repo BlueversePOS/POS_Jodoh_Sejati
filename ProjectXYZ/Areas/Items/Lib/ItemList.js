@@ -154,4 +154,12 @@
         }
     });
 
+    $('#cancelImport').on('click', function () {
+        try {
+            Clear();
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    });
+
 });

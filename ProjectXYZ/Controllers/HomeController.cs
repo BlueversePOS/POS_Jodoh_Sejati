@@ -1,6 +1,8 @@
 ﻿using Antlr.Runtime.Misc;
-using CMS.Helpers;
-using CMS.Models;
+using Newtonsoft.Json;
+using ProjectXYZ.ActionFilter;
+using ProjectXYZ.Helpers;
+using ProjectXYZ.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -12,12 +14,14 @@ using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using System.Web.UI.WebControls;
 
-namespace CMS.Controllers
+namespace ProjectXYZ.Controllers
 {
     public class HomeController : Controller
     {
@@ -47,22 +51,33 @@ namespace CMS.Controllers
             }
         }
 
+        public ActionResult SignUp()
+        {
+            ViewBag.Countries = CultureInfo.GetCultures(CultureTypes.SpecificCultures)
+                .Select(x => new SelectListItem() { Value = new RegionInfo(x.LCID).Name, Text = new RegionInfo(x.LCID).EnglishName })
+                .ToList()
+                .GroupBy(c => c.Text)
+                .Select(c => c.First())
+                .OrderBy(c => c.Text);
+            return View();
+        }
+
         public void CHECKUSERCOOKIE()
         {
             try
             {
-                if (Request.Cookies["OMP"] != null)
+                if (Request.Cookies["BPOS"] != null)
                 {
-                    UA.username = Request.Cookies["OMP"].Values["username"];
-                    string enPwd = Request.Cookies["OMP"].Values["password"];
+                    UA.EmailAddress = Request.Cookies["BPOS"].Values["EmailAddress"];
+                    string enPwd = Request.Cookies["BPOS"].Values["PASSWORD"];
                     string depwd = func.Decrypt(enPwd);
-                    UA.password = depwd;
+                    UA.PASSWORD = depwd;
                     UA.remember = true;
                 }
                 else
                 {
-                    UA.username = "";
-                    UA.password = "";
+                    UA.EmailAddress = "";
+                    UA.PASSWORD = "";
                     UA.remember = false;
                 }
 
@@ -79,47 +94,31 @@ namespace CMS.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Obsolete]
-        public ActionResult LoginAction()
+        public ActionResult LoginAction(string param)
         {
             //string code = "", description = "";
+            UserLogin model = new UserLogin();
             try
             {
-                #region VALIDATE CAPTCHA
-
-                //string clientCaptcha = model.clientcaptcha;
-                //string serverCaptcha = captchalogin;
-                //if (Session["TEGUHCAP"] != null)
-                //{
-                //    serverCaptcha = Session["TEGUHCAP"].ToString();
-                //}
-
-                //if (!clientCaptcha.Equals(serverCaptcha, StringComparison.InvariantCultureIgnoreCase))
-                //{
-                //    string msg = "Sorry, wrong text captcha.";
-                //    var js = Json(new { captcha = true, message = msg }, JsonRequestBehavior.AllowGet);
-                //    js.MaxJsonLength = int.MaxValue;
-                //    return js;
-                //}
-                #endregion
-                Session["USER"] = "TEST";
+                string decryptmodel = func.Decrypt(param);
+                model = JsonConvert.DeserializeObject<UserLogin>(decryptmodel);
+                string password = string.IsNullOrEmpty(model.PASSWORD) ? "" : model.PASSWORD.Trim();
+                password = func.Encrypt(password);
+                Session["USER"] = null;
                 Session["formatdate"] = FORMATDATE;
-                //string guid = "6270d7e1-cf15-42fd-a893-a07e74493c59"; //artha1
-                //string guid = "36ca0506-00a2-42f9-b4cb-c553ac7a35fe"; //teg01
-                //string guid = "86b33943-c133-4ff5-94d5-9ec55f0c9d5c"; //gpuser (UAT)
 
-                //DataTable dt = homeRep.getDataUserbyGuid(guid);
-                //if (dt.Rows.Count != 0)
-                //{
-                //    Session["USER"] = dt.Rows[0]["USERID"].ToString();
-                //    Session["USERNAME"] = dt.Rows[0]["USERNAME"].ToString();
-                //    Session["GUID"] = dt.Rows[0]["GUID"].ToString();
+                DataTable dt = homeRep.getDataUser(model, password);
+                if (dt.Rows.Count != 0)
+                {
+                    Session["USER"] = dt.Rows[0]["UserID"].ToString();
+                    Session["EmailAddress"] = dt.Rows[0]["EmailAddress"].ToString();
 
-                //    Session["formatdate"] = FORMATDATE;
-                //}
-                //else
-                //{
-                //    throw new Exception("DATA USER TIDAK ADA");
-                //}
+                    Session["formatdate"] = FORMATDATE;
+                }
+                else
+                {
+                    throw new Exception("DATA USER TIDAK ADA");
+                }
 
                 var jsonResult = Json(new { success = true });
                 return jsonResult;
@@ -135,14 +134,50 @@ namespace CMS.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Obsolete]
+        public JsonResult SignUpUser(string param)
+        {
+            bool success = false;
+            UserAccount model = new UserAccount();
+            try
+            {
+                string decryptmodel = func.Decrypt(param);
+                model = JsonConvert.DeserializeObject<UserAccount>(decryptmodel);
+                string password = string.IsNullOrEmpty(model.PASSWORD) ? "" : model.PASSWORD.Trim();
+                password = func.Encrypt(password);
+                DataTable ObjList = homeRep.SignUpUser(model, password);
+                List<DataRow> rows = ObjList.Select().ToList();
+
+                int i = 1;
+                var list = (from DataRow ro in rows
+                            select new
+                            {
+                                EmailAddress = model.EmailAddress
+                            }).ToList();
+
+                success = true;
+                var jsonResult = Json(new { success = success, data = list }, JsonRequestBehavior.AllowGet);
+                jsonResult.MaxJsonLength = int.MaxValue;
+                return jsonResult;
+            }
+            catch (Exception ex)
+            {
+                var jsonResult = Json(new { success = success, message = ex.Message }, JsonRequestBehavior.AllowGet);
+                jsonResult.MaxJsonLength = int.MaxValue;
+                return jsonResult;
+            }
+        }
+
         public ActionResult Logout()
         {
             Session["USER"] = null;
-            Session["USERNAME"] = null;
-            Session["GUID"] = null;
-            Session["CURRENTCOMPANYNAME"] = null;
-            Session["CURRENTCOMPANY"] = null;
-            Session["INTERID"] = null;
+            Session["EmailAddress"] = null;
+            //Session["GUID"] = null;
+            //Session["CURRENTCOMPANYNAME"] = null;
+            //Session["CURRENTCOMPANY"] = null;
+            //Session["INTERID"] = null;
 
             Session.Clear();
             Session.Abandon();
@@ -174,155 +209,19 @@ namespace CMS.Controllers
             return View();
         }
 
-        #region CAPTCHA
-        // This action for get Captcha Image
-        [HttpGet]
-        [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")] // This is for output cache false
-        public FileResult GetCaptchaImage()
+        public ActionResult Encrypt(string model)
         {
-            Random random = new Random();
-
-            captchalogin = GetRandomText();
-            Session["TEGUHCAP"] = captchalogin;
-            //Session["TEGUH"] = GetRandomText();
-            //string text = Session["TEGUH"].ToString();
-            //first, create a dummy bitmap just to get a graphics object
-
-            int width = 320;
-            int height = 70;
-            Bitmap img = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-            Graphics g = Graphics.FromImage(img);
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-
-            Rectangle rect = new Rectangle(0, 0, width, height);
-            HatchBrush hatchBrush = new HatchBrush(HatchStyle.SmallConfetti,
-                Color.LightGray, Color.White);
-            g.FillRectangle(hatchBrush, rect);
-            SizeF size;
-            float fontSize = rect.Height + 1;
-            Font font;
-
-            do
-            {
-                fontSize--;
-                font = new Font(FontFamily.GenericSansSerif, fontSize, FontStyle.Bold);
-                size = g.MeasureString(captchalogin, font);
-            } while (size.Width > rect.Width);
-
-            StringFormat format = new StringFormat();
-            format.Alignment = StringAlignment.Center;
-            format.LineAlignment = StringAlignment.Center;
-            GraphicsPath path = new GraphicsPath();
-            path.AddString(captchalogin, font.FontFamily, (int)font.Style, 75, rect, format);
-            float v = 4F;
-            PointF[] points =
-            {
-                new PointF(random.Next(rect.Width) / v, random.Next(
-                   rect.Height) / v),
-                new PointF(rect.Width - random.Next(rect.Width) / v,
-                    random.Next(rect.Height) / v),
-                new PointF(random.Next(rect.Width) / v,
-                    rect.Height - random.Next(rect.Height) / v),
-                new PointF(rect.Width - random.Next(rect.Width) / v,
-                    rect.Height - random.Next(rect.Height) / v)
-          };
-            Matrix matrix = new Matrix();
-            matrix.Translate(0F, 0F);
-            path.Warp(points, rect, matrix, WarpMode.Perspective, 0F);
-            hatchBrush = new HatchBrush(HatchStyle.Percent10, Color.Black, Color.DodgerBlue);
-            g.FillPath(hatchBrush, path);
-            int m = Math.Max(rect.Width, rect.Height);
-            for (int i = 0; i < (int)(rect.Width * rect.Height / 30F); i++)
-            {
-                int x = random.Next(rect.Width);
-                int y = random.Next(rect.Height);
-                int w = random.Next(m / 50);
-                int h = random.Next(m / 50);
-                g.FillEllipse(hatchBrush, x, y, w, h);
-            }
-
-            g.DrawLine(Pens.Black, random.Next(0, 350), random.Next(10, 30), random.Next(0, 200), random.Next(0, 50));
-            g.DrawLine(Pens.Blue, random.Next(0, 320), random.Next(10, 50), random.Next(100, 200), random.Next(0, 80));
-
-            font.Dispose();
-            hatchBrush.Dispose();
-            g.Dispose();
-
-            MemoryStream ms = new MemoryStream();
-            img.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-            img.Dispose();
-
-            return File(ms.ToArray(), "image/png");
-        }
-
-        private string GetRandomText()
-        {
-            StringBuilder randomText = new StringBuilder();
-            string alphabets = "012345679ACEFGHKLMNPRSWXZabcdefghijkhlmnopqrstuvwxyz";
-            Random r = new Random();
-            for (int j = 0; j <= 3; j++)
-            {
-                randomText.Append(alphabets[r.Next(alphabets.Length)]);
-            }
-            return randomText.ToString();
-        }
-        #endregion
-
-        #region FUNCTION
-        private static string ToTitleCase(string title)
-        {
-            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(title.ToLower());
-        }
-        #endregion
-
-        public ActionResult SelectCompany()
-        {
+            string controllerName = ControllerContext.RouteData.Values["controller"].ToString();
             try
             {
-                string userid = Session["USER"].ToString();
-                string guid = Session["GUID"].ToString();
-
-                var Companies = homeRep.getCompanyList(userid);
-                if (Companies != null)
-                {
-                    ViewBag.CompanyList = Companies;
-                }
-
-                return View();
+                string hasil = func.Encrypt(model);
+                return Json(new { success = true, data = hasil });
             }
             catch (Exception ex)
             {
-                return View("NoAccess", ex.Message.ToString());
-            }
-        }
-
-        public ActionResult SelectedCompanies(GroupCompany company)
-        {
-            try
-            {
-                string userid = Session["USER"].ToString();
-                string companyselected = company.Companyid.TrimEnd();
-
-                List<GroupCompany> companylist = new List<GroupCompany>();
-                companylist = homeRep.getCompanyListById(userid, companyselected);
-
-                if (companylist.Count() > 0)
-                {
-                    Session["CURRENTCOMPANYNAME"] = companylist[0].Companyname.Trim();
-                    Session["CURRENTCOMPANY"] = companylist[0].Companyid;
-                    Session["INTERID"] = companylist[0].Companydb;
-                    ViewBag.COMNAME = companylist[0].Companyname.Trim();
-
-                    return RedirectToAction("Index", "Dashboard");
-                }
-                else
-                {
-                    return RedirectToAction("SelectCompany", "Home");
-                }
-            }
-            catch (Exception ex)
-            {
-                return View("NoAccess", ex.Message.ToString());
+                var jsonResult = Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
+                jsonResult.MaxJsonLength = int.MaxValue;
+                return jsonResult;
             }
         }
     }

@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using CMS.Models;
+using ProjectXYZ.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +9,7 @@ using System.Runtime.Serialization.Json;
 using System.Web;
 using System.Xml.Linq;
 
-namespace CMS.Models
+namespace ProjectXYZ.Models
 {
     public class IPHandler
     {

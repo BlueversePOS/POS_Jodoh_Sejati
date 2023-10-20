@@ -14,7 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace CMS.Helpers
+namespace ProjectXYZ.Helpers
 {
     public class FuncHelper
     {
@@ -55,7 +55,7 @@ namespace CMS.Helpers
         {
             try
             {
-                string EncryptionKey = "PROAPI";
+                string EncryptionKey = "BlueversePOS";
                 byte[] clearBytes = Encoding.Unicode.GetBytes(encryptString);
                 using (Aes encryptor = Aes.Create())
                 {
@@ -81,7 +81,7 @@ namespace CMS.Helpers
         {
             try
             {
-                string EncryptionKey = "PROAPI";
+                string EncryptionKey = "BlueversePOS";
                 cipherText = cipherText.Replace(" ", "+");
                 byte[] cipherBytes = Convert.FromBase64String(cipherText);
                 using (Aes encryptor = Aes.Create())

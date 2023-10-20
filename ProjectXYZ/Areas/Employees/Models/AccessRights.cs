@@ -7,5 +7,6 @@ namespace ProjectXYZ.Areas.Employees.Models
 {
     public class AccessRights
     {
+        public string INTERID { get; set; }
     }
 }

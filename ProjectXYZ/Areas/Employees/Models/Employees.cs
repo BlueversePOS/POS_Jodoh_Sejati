@@ -5,7 +5,8 @@ using System.Web;
 
 namespace ProjectXYZ.Areas.Employees.Models
 {
-    public class Employees
+    public class Employeess
     {
+        public string INTERID { get; set; }
     }
 }

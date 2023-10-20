@@ -17,9 +17,8 @@
     function ResetSpan() {
         try {
             //login form
-            $("#email").parents("div").siblings("span").hide();
-            $("#password").parents("div").siblings("span").hide();
-            //$("#captcha_text").parents("div").siblings("span").hide();
+            $(".msg-email").hide();
+            $(".msg-password").hide();
             $("#errormessage").text('');
         }
         catch (err) {
@@ -31,15 +30,60 @@
         var emailaddress = $(el).val();
         var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
         if (!emailReg.test(emailaddress)) {
-            //el.siblings("span").show();
-            $("#errormessage").text('Please enter the correct email format.');
-            //swal({ type: "info", title: "Information", text: "Please enter the correct email format." });
+            $(".msg-email").text('Please enter the correct email format.');
             el.val('');
             el.removeClass("x onX").val("").change();
             el.focus();
+            $(".msg-email").show();
         }
         else {
-            $("#errormessage").text('');
+            $(".msg-email").text('');
+            $(".msg-email").hide();
+        }
+    };
+
+    function FuncEncrypt(plainText) {
+        try {
+            var hasil;
+
+            $.ajax({
+                url: rootUrl + "Home/Encrypt",
+                type: "POST",
+                async: false,
+                dataType: "json",
+                data: {
+                    model: plainText
+                },
+                success: function (result) {
+                    if (result.success) {
+                        hasil = result.data;
+                    }
+                    else {
+                        window.location = rootUrl + "Home/NoAccess?ErrorMessage=" + result.message;
+                    }
+                },
+                error: function (xhr) {
+                    if (xhr.status != "200") {
+                        var doc = $.parseHTML(xhr.responseText);
+                        if (!emptyStr(doc)) {
+                            var titleNode = doc.filter(function (node) {
+                                return node.localName === "title";
+                            });
+                            var msg = titleNode[0].textContent;
+                            swal("Error", "Error : " + msg, "error");
+                        }
+                        else {
+                            if (xhr.statusText.toUpperCase().trim() != "OK") {
+                                swal({ type: "error", title: "Error", text: xhr.statusText });
+                            }
+                        }
+                    }
+                }
+            });
+
+            return hasil;
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
         }
     };
 
@@ -52,7 +96,7 @@
 
     $("#email").focusout(function () {
         try {
-            ResetSpan();
+            //ResetSpan();
             var element = $(this);
             validateEmail(element);
         }
@@ -63,26 +107,13 @@
 
     $("#password").focusout(function () {
         try {
-            ResetSpan();
+            var values = $(this).val();
+            $(".msg-password").hide();
+            if (emptyStr(values)) {
+                $(".msg-password").show();
+            }
         }
         catch (err) {
-            swal({ type: "error", title: "Error", text: err.message });
-        }
-    });
-
-    $("#captcha_text").focusout(function () {
-        try {
-            ResetSpan();
-        }
-        catch (err) {
-            swal({ type: "error", title: "Error", text: err.message });
-        }
-    });
-
-    $("#captcha_img").click(function () {
-        try {
-            this.src = rootUrl + "Home/GetCaptchaImage";
-        } catch (err) {
             swal({ type: "error", title: "Error", text: err.message });
         }
     });
@@ -95,29 +126,31 @@
             ResetSpan();
             var IsValid = true;
 
-            //if (emptyStr($("#email").val())) {
-            //    IsValid = false;
-            //    $("#email").parents(".input-group").siblings(".msg-email").show();
-            //}
-            //if (emptyStr($("#password").val())) {
-            //    IsValid = false;
-            //    $("#password").parents(".input-group").siblings(".msg-password").show();
-            //}
-            //if (emptyStr($("#captcha_text").val())) {
-            //    IsValid = false;
-            //    $("#captcha_text").parents(".input-group").siblings(".msg-box").show();
-            //}
+            if (emptyStr($("#email").val())) {
+                IsValid = false;
+                $(".msg-email").show();
+            }
+            if (emptyStr($("#password").val())) {
+                IsValid = false;
+                $(".msg-password").show();
+            }
 
             if (IsValid) {
 
-                //var clientcaptcha = $("#captcha_text").val().trim();
+                var EmailAddress = $("#email").val().trim();
+                var PASSWORD = $("#password").val().trim();
+                var remember = $("#remember").is(":checked");
 
-                //var model = {
-                //    'clientcaptcha': clientcaptcha
-                //};
+                var model = {
+                    'EmailAddress': EmailAddress,
+                    'PASSWORD': PASSWORD,
+                    'remember': remember
+                };
 
                 var form = $('#formlogin');
                 var token = form.find("input[name='__RequestVerificationToken']").val();
+                model = JSON.stringify(model);
+                var hasil = FuncEncrypt(model);
 
                 $.ajax({
                     url: rootUrl + 'Home/LoginAction',
@@ -125,19 +158,15 @@
                     dataType: 'json',
                     contentType: 'application/x-www-form-urlencoded',
                     data: {
-                        __RequestVerificationToken: token
+                        __RequestVerificationToken: token,
+                        'param': hasil
                     },
                     success: function (data) {
-                        if (data.captcha) {
-                            $("#errormessage").text(data.message);
+                        if (data.success) {
+                            window.location = rootUrl + 'Dashboard/Index';
                         }
                         else {
-                            if (data.success) {
-                                window.location = rootUrl + 'Dashboard/Index';
-                            }
-                            else {
-                                $("#errormessage").text(data.message);
-                            }
+                            $("#errormessage").text(data.message);
                         }
                     },
                     beforeSend: function () {

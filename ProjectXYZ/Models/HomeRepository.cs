@@ -1,219 +1,295 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net.Http.Headers;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 
-namespace CMS.Models
+namespace ProjectXYZ.Models
 {
     public class HomeRepository
     {
-        readonly string conString;
-
-        public HomeRepository()
+        private string urlpwoapi = System.Configuration.ConfigurationManager.AppSettings["PORTALAPI"];
+        private string tokenapi = System.Configuration.ConfigurationManager.AppSettings["PORTALTOKEN"];
+        private string database = System.Configuration.ConfigurationManager.AppSettings["DBConfigDB"];
+        public async Task<string> callAPI(string url, string inputJson)
         {
-            conString = DataAccessCompany.ConnectionStringBuildRes();
-        }
+            string rtn = "";
 
-        public IDbConnection Connection
-        {
-            get
+            using (HttpClient client = new HttpClient())
             {
-                return new SqlConnection(conString);
+                client.Timeout = TimeSpan.FromMinutes(10);
+                var content = new StringContent(inputJson, Encoding.UTF8, "application/json");
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + tokenapi);
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                HttpResponseMessage tokenResponse = await client.PostAsync(url, content);
+                var result = await tokenResponse.Content.ReadAsStringAsync();
+                rtn = result;
             }
+
+            return rtn;
         }
 
-        private SqlConnection conn;
-        private SqlTransaction trans;
-
-        public DataTable getDataUserbyGuid(string guid)
+        public DataTable getDataUser(UserLogin model, string password)
         {
             DataTable dt = new DataTable();
-
-            conn = new SqlConnection(Connection.ConnectionString);
-            if (conn.State != ConnectionState.Open)
-                conn.Open();
-
-            trans = conn.BeginTransaction();
+            string jsonapiresult = "";
 
             try
             {
-                SqlCommand command = new SqlCommand("AI_GETDATAUSER_GUIDAD", conn, trans)
+                #region GetDataJson
+
+                var param = new
                 {
-                    CommandType = CommandType.StoredProcedure
+                    EmailAddress = model.EmailAddress,
+                    PASSWORD = password
                 };
-                command.Parameters.AddWithValue("@GUID", guid);
 
-                SqlDataAdapter adp = new SqlDataAdapter
+                string inputJson = JsonConvert.SerializeObject(param);
+                string urlapi = urlpwoapi + "/api/Service/getDataUser";
+                jsonapiresult = Task.Run(async () => await callAPI(urlapi, inputJson)).Result;
+
+                //JavaScriptSerializer jss = new JavaScriptSerializer();
+                //var d = jss.Deserialize<dynamic>(jsonapiresult);
+                var d = JsonConvert.DeserializeObject<dynamic>(jsonapiresult);
+                if (d is bool)
                 {
-                    SelectCommand = command
-                };
-                adp.Fill(dt);
-
-                trans.Commit();
-
-                return dt;
-            }
-            catch (Exception ex)
-            {
-                trans?.Rollback();
-                throw new Exception(ex.Message);
-            }
-            finally
-            {
-                if (conn != null)
-                {
-                    if (conn.State == ConnectionState.Open)
-                        conn.Close();
-
-                    conn.Dispose();
-                    conn = null;
-                }
-
-                if (trans != null)
-                {
-                    trans.Dispose();
-                    trans = null;
-                }
-            }
-        }
-
-        public List<GroupCompany> getCompanyList(string userid)
-        {
-            DataTable dt = new DataTable();
-            List<GroupCompany> companygroup = new List<GroupCompany>();
-
-            conn = new SqlConnection(Connection.ConnectionString);
-            if (conn.State != ConnectionState.Open)
-                conn.Open();
-
-            trans = conn.BeginTransaction();
-
-            try
-            {
-                SqlCommand command = new SqlCommand("erAvailableCompanies", conn, trans)
-                {
-                    CommandType = CommandType.StoredProcedure
-                };
-                command.Parameters.AddWithValue("@user_id", userid);
-
-                SqlDataAdapter adp = new SqlDataAdapter
-                {
-                    SelectCommand = command
-                };
-                adp.Fill(dt);
-
-                trans.Commit();
-
-                if (dt.Rows.Count > 0)
-                {
-                    foreach (DataRow dr in dt.Rows)
+                    if (d == true || d == false)
                     {
-                        companygroup.Add(
-                            new GroupCompany
-                            {
-                                Companyid = Convert.ToString(dr["company_id"]),
-                                Companyname = dr["company_name"].ToString()
-                            });
+                        return d;
                     }
-                    companygroup = companygroup.OrderBy(o => o.Companyname).ToList();
+                    else
+                    {
+                        string errormsg = Convert.ToString(d["msg"]);
+                        throw new Exception(errormsg);
+                    }
+                }
+                else if (jsonapiresult.StartsWith("[")) //jadi table
+                {
+                    if (d == null) //no data
+                    {
+                        return dt;
+                    }
+                    else if (d.Count == 0)
+                    {
+                        return dt;
+                    }
+                    else //with data
+                    {
+                        //JSON Array
+                        dt = (DataTable)JsonConvert.DeserializeObject(jsonapiresult, (typeof(DataTable)));
+                        //dt = d;
+                    }
+                }
+                else if (d.Count > 0) //dataset
+                {
+                    string statuscode = Convert.ToString(d["code"]);
+                    if (statuscode == "200")
+                    {
+                        if (d.ContainsKey("desc"))
+                        {
+                            string errormsg = Convert.ToString(d["desc"]);
+                            return dt;
+                        }
+                        else
+                        {
+                            dynamic hasil = JsonConvert.SerializeObject(d["hasil"]);
+                            dt = (DataTable)JsonConvert.DeserializeObject(hasil, (typeof(DataTable)));
+                            return dt;
+                        }
+                    }
+                    else
+                    {
+                        string errormsg = Convert.ToString(d["desc"]);
+                        throw new Exception(errormsg);
+                    }
+                }
+                else
+                {
+                    string errormsg = "";
+                    if (d.ContainsKey("desc"))
+                    {
+                        errormsg = Convert.ToString(d["desc"]);
+                    }
+                    else if (d.ContainsKey("result"))
+                    {
+                        //var dyn = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(d["results"]);
+                        dynamic nilai = Convert.ToString(d["result"]);
+                        dt = (DataTable)JsonConvert.DeserializeObject(nilai, (typeof(DataTable)));
+                        return dt;
+                    }
+                    else
+                    {
+                        #region TAMBAHAN CHECK
+
+                        var dyn = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(jsonapiresult);
+                        foreach (var key in dyn.Keys)
+                        {
+                            // check if the value is not null or empty.
+                            if (!string.IsNullOrEmpty(dyn[key].Last.Value))
+                            {
+                                var value = dyn[key].Last.Value;
+                                // code to do something with
+
+                                errormsg = errormsg + value + ", ";
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(errormsg))
+                        {
+                            errormsg = errormsg.Remove(errormsg.Length - 2);
+                        }
+
+                        #endregion
+                    }
+                    throw new Exception(errormsg);
                 }
 
-                return companygroup;
+                #endregion
+
             }
             catch (Exception ex)
             {
-                trans?.Rollback();
-                throw new Exception(ex.Message);
+                throw ex;
             }
-            finally
-            {
-                if (conn != null)
-                {
-                    if (conn.State == ConnectionState.Open)
-                        conn.Close();
 
-                    conn.Dispose();
-                    conn = null;
-                }
-
-                if (trans != null)
-                {
-                    trans.Dispose();
-                    trans = null;
-                }
-            }
+            return dt;
         }
 
-        public List<GroupCompany> getCompanyListById(string userid, string companyid)
+        public DataTable SignUpUser(UserAccount model, string password)
         {
             DataTable dt = new DataTable();
-            List<GroupCompany> companyresult = new List<GroupCompany>();
-
-            conn = new SqlConnection(Connection.ConnectionString);
-            if (conn.State != ConnectionState.Open)
-                conn.Open();
-
-            trans = conn.BeginTransaction();
+            string jsonapiresult = "";
 
             try
             {
-                SqlCommand command = new SqlCommand("erAvailableCompanies", conn, trans)
+                #region GetDataJson
+
+                var param = new
                 {
-                    CommandType = CommandType.StoredProcedure
-                };
-                command.Parameters.AddWithValue("@user_id", userid);
+                    UserID = model.UserID,
+                    EmailAddress = model.EmailAddress,
+                    PASSWORD = password,
+                    Business_Name = model.Business_Name,
+                    Currency = model.Currency,
+                    Country = model.Country
+    };
 
-                SqlDataAdapter adp = new SqlDataAdapter
+                string inputJson = JsonConvert.SerializeObject(param);
+                string urlapi = urlpwoapi + "/api/Service/SignUpUser";
+                jsonapiresult = Task.Run(async () => await callAPI(urlapi, inputJson)).Result;
+
+                //JavaScriptSerializer jss = new JavaScriptSerializer();
+                //var d = jss.Deserialize<dynamic>(jsonapiresult);
+                var d = JsonConvert.DeserializeObject<dynamic>(jsonapiresult);
+                if (d is bool)
                 {
-                    SelectCommand = command
-                };
-                adp.Fill(dt);
-
-                trans.Commit();
-
-                if (dt.Rows.Count > 0)
-                {
-                    DataRow[] rowresult = dt.Select(string.Format("company_id={0}", companyid));
-
-                    foreach (DataRow dr in rowresult)
+                    if (d == true || d == false)
                     {
-                        companyresult.Add(
-                            new GroupCompany
-                            {
-                                Companyid = Convert.ToString(dr["company_id"]),
-                                Companyname = dr["company_name"].ToString(),
-                                Companydb = dr["database_name"].ToString()
-                            });
+                        return d;
                     }
-                    companyresult = companyresult.OrderBy(o => o.Companyname).ToList();
+                    else
+                    {
+                        string errormsg = Convert.ToString(d["msg"]);
+                        throw new Exception(errormsg);
+                    }
+                }
+                else if (jsonapiresult.StartsWith("[")) //jadi table
+                {
+                    if (d == null) //no data
+                    {
+                        return dt;
+                    }
+                    else if (d.Count == 0)
+                    {
+                        return dt;
+                    }
+                    else //with data
+                    {
+                        //JSON Array
+                        dt = (DataTable)JsonConvert.DeserializeObject(jsonapiresult, (typeof(DataTable)));
+                        //dt = d;
+                    }
+                }
+                else if (d.Count > 0) //dataset
+                {
+                    string statuscode = Convert.ToString(d["code"]);
+                    if (statuscode == "200")
+                    {
+                        if (d.ContainsKey("desc"))
+                        {
+                            string errormsg = Convert.ToString(d["desc"]);
+                            return dt;
+                        }
+                        else
+                        {
+                            dynamic hasil = JsonConvert.SerializeObject(d["hasil"]);
+                            dt = (DataTable)JsonConvert.DeserializeObject(hasil, (typeof(DataTable)));
+                            return dt;
+                        }
+                    }
+                    else
+                    {
+                        string errormsg = Convert.ToString(d["desc"]);
+                        throw new Exception(errormsg);
+                    }
+                }
+                else
+                {
+                    string errormsg = "";
+                    if (d.ContainsKey("desc"))
+                    {
+                        errormsg = Convert.ToString(d["desc"]);
+                    }
+                    else if (d.ContainsKey("result"))
+                    {
+                        //var dyn = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(d["results"]);
+                        dynamic nilai = Convert.ToString(d["result"]);
+                        dt = (DataTable)JsonConvert.DeserializeObject(nilai, (typeof(DataTable)));
+                        return dt;
+                    }
+                    else
+                    {
+                        #region TAMBAHAN CHECK
+
+                        var dyn = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(jsonapiresult);
+                        foreach (var key in dyn.Keys)
+                        {
+                            // check if the value is not null or empty.
+                            if (!string.IsNullOrEmpty(dyn[key].Last.Value))
+                            {
+                                var value = dyn[key].Last.Value;
+                                // code to do something with
+
+                                errormsg = errormsg + value + ", ";
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(errormsg))
+                        {
+                            errormsg = errormsg.Remove(errormsg.Length - 2);
+                        }
+
+                        #endregion
+                    }
+                    throw new Exception(errormsg);
                 }
 
-                return companyresult;
+                #endregion
+
             }
             catch (Exception ex)
             {
-                trans?.Rollback();
-                throw new Exception(ex.Message);
+                throw ex;
             }
-            finally
-            {
-                if (conn != null)
-                {
-                    if (conn.State == ConnectionState.Open)
-                        conn.Close();
 
-                    conn.Dispose();
-                    conn = null;
-                }
-
-                if (trans != null)
-                {
-                    trans.Dispose();
-                    trans = null;
-                }
-            }
+            return dt;
         }
     }
 }

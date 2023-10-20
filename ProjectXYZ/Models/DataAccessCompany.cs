@@ -1,11 +1,11 @@
-﻿using CMS.Helpers;
+﻿using ProjectXYZ.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 
-namespace CMS.Models
+namespace ProjectXYZ.Models
 {
     public class DataAccessCompany
     {

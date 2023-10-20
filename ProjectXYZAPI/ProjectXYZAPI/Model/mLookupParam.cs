@@ -7,11 +7,13 @@ namespace ProjectXYZAPI.Model
 {
     public class mLookupParam
     {
+        public string interid { get; set; }
         public string search { get; set; }
         public int length { get; set; }
         public int from { get; set; }
         public int orderCol { get; set; }
         public string orderType { get; set; }
+        public string user { get; set; }
     }
 
     public class mLookupParam2

@@ -10,11 +10,11 @@ using System.Web;
 using Newtonsoft.Json;
 using System.Web.Script.Serialization;
 using System.Data;
-using CMS.Helpers;
+using ProjectXYZ.Helpers;
 using System.Data.SqlClient;
 using System.Diagnostics;
 
-namespace CMS.Models
+namespace ProjectXYZ.Models
 {
     public class Logging
     {

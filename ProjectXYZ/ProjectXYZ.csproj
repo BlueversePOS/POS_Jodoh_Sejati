@@ -158,10 +158,6 @@
     <Compile Include="Areas\Items\Models\DiscountsRepo.cs" />
     <Compile Include="Areas\Items\Models\ItemList.cs" />
     <Compile Include="Areas\Items\Models\ItemListRepo.cs" />
-    <Compile Include="Areas\Request\Controllers\SupportInboxController.cs" />
-    <Compile Include="Areas\Request\Models\SupportInbox.cs" />
-    <Compile Include="Areas\Request\Models\SupportInboxRepository.cs" />
-    <Compile Include="Areas\Request\RequestAreaRegistration.cs" />
     <Compile Include="Areas\Setting\Controllers\SettingsController.cs" />
     <Compile Include="Areas\Setting\Models\Settings.cs" />
     <Compile Include="Areas\Setting\Models\SettingsRepo.cs" />
@@ -194,7 +190,6 @@
     <Content Include="Areas\Items\Lib\Categories.js" />
     <Content Include="Areas\Items\Lib\Discounts.js" />
     <Content Include="Areas\Items\Lib\ItemList.js" />
-    <Content Include="Areas\Request\Lib\SupportInbox.js" />
     <Content Include="Areas\Setting\Lib\Settings.js" />
     <Content Include="Content\adminlte\dist\css\adminlte.css" />
     <Content Include="Content\adminlte\dist\css\adminlte.min.css" />
@@ -4584,10 +4579,9 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Lib\Bantuan.js" />
     <Content Include="Lib\Dashboard.js" />
     <Content Include="Lib\Login.js" />
-    <Content Include="Lib\Produk.js" />
+    <Content Include="Lib\SignUp.js" />
     <Content Include="logoartha2.ico" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -4836,8 +4830,6 @@
     <Content Include="Content\adminlte\dist\icon\themify-icons\fonts\themify9f24.woff" />
     <Content Include="Content\adminlte\dist\icon\themify-icons\fonts\themifyd41d.eot" />
     <Content Include="Content\adminlte\dist\css\adminltenew.css.map" />
-    <Content Include="Areas\Request\Views\SupportInbox\Index.cshtml" />
-    <Content Include="Areas\Request\Views\web.config" />
     <Content Include="Areas\Items\Views\web.config" />
     <Content Include="Areas\Items\Views\ItemList\Index.cshtml" />
     <Content Include="Areas\Items\Views\Categories\Index.cshtml" />
@@ -4856,9 +4848,9 @@
     <Content Include="Areas\Inventory\Views\StockAdjustment\Index.cshtml" />
     <Content Include="Areas\Inventory\Views\InvCounts\Index.cshtml" />
     <Content Include="Areas\Inventory\Views\InvHistory\Index.cshtml" />
+    <None Include="Properties\PublishProfiles\blueversepos-001-site1 - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\blueversepos-001-site1 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
-    <None Include="Properties\PublishProfiles\pungkas07-001-site1 - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\pungkas07-001-site1 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -4890,8 +4882,7 @@
     <Content Include="Views\Home\TimeOut.cshtml" />
     <Content Include="Views\Home\NoAccess.cshtml" />
     <Content Include="Views\Navigation\Maintenance.cshtml" />
-    <Content Include="Views\Home\SelectCompany.cshtml" />
-    <Content Include="Views\Dashboard\Produk.cshtml" />
+    <Content Include="Views\Home\Signup.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -4902,7 +4893,6 @@
     <Folder Include="Areas\Items\Views\Shared\" />
     <Folder Include="Areas\Setting\Views\Shared\" />
     <Folder Include="Content\adminlte\files\assets\pages\chart\echarts\js\" />
-    <Folder Include="Views\ItemList\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

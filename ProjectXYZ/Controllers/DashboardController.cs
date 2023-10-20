@@ -1,4 +1,4 @@
-﻿using CMS.ActionFilter;
+﻿using ProjectXYZ.ActionFilter;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -6,25 +6,13 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace CMS.Controllers
+namespace ProjectXYZ.Controllers
 {
     public class DashboardController : Controller
     {
         [AuthorizeActionFilterAttribute]
         // GET: Dashboard
         public ActionResult Index()
-        {
-            return View();
-        }
-
-        // GET: Dashboard/Details/5
-        public ActionResult Produk()
-        {
-            return View();
-        }
-
-        // GET: Dashboard/Create
-        public ActionResult Bantuan()
         {
             return View();
         }

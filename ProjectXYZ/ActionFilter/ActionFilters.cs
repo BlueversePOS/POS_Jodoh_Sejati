@@ -6,7 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace CMS.ActionFilter
+namespace ProjectXYZ.ActionFilter
 {
     public class LogActionFilter : ActionFilterAttribute
     {
