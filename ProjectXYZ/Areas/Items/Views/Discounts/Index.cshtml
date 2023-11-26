@@ -84,40 +84,46 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label class="form-label" for="DISCOUNT_NAME">Name</label>
-                                    <input type="text" class="form-input" id="DISCOUNT_NAME" />
-                                </div>
-                                <div class="form-group col-12 p-0 row ml-0 mr-0">
-                                    <div class="col-3 p-0 text-left">
-                                        <span>Type</span>
+                            @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "FormDiscount" }))//data-resetUrl
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                <div class="col-12">
+                                    <input type="hidden" id="Discount_ID" />
+                                    <div class="form-group">
+                                        <label class="form-label" for="DISCOUNT_NAME">Name</label>
+                                        <input type="text" class="form-input" id="DISCOUNT_NAME" />
                                     </div>
-                                    <div class="col-9 p-0 text-left">
-                                        <input type="radio" value="1" class="rbDiscType" />
-                                        <span class="pl-3  col-4">Percentage</span>
-                                        <input type="radio" value="2" class="rbDiscType" />
-                                        <span class="pl-3 col-4">Amount</span>
+                                    <div class="form-group col-12 p-0 row ml-0 mr-0">
+                                        <div class="col-3 p-0 text-left">
+                                            <span>Type</span>
+                                        </div>
+                                        <div class="col-9 p-0 text-left">
+                                            <input type="radio" value="1" class="rbDiscType" />
+                                            <span class="pl-3  col-4">Percentage</span>
+                                            <input type="radio" value="2" class="rbDiscType" />
+                                            <span class="pl-3 col-4">Amount</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group text-left">
+                                        <label class="form-label" for="DISCOUNT_VALUE">Value</label>
+                                        <input type="text" name="number" class="form-input" id="DISCOUNT_VALUE" />
+                                        <span style="font-size: 10pt;">Leave the field blank to indicate the value upon sale</span>
+                                    </div>
+                                    <div class="form-group col-12 p-0 row ml-0 mr-0">
+                                        <div class="col-10 p-0 text-left">
+                                            <label class="col-form-label col-12 p-0">Restricted access</label>
+                                            <span style="font-size: 12pt;">Only employees with appropriate access right are able to apply this discount</span>
+                                        </div>
+                                        <div class="col-2 p-0 text-right">
+                                            <label class="switch mt-2">
+                                                <input type="checkbox" id="RESTRICTED_ACCESS" value="0">
+                                                <span class="slider round"></span>
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="form-group text-left">
-                                    <label class="form-label" for="DISCOUNT_VALUE">Value</label>
-                                    <input type="text" class="form-input" id="DISCOUNT_VALUE" />
-                                    <span style="font-size: 10pt;">Leave the field blank to indicate the value upon sale</span>
-                                </div>
-                                <div class="form-group col-12 p-0 row ml-0 mr-0">
-                                    <div class="col-10 p-0 text-left">
-                                        <label class="col-form-label col-12 p-0">Restricted access</label>
-                                        <span style="font-size: 12pt;">Only employees with appropriate access right are able to apply this discount</span>
-                                    </div>
-                                    <div class="col-2 p-0 text-right">
-                                        <label class="switch mt-2">
-                                            <input type="checkbox" id="RESTRICTED_ACCESS" value="0">
-                                            <span class="slider round"></span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
+                            }
                         </div>
                     </div>
                     <div class="col-lg-9 col-md-12 col-12 p-0" style="border-top: 1px solid lightgray;">

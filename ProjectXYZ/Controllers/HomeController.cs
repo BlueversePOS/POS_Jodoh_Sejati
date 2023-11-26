@@ -62,6 +62,11 @@ namespace ProjectXYZ.Controllers
             return View();
         }
 
+        public ActionResult ForgotPassword()
+        {
+            return View();
+        }
+
         public void CHECKUSERCOOKIE()
         {
             try
@@ -102,18 +107,37 @@ namespace ProjectXYZ.Controllers
             {
                 string decryptmodel = func.Decrypt(param);
                 model = JsonConvert.DeserializeObject<UserLogin>(decryptmodel);
-                string password = string.IsNullOrEmpty(model.PASSWORD) ? "" : model.PASSWORD.Trim();
-                password = func.Encrypt(password);
                 Session["USER"] = null;
                 Session["formatdate"] = FORMATDATE;
 
-                DataTable dt = homeRep.getDataUser(model, password);
+                DataTable dt = homeRep.getDataUser(model);
                 if (dt.Rows.Count != 0)
                 {
                     Session["USER"] = dt.Rows[0]["UserID"].ToString();
                     Session["EmailAddress"] = dt.Rows[0]["EmailAddress"].ToString();
-
                     Session["formatdate"] = FORMATDATE;
+
+                    if (model.remember == true)
+                    {
+                        HttpCookie pwrops = new HttpCookie("BPOS");
+                        pwrops.Values.Add("EmailAddress", model.EmailAddress);
+                        pwrops.Values.Add("PASSWORD", func.Encrypt(model.PASSWORD));
+                        pwrops.Expires = DateTime.Now.AddMonths(1);
+                        Response.Cookies.Add(pwrops);
+                    }
+                    else
+                    {
+                        if (Request.Cookies["BPOS"] != null)
+                        {
+                            //remove cookies
+                            HttpCookie currentUserCookie = HttpContext.Request.Cookies["BPOS"];
+                            HttpContext.Response.Cookies.Remove("BPOS");
+                            HttpContext.Response.SetCookie(currentUserCookie);
+                            currentUserCookie.Expires = DateTime.Now.AddDays(-10);
+                            currentUserCookie.Value = null;
+                            HttpContext.Response.SetCookie(currentUserCookie);
+                        }
+                    }
                 }
                 else
                 {
@@ -145,9 +169,41 @@ namespace ProjectXYZ.Controllers
             {
                 string decryptmodel = func.Decrypt(param);
                 model = JsonConvert.DeserializeObject<UserAccount>(decryptmodel);
-                string password = string.IsNullOrEmpty(model.PASSWORD) ? "" : model.PASSWORD.Trim();
-                password = func.Encrypt(password);
-                DataTable ObjList = homeRep.SignUpUser(model, password);
+                DataTable ObjList = homeRep.SignUpUser(model);
+                List<DataRow> rows = ObjList.Select().ToList();
+
+                int i = 1;
+                var list = (from DataRow ro in rows
+                            select new
+                            {
+                                EmailAddress = model.EmailAddress
+                            }).ToList();
+
+                success = true;
+                var jsonResult = Json(new { success = success, data = list }, JsonRequestBehavior.AllowGet);
+                jsonResult.MaxJsonLength = int.MaxValue;
+                return jsonResult;
+            }
+            catch (Exception ex)
+            {
+                var jsonResult = Json(new { success = success, message = ex.Message }, JsonRequestBehavior.AllowGet);
+                jsonResult.MaxJsonLength = int.MaxValue;
+                return jsonResult;
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Obsolete]
+        public JsonResult ResetPassword(string param)
+        {
+            bool success = false;
+            UserAccount model = new UserAccount();
+            try
+            {
+                string decryptmodel = func.Decrypt(param);
+                model = JsonConvert.DeserializeObject<UserAccount>(decryptmodel);
+                DataTable ObjList = homeRep.ResetPassword(model);
                 List<DataRow> rows = ObjList.Select().ToList();
 
                 int i = 1;

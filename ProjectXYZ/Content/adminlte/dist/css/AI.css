@@ -400,7 +400,7 @@ a.nav-link p {
     font-family: 'FontAwesome'
 }
 
-.select2-container .select2-selection--single {
+.select2-container .select2-selection--single, .select2-container .select2-selection--multiple {
     height: calc(2.25rem + 5px) !important;
     outline: 0;
     border: 0;

@@ -72,7 +72,7 @@ namespace ProjectXYZAPI
 
         public static string Encrypt(string encryptString)
         {
-            string EncryptionKey = "BluePOS";
+            string EncryptionKey = "BlueversePOS";
             byte[] clearBytes = Encoding.Unicode.GetBytes(encryptString);
             using (Aes encryptor = Aes.Create())
             {
@@ -97,7 +97,7 @@ namespace ProjectXYZAPI
         {
             if (cipherText != "")
             {
-                string EncryptionKey = "BluePOS";
+                string EncryptionKey = "BlueversePOS";
                 cipherText = cipherText.Replace(" ", "+");
                 byte[] cipherBytes = Convert.FromBase64String(cipherText);
                 using (Aes encryptor = Aes.Create())

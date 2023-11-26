@@ -2,19 +2,21 @@ CREATE OR ALTER proc [dbo].[Web_AccessRight_Getdatalist]
 AS
 BEGIN
 	BEGIN TRY
-		SELECT Role_ID, Role_Name, 
+		SELECT A.Role_ID, A.Role_Name, 
 		CASE 
-		WHEN BckOffice_Flag = 1 and POS_Flag = 1
+		WHEN A.BckOffice_Flag = 1 and A.POS_Flag = 1
 		THEN 'Back Office and POS' 
-		WHEN BckOffice_Flag = 1 and POS_Flag = 0
+		WHEN A.BckOffice_Flag = 1 and A.POS_Flag = 0
 		THEN 'Back Office' 
-		WHEN BckOffice_Flag = 0 and POS_Flag = 1
+		WHEN A.BckOffice_Flag = 0 and A.POS_Flag = 1
 		THEN 'POS' 
-		ELSE '' END Access,
-		COUNT(Role_ID) Access_Employee
-		FROM POS_EmployeeRole
-		GROUP BY Role_ID, Role_Name, BckOffice_Flag, POS_Flag
-		ORDER BY Role_Name asc
+		ELSE '' END Access, ISNULL(B.Access_Employee, 0) Access_Employee
+		FROM POS_EmployeeRole A
+		LEFT JOIN(
+			select Role_ID, COUNT(Role_ID) Access_Employee from POS_Employee
+			group by Role_ID
+		) B ON A.Role_ID=B.Role_ID
+		ORDER BY A.Role_Name asc
 	END TRY
 	BEGIN	CATCH
 			DECLARE @ErrorMessage NVARCHAR(4000)

@@ -13,6 +13,7 @@ CREATE TABLE POS_CategoryItem
 (
 	Category_ID nvarchar(20) NOT NULL, 
 	Category_Name nvarchar(250) NOT NULL,
+	Category_Color nvarchar(20) NOT NULL, 
 	Created_User nvarchar(30),
 	Created_Date DATETIME,
 	Modified_User nvarchar(30),

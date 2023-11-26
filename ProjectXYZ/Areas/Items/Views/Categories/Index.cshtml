@@ -21,6 +21,7 @@
             width: 50px;
             height: 50px;
             background-color: lightgray;
+            cursor: pointer;
         }
 
         .burst {
@@ -98,26 +99,35 @@
                         </div>
                     </div>
                 </div>
-                <div class="card addCategories">
-                    <div class="card-header border-0 pb-0">
-                        <div class="row">
-                            <button type="button" class="btn text-blue" id="btnBack">Back</button>
+                <div class="addCategories">
+                    <div class="card col-lg-7 col-md-12 col-12">
+                        <div class="card-body">
+                            @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "FormCategories" }))//data-resetUrl
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                <input type="hidden" id="Category_ID" />
+                                <div class="form-group">
+                                    <label class="form-label" for="CATEGORY_NAME">Category name</label>
+                                    <input type="text" class="form-input" id="CATEGORY_NAME" />
+                                </div>
+                                <div class="col-12 row pl-0 pr-0 pt-3 m-0" id="Category_Color">
+                                    <div class="shapes text-center bg-gray-light mr-4 mb-3" id="bg-gray-light"></div>
+                                    <div class="shapes text-center bg-red mr-4 mb-3" id="bg-red"></div>
+                                    <div class="shapes text-center bg-pink mr-4 mb-3" id="bg-pink"></div>
+                                    <div class="shapes text-center bg-orange mr-4 mb-3" id="bg-orange"></div>
+                                    <div class="shapes text-center bg-yellow mr-4 mb-3" id="bg-yellow"></div>
+                                    <div class="shapes text-center bg-green mr-4 mb-3" id="bg-green"></div>
+                                    <div class="shapes text-center bg-blue mr-4 mb-3" id="bg-blue"></div>
+                                    <div class="shapes text-center bg-purple mr-4 mb-3" id="bg-purple"></div>
+                                </div>
+                            }
                         </div>
                     </div>
-                    <div class="card-body pt-0">
-                        <div class="form-group">
-                            <label class="form-label" for="CATEGORY_NAME">Category name</label>
-                            <input type="text" class="form-input" id="CATEGORY_NAME" />
-                        </div>
-                        <div class="col-12 row pl-0 pr-0 pt-3 m-0">
-                            <div class="shapes bg-gray-light mr-4 mb-3"></div>
-                            <div class="shapes bg-red mr-4 mb-3"></div>
-                            <div class="shapes bg-pink mr-4 mb-3"></div>
-                            <div class="shapes bg-orange mr-4 mb-3"></div>
-                            <div class="shapes bg-yellow mr-4 mb-3"></div>
-                            <div class="shapes bg-green mr-4 mb-3"></div>
-                            <div class="shapes bg-blue mr-4 mb-3"></div>
-                            <div class="shapes bg-purple mr-4 mb-3"></div>
+                    <div class="col-lg-7 col-md-12 col-12 p-0" style="border-top: 1px solid lightgray;">
+                        <div class="col-12 px-0 py-2 row mx-0" style="justify-content: right;">
+                            <button type="button" class="btn btn-default col-lg-3 col-md-4 col-12 mr-md-2" id="btnCancel" style="width: 120px;">Cancel</button>
+                            <button type="button" class="btn btn-primary col-lg-3 col-md-4 col-12 mt-md-0 mt-2" id="btnSave" style="width: 120px;">Save</button>
                         </div>
                     </div>
                 </div>

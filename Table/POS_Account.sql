@@ -11,9 +11,9 @@ GO
 
 CREATE TABLE POS_Account
 (
-	Account_ID nvarchar(20) NOT NULL, 
-	Account_Name nvarchar(250) NOT NULL,
-	Email nvarchar(250) NOT NULL,
+	UserID nvarchar(20) NOT NULL, 
+	Business_Name nvarchar(100) NOT NULL,
+	EmailAddress nvarchar(250) NOT NULL,
 	[Password] nvarchar(30) NOT NULL,
 	CurrencyID nvarchar(20) NOT NULL,
 	Currency nvarchar(30) NOT NULL,
@@ -22,8 +22,8 @@ CREATE TABLE POS_Account
 	Created_Date DATETIME NOT NULL,
 	Modified_User nvarchar(30),
 	Modified_Date DATETIME,
-	CONSTRAINT PK_POS_Account PRIMARY KEY NONCLUSTERED (Account_ID ASC),
-	CONSTRAINT FK_POS_User FOREIGN KEY (Account_ID, Email)
+	CONSTRAINT PK_POS_Account PRIMARY KEY NONCLUSTERED (UserID ASC),
+	CONSTRAINT FK_POS_User FOREIGN KEY (UserID, EmailAddress)
 	REFERENCES POS_LoginUser (UserID, EmailAddress)
 	ON DELETE CASCADE
 	ON UPDATE CASCADE

@@ -1,4 +1,4 @@
-﻿
+﻿@model ProjectXYZ.Models.UserAccount
 @{
     ViewBag.Title = "Customers";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -84,77 +84,91 @@
                                 </div>
                             </div>
                             <div class="col-12">
-                                <div class="form-group" style="margin: 1rem 0 1rem 0;">
-                                    <label class="form-label" for="CUSTOMER_NAME">Name</label>
-                                    <input type="text" class="form-input" id="CUSTOMER_NAME" />
-                                </div>
-                                <div class="row col-12 p-0" style="margin: 1rem 0 1rem 0;">
-                                    <i class="fas fa-envelope text-gray text-left col-lg-1 col-md-2 col-2 p-0" style="align-self: center;"></i>
-                                    <div class="form-group m-0 col-lg-11 col-md-10 col-10 p-0">
-                                        <label class="form-label" for="CUSTOMER_EMAIL">Email</label>
-                                        <input type="email" class="form-input" id="CUSTOMER_EMAIL" />
+                                @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "FormCustomer" }))//data-resetUrl
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                    <input type="hidden" id="Customer_ID" value="" />
+                                    <div class="form-group" style="margin: 1rem 0 1rem 0;">
+                                        <label class="form-label" for="CUSTOMER_NAME">Name</label>
+                                        <input type="text" class="form-input" id="CUSTOMER_NAME" />
                                     </div>
-                                </div>
-                                <div class="form-group col-12 p-0 row" style="margin: 1rem 0 1rem 0;">
-                                    <i class="fas fa-phone text-gray text-left col-lg-1 col-md-2 col-2 p-0" style="align-self: center;"></i>
-                                    <div class="form-group m-0 col-lg-11 col-md-10 col-10 p-0">
-                                        <label class="form-label" for="CUSTOMER_PHONE">Phone</label>
-                                        <input type="tel" class="form-input" id="CUSTOMER_PHONE" />
-                                    </div>
-                                </div>
-                                <div class="form-group col-12 p-0 row" style="margin: 1rem 0 1rem 0;">
-                                    <i class="fas fa-map-marker-alt text-gray text-left col-lg-1 col-md-2 col-2 p-0" style="align-self: center;"></i>
-                                    <div class="form-group m-0 col-lg-11 col-md-10 col-10 p-0">
-                                        <label class="form-label" for="CUSTOMER_ADDRESS">Address</label>
-                                        <input type="text" class="form-input" id="CUSTOMER_ADDRESS" />
-                                    </div>
-                                </div>
-                                <div class="col-12 p-0 row" style="margin: 1rem 0 0.5rem 0;">
-                                    <i class="text-gray col-lg-1 p-0"></i>
-                                    <div class="col-lg-5 col-md-12 col-12 p-0">
-                                        <div class="form-group m-0 mb-1 col-12 p-0">
-                                            <label class="form-label" for="CUSTOMER_CITY">City</label>
-                                            <input type="text" class="form-input" id="CUSTOMER_CITY" />
+                                    <div class="row col-12 p-0" style="margin: 1rem 0 1rem 0;">
+                                        <i class="fas fa-envelope text-gray text-left col-lg-1 col-md-2 col-2 p-0" style="align-self: center;"></i>
+                                        <div class="form-group m-0 col-lg-11 col-md-10 col-10 p-0">
+                                            <label class="form-label" for="CUSTOMER_EMAIL">Email</label>
+                                            <input type="email" class="form-input" id="CUSTOMER_EMAIL" />
                                         </div>
                                     </div>
-                                    <span class="col-lg-1"></span>
-                                    <div class="col-lg-5 col-md-12 col-12 p-0">
-                                        <div class="form-group m-0 col-12 p-0">
-                                            <label class="form-label" for="CUSTOMER_PROVINCE">Province</label>
-                                            <input type="text" class="form-input" id="CUSTOMER_PROVINCE" />
+                                    <div class="form-group col-12 p-0 row" style="margin: 1rem 0 1rem 0;">
+                                        <i class="fas fa-phone text-gray text-left col-lg-1 col-md-2 col-2 p-0" style="align-self: center;"></i>
+                                        <div class="form-group m-0 col-lg-11 col-md-10 col-10 p-0">
+                                            <label class="form-label" for="CUSTOMER_PHONE">Phone</label>
+                                            <input type="tel" class="form-input" id="CUSTOMER_PHONE" />
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-12 p-0 row" style="margin: 0.5rem 0 1rem 0;">
-                                    <i class="text-gray col-lg-1 p-0"></i>
-                                    <div class="col-lg-5 col-md-12 col-12 p-0">
-                                        <div class="form-group m-0 mb-1 col-12 p-0">
-                                            <label class="form-label" for="CUSTOMER_POSTALCODE">Postal Code</label>
-                                            <input type="text" class="form-input" id="CUSTOMER_POSTALCODE" />
+                                    <div class="form-group col-12 p-0 row" style="margin: 1rem 0 1rem 0;">
+                                        <i class="fas fa-map-marker-alt text-gray text-left col-lg-1 col-md-2 col-2 p-0" style="align-self: center;"></i>
+                                        <div class="form-group m-0 col-lg-11 col-md-10 col-10 p-0">
+                                            <label class="form-label" for="CUSTOMER_ADDRESS">Address</label>
+                                            <input type="text" class="form-input" id="CUSTOMER_ADDRESS" />
                                         </div>
                                     </div>
-                                    <span class="col-lg-1"></span>
-                                    <div class="col-lg-5 col-md-12 col-12 p-0">
-                                        <div class="form-group m-0 col-12 p-0">
-                                            <label class="form-label" for="CUSTOMER_COUNTRY">Country</label>
-                                            <select class="form-input" id="CUSTOMER_COUNTRY"></select>
+                                    <div class="col-12 p-0 row" style="margin: 1rem 0 1rem 0;">
+                                        <i class="text-gray col-lg-1 p-0"></i>
+                                        <div class="col-lg-5 col-md-12 col-12 p-0">
+                                            <div class="form-group m-0 mb-1 col-12 p-0">
+                                                <label class="form-label" for="CUSTOMER_CITY">City</label>
+                                                <input type="text" class="form-input" id="CUSTOMER_CITY" />
+                                            </div>
+                                        </div>
+                                        <span class="col-lg-1"></span>
+                                        <div class="col-lg-5 col-md-12 col-12 p-0">
+                                            <div class="form-group m-0 col-12 p-0">
+                                                <label class="form-label" for="CUSTOMER_PROVINCE">Province</label>
+                                                <input type="text" class="form-input" id="CUSTOMER_PROVINCE" />
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="form-group col-12 p-0 row" style="margin: 1rem 0 1rem 0;">
-                                    <i class="fas fa-barcode text-gray text-left col-lg-1 col-md-2 col-2 p-0" style="align-self: center;"></i>
-                                    <div class="form-group m-0 col-lg-11 col-md-10 col-10 p-0">
-                                        <label class="form-label" for="CUSTOMER_CODE">Customer Code</label>
-                                        <input type="text" class="form-input" id="CUSTOMER_CODE" />
+                                    <div class="col-12 p-0 row" style="margin: 0.5rem 0 1rem 0;">
+                                        <i class="text-gray col-lg-1 p-0"></i>
+                                        <div class="col-lg-5 col-md-12 col-12 p-0">
+                                            <div class="form-group m-0 mb-1 col-12 p-0">
+                                                <label class="form-label" for="CUSTOMER_POSTALCODE">Postal Code</label>
+                                                <input type="text" class="form-input" id="CUSTOMER_POSTALCODE" />
+                                            </div>
+                                        </div>
+                                        <span class="col-lg-1"></span>
+                                        <div class="col-lg-5 col-md-12 col-12 p-0">
+                                            <div class="form-group m-0 col-12 p-0 focused">
+                                                <label class="form-label" for="CUSTOMER_COUNTRY">Country</label>
+                                                <div>
+                                                    @Html.DropDownListFor(Model => Model.Country, ViewBag.Countries as IEnumerable<SelectListItem>, "Select Country",
+                                                    new
+                                                    {
+                                                        @class = "w-100 form-input",
+                                                        @id = "CUSTOMER_COUNTRY",
+                                                        @tabindex = "4"
+                                                    })
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group col-12 p-0 row" style="margin: 1rem 0 1rem 0;">
-                                    <i class="fas fa-comment-alt text-gray text-left col-lg-1 col-md-2 col-2 p-0" style="align-self: center;"></i>
-                                    <div class="form-group m-0 col-lg-11 col-md-10 col-10 p-0">
-                                        <label class="form-label" for="CUSTOMER_NOTE">Note</label>
-                                        <input type="text" class="form-input" id="CUSTOMER_NOTE" />
+                                    <div class="form-group col-12 p-0 row" style="margin: 1rem 0 1rem 0;">
+                                        <i class="fas fa-barcode text-gray text-left col-lg-1 col-md-2 col-2 p-0" style="align-self: center;"></i>
+                                        <div class="form-group m-0 col-lg-11 col-md-10 col-10 p-0">
+                                            <label class="form-label" for="CUSTOMER_CODE">Customer Code</label>
+                                            <input type="text" class="form-input" id="CUSTOMER_CODE" />
+                                        </div>
                                     </div>
-                                </div>
+                                    <div class="form-group col-12 p-0 row" style="margin: 1rem 0 1rem 0;">
+                                        <i class="fas fa-comment-alt text-gray text-left col-lg-1 col-md-2 col-2 p-0" style="align-self: center;"></i>
+                                        <div class="form-group m-0 col-lg-11 col-md-10 col-10 p-0">
+                                            <label class="form-label" for="CUSTOMER_NOTE">Note</label>
+                                            <input type="text" class="form-input" id="CUSTOMER_NOTE" />
+                                        </div>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>

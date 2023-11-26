@@ -16,6 +16,10 @@
         .small-box.text-center {
             box-shadow: 0 0 0;
         }
+
+        .select2 .select2-selection__rendered, .select2 .select2-selection {
+            padding-left: 0;
+        }
     </style>
 </head>
 <body>
@@ -23,32 +27,35 @@
         <div class="card container-fluid" style="background: none; box-shadow: none !important;">
             <div class="card-body">
                 <div class="card col-lg-6 col-md-12 col-12">
-                    <div class="card-body text-center">
+                    <div class="card-body">
                         <div class="col-12">
-                            <div class="form-group" style="margin: 1rem 0 1rem 0;">
-                                <label class="form-label" for="ACCOUNT_NAME">Business Name</label>
-                                <input type="text" class="form-input" id="ACCOUNT_NAME" />
-                            </div>
-                            <div class="form-group" style="margin: 1rem 0 1rem 0;">
-                                <label class="form-label" for="ACCOUNT_EMAIL">Email</label>
-                                <input type="email" class="form-input" id="ACCOUNT_EMAIL" />
-                            </div>
-                            <div class="form-group" style="margin: 1rem 0 1rem 0;">
-                                <label class="form-label" for="ACCOUNT_PASSWORD">Password</label>
-                                <input type="password" class="form-input" id="ACCOUNT_PASSWORD" />
-                            </div>
-                            <div class="form-group" style="margin: 1rem 0 1rem 0;">
-                                <div class="form-group m-0 col-12 p-0">
-                                    <label class="form-label" for="ACCOUNT_CURRENCY">Currency</label>
-                                    <select class="form-input" id="ACCOUNT_CURRENCY"></select>
+                            @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "FormAccount" }))//data-resetUrl
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                <div class="form-group my-3">
+                                    <label class="form-label" for="ACCOUNT_NAME">Business Name</label>
+                                    <input type="text" class="form-input" id="ACCOUNT_NAME" />
                                 </div>
-                            </div>
-                            <div class="form-group" style="margin: 1rem 0 1rem 0;">
-                                <div class="form-group m-0 col-12 p-0">
-                                    <label class="form-label" for="ACCOUNT_TIMEZONE">Timezone</label>
-                                    <select class="form-input" id="ACCOUNT_TIMEZONE"></select>
+                                <div class="form-group my-3">
+                                    <label class="form-label" for="ACCOUNT_EMAIL">Email</label>
+                                    <input type="email" class="form-input" id="ACCOUNT_EMAIL" />
                                 </div>
-                            </div>
+                                <div class="form-group my-3">
+                                    <label class="form-label" for="ACCOUNT_PASSWORD">Password</label>
+                                    <input type="password" class="form-input" id="ACCOUNT_PASSWORD" />
+                                </div>
+                                <div class="form-group my-3">
+                                    <label class="col-form-label" style="font-size: 10pt; color: darkgrey;">Currency</label>
+                                    <select class="form-control select2" id="ACCOUNT_CURRENCY">
+                                        <option value="IDR">IDR</option>
+                                    </select>
+                                </div>
+                                <div class="form-group my-3">
+                                    <label class="col-form-label" style="font-size: 10pt; color: darkgrey;">Timezone</label>
+                                    <select class="form-control select2" id="ACCOUNT_TIMEZONE"></select>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>

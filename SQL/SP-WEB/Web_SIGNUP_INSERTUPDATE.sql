@@ -53,7 +53,12 @@ BEGIN
 			INSERT INTO [POS_LoginUser]
 			(UserID, EmailAddress, [PASSWORD], Business_Name, Currency, Country, Verify, Created_User, Created_Date, Modified_User, Modified_Date)
 			VALUES
-			(@USER, RTRIM(@EmailAddress), RTRIM(@PASSWORD), RTRIM(@Business_Name), RTRIM(@Currency), RTRIM(@Country), 0, @EmailAddress, DATEADD(HOUR,1,GETDATE()), '', '')
+			(@USER, RTRIM(@EmailAddress), RTRIM(@PASSWORD), RTRIM(@Business_Name), RTRIM(@Currency), RTRIM(@Country), 0, @USER, DATEADD(HOUR,1,GETDATE()), '', '')
+
+			INSERT INTO [POS_Account]
+			(UserID, Business_Name, EmailAddress, Password, CurrencyID, Currency, Timezone, Created_User, Created_Date, Modified_User, Modified_Date)
+			VALUES
+			(@USER, RTRIM(@Business_Name), RTRIM(@EmailAddress), RTRIM(@PASSWORD), RTRIM(@Currency), RTRIM(@Currency), '', @USER, DATEADD(HOUR,1,GETDATE()), '', '')
 		END
 			
 		SELECT CODE='200', EmailAddress=@EmailAddress

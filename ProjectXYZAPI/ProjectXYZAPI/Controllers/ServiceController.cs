@@ -182,18 +182,303 @@ namespace ProjectXYZAPI.Controllers
             }
         }
 
+        [Route("ResetPassword")]
+        [HttpPost]
+        public dynamic ResetPassword([FromBody] UserLogin param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.ResetPassword(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
         #endregion
 
         #region Employee
 
         [Route("GetAccessRight")]
-        [HttpGet]
+        [HttpPost]
         public dynamic GetAccessRight()
         {
             try
             {
                 DataTable dt = null;
                 dt = repo.GetAccessRight();
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("SaveAccessRight")]
+        [HttpPost]
+        public dynamic SaveAccessRight([FromBody] AccessRight param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.SaveAccessRight(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        #endregion
+
+        #region Account
+
+        [Route("GetDataAccount")]
+        [HttpPost]
+        public dynamic GetDataAccount([FromBody] Accounts param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.GetDataAccount(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("SaveAccount")]
+        [HttpPost]
+        public dynamic SaveAccount([FromBody] Accounts param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.SaveAccount(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        #endregion
+
+        #region Item List
+
+        [Route("GetDataDiscount")]
+        [HttpPost]
+        public dynamic GetDataDiscount(string authorization)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.GetDataDiscount();
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("GetCompositeItems")]
+        [HttpPost]
+        public dynamic GetCompositeItems(string authorization)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.GetCompositeItems();
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("SaveDiscount")]
+        [HttpPost]
+        public dynamic SaveDiscount([FromBody] Discount param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.SaveDiscount(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("GetDataCategories")]
+        [HttpPost]
+        public dynamic GetDataCategories(string authorization)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.GetDataCategories();
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("SaveCategories")]
+        [HttpPost]
+        public dynamic SaveCategories([FromBody] Category param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.SaveCategories(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("SaveItem")]
+        [HttpPost]
+        public dynamic SaveItem([FromBody] ItemList param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.SaveItem(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        #endregion
+
+        #region Customers
+
+        [Route("GetDatalistCustomer")]
+        [HttpPost]
+        public dynamic GetDatalistCustomer([FromBody] Customers param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.GetDatalistCustomer(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("GetDataCustomer")]
+        [HttpPost]
+        public dynamic GetDataCustomer([FromBody] Customers param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.GetDataCustomer(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("SaveCustomer")]
+        [HttpPost]
+        public dynamic SaveCustomer([FromBody] Customers param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.SaveCustomer(param);
                 return dt;
             }
             catch (Exception ex)

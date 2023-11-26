@@ -16,7 +16,6 @@
     <meta name="description" content="Project XYZ - Web">
     <meta name="keywords" content="Project XYZ">
     <meta name="author" content="XYZ">
-    <link rel="icon" href="~/Content/adminlte/dist/img/logoartha2.png" />
     <!-- Font Awesome -->
     <link rel="stylesheet" href="~/Content/adminlte/plugins/fontawesome-free/css/all.min.css">
     <!-- icheck bootstrap -->
@@ -106,7 +105,7 @@
                 }
 
                 <p class="mb-1">
-                    <a href="forgot-password.html" tabindex="5">Forgot Password ?</a>
+                    <a href="@Url.Action("ForgotPassword", "Home" , new { area="" })" tabindex="5">Forgot Password ?</a>
                 </p>
                 <p class="mb-1">
                     <a href="@Url.Action("SignUp", "Home" , new { area="" })" tabindex="6">Sign Up ?</a>

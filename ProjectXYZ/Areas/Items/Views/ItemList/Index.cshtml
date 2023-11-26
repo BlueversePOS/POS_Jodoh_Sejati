@@ -23,6 +23,12 @@
             background-color: lightgray;
         }
 
+        .shapes2 {
+            width: 50px;
+            height: 50px;
+            background-color: lightgray;
+        }
+
         .burst {
             background-color: lightgray;
             width: 45px;
@@ -66,13 +72,23 @@
             width: 56px;
             transform: rotate(0deg);
         }
+
+        .select2-selection--multiple {
+            border: none !important;
+            box-shadow: 0 1px 0 0 #e5e5e5;
+        }
+
+        .select2-selection__choice{
+            color: black !important;
+            border-radius: 30%;
+        }
     </style>
 </head>
 <body>
     <section class="content">
         <div class="card container-fluid" style="background: none; box-shadow: none !important;">
-            <div class="card-body items">
-                <div class="card">
+            <div class="card-body">
+                <div class="card itemList">
                     <div class="card-header border-0">
                         <div class="row">
                             <div class="col-lg-6 col-md-12 col-12">
@@ -84,13 +100,13 @@
                             </div>
                             <div class="col-lg-6 col-md-12 col-12 row m-0 p-0" style="justify-content: right;">
                                 <div class="col-5">
-                                    <span class="col-12 pr-0" style="font-size: 10pt; color: darkgrey;">Category</span>
+                                    <label class="col-12 pr-0 m-0" style="font-size: .75rem; color: darkgrey;">Category</label>
                                     <div class="row m-0">
                                         <select class="form-control select2" id="FILTER_CATEGORY"></select>
                                     </div>
                                 </div>
                                 <div class="col-5">
-                                    <span class="col-12 pr-0" style="font-size: 10pt; color: darkgrey;">Stock alert</span>
+                                    <label class="col-12 pr-0 m-0" style="font-size: .75rem; color: darkgrey;">Stock alert</label>
                                     <div class="row m-0">
                                         <select class="form-control select2" id="FILTER_STOCK"></select>
                                     </div>
@@ -121,19 +137,20 @@
                         </div>
                     </div>
                 </div>
-                <div class="card col-lg-10 col-md-12 col-12">
-                    <div class="card-body">
-                        <div class="col-12 p-0">
-                            <form action="" class="form">
+                <div class="itemAdd">
+                    <div class="card col-lg-10 col-md-12 col-12 itemAdd">
+                        <div class="card-body">
+                            <div class="col-12 p-0">
+                                <input type="hidden" id="Item_Number" value="" />
                                 <div class="col-12 row p-0">
                                     <div class="col-lg-6 col-12 pl-0 pr-lg-1 pr-0">
                                         <div class="form-group">
                                             <label class="form-label" for="NAME">Name</label>
-                                            <input id="NAME" class="form-input" type="text" />
+                                            <input id="NAME" class="form-input" type="text" maxlength="50" />
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-12 pr-0 pl-lg-1 pl-0">
-                                        <div class="form-group">
+                                        <div class="form-group focused">
                                             <label class="form-label" for="CATEGORY">Category</label>
                                             <select class="form-input" id="CATEGORY"></select>
                                         </div>
@@ -150,9 +167,9 @@
                                     </div>
                                     <div class="col-12 pl-0 pr-0 pt-4">
                                         <span class="pr-4">Sold by</span>
-                                        <input type="radio" class="mt-3" id="RB_EACH" />
+                                        <input type="radio" class="mt-3 rbSoldBy" id="RB_EACH" value="1" />
                                         <span class="pr-4">Each</span>
-                                        <input type="radio" class="mt-3" id="RB_WEIGHT" />
+                                        <input type="radio" class="mt-3 rbSoldBy" id="RB_WEIGHT" value="2" />
                                         <span class="pr-4">Weight/Volume</span>
                                     </div>
                                     <div class="col-lg-6 col-12 pl-0 pr-lg-1 pr-0 pt-4">
@@ -181,23 +198,21 @@
                                         </div>
                                     </div>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="card col-lg-10 col-md-12 col-12">
-                    <div class="card-header border-0">
-                        <div class="row">
-                            <h5>Inventory</h5>
+                    <div class="card col-lg-10 col-md-12 col-12">
+                        <div class="card-header border-0">
+                            <div class="row">
+                                <h5>Inventory</h5>
+                            </div>
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="col-12 p-0">
-                            <form action="" class="form">
+                        <div class="card-body">
+                            <div class="col-12 p-0">
                                 <div class="col-12 row p-0" style="justify-content: space-between;">
                                     <span class="col-form-label col-11" for="COMPOSITE_ITEM">Composite item</span>
                                     <label class="switch mt-2">
-                                        <input type="checkbox" class="cbINV" id="COMPOSITE_ITEM" name="composite" value="0">
+                                        <input type="checkbox" class="cbINV" id="COMPOSITE_ITEM" name="composite" value="1">
                                         <span class="slider round"></span>
                                     </label>
                                     <div class="col-12 invToggle composite">
@@ -219,55 +234,73 @@
                                     </div>
                                     <span class="col-form-label col-11" for="TRACK_STOCK">Track stock</span>
                                     <label class="switch mt-2">
-                                        <input type="checkbox" class="cbINV" id="TRACK_STOCK" name="trackstock" value="0">
+                                        <input type="checkbox" class="cbINV" id="TRACK_STOCK" name="trackstock" value="1">
                                         <span class="slider round"></span>
                                     </label>
                                     <div class="col-12 p-0 row m-0 invToggle trackstock">
                                         <div class="col-lg-6 col-md-6 col-12">
                                             <div class="form-group">
                                                 <label class="form-label" for="IN_STOCK">In stock</label>
-                                                <input type="text" class="form-input" id="IN_STOCK" />
+                                                <input type="number" class="form-input" id="IN_STOCK" />
                                             </div>
                                         </div>
                                         <div class="col-lg-6 col-md-6 col-12">
                                             <div class="form-group">
                                                 <label class="form-label" for="LOW_STOCK">Low stock</label>
-                                                <input type="text" class="form-input" id="LOW_STOCK" />
+                                                <input type="number" class="form-input" id="LOW_STOCK" />
                                                 <span style="font-size: 9pt;">Item quantity at which you will be notified about low stock</span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="card col-lg-10 col-md-12 col-12">
-                    <div class="card-header border-0">
-                        <div class="row">
-                            <h5>Variants</h5>
+                    <div class="card col-lg-10 col-md-12 col-12">
+                        <div class="card-header border-0">
+                            <div class="row">
+                                <h5>Variants</h5>
+                            </div>
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="col-12 p-0">
-                            <form action="" class="form">
-                                <div class="col-12 row p-0">
+                        <div class="card-body">
+                            <div class="col-12 p-0">
+                                <div class="col-12 row addVariant">
                                     <span class="col-form-label col-12">Use variants if an item has different sizes, colors or other options</span>
                                     <button type="button" class="btn text-success" id="addVariant"><i class="fa fa-plus-circle"></i> ADD VARIANTS</button>
                                 </div>
-                            </form>
+                                <div class="col-12 row editVariant">
+                                    <span class="col-form-label col-12" id="OPTIONNAME"></span>
+                                    <button type="button" class="btn text-success" id="editVariant"><i class="fa fa-pen text-primary"></i> EDIT OPTIONS</button>
+                                    <div class="col-12 px-0 py-3">
+                                        <table id="table_listvariant" class="table table-hover wrap">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center" style="vertical-align: middle;"><input type="checkbox" id="CBavailALL" /> Available</th>
+                                                    <th class="no-wrap" style="vertical-align: middle;">Variant</th>
+                                                    <th class="no-wrap" style="vertical-align: middle;">Price</th>
+                                                    <th class="no-wrap" style="vertical-align: middle;">Cost</th>
+                                                    <th class="no-wrap" style="vertical-align: middle;">In Stock</th>
+                                                    <th class="no-wrap" style="vertical-align: middle;">Low Stock</th>
+                                                    <th class="no-wrap" style="vertical-align: middle;">Optimal Stock</th>
+                                                    <th class="no-wrap" style="vertical-align: middle;">SKU</th>
+                                                    <th class="no-wrap" style="vertical-align: middle;">Barcode</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="card col-lg-10 col-md-12 col-12">
-                    <div class="card-header border-0">
-                        <div class="row">
-                            <h5>Taxes</h5>
+                    <div class="card col-lg-10 col-md-12 col-12">
+                        <div class="card-header border-0">
+                            <div class="row">
+                                <h5>Taxes</h5>
+                            </div>
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="col-12 p-0">
-                            <form action="" class="form">
+                        <div class="card-body">
+                            <div class="col-12 p-0">
                                 <div class="col-12 row p-0" style="justify-content: space-between;">
                                     <span class="col-form-label col-11" for="PPN_10">PPN 10% (10 %)</span>
                                     <label class="switch mt-2">
@@ -275,45 +308,43 @@
                                         <span class="slider round"></span>
                                     </label>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="card col-lg-10 col-md-12 col-12">
-                    <div class="card-header border-0">
-                        <div class="row">
-                            <h5>Representation on POS</h5>
+                    <div class="card col-lg-10 col-md-12 col-12">
+                        <div class="card-header border-0">
+                            <div class="row">
+                                <h5>Representation on POS</h5>
+                            </div>
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="col-12 p-0">
-                            <form action="" class="form">
+                        <div class="card-body">
+                            <div class="col-12 p-0">
                                 <div class="col-12 row p-0" style="justify-content: space-between;">
                                     <div class="col-lg-8 col-md-12 col-12 p-0">
-                                        <input type="radio" class="mt-3" id="RB_COLORSHAPE" />
+                                        <input type="radio" class="mt-3 rbRepresen" id="RB_COLORSHAPE" value="1" />
                                         <span class="pl-3">Color and shape</span>
-                                        <div class="col-12 row pl-0 pr-0 pt-3 m-0">
-                                            <div class="shapes bg-gray-light mr-4 mb-3"></div>
-                                            <div class="shapes bg-red mr-4 mb-3"></div>
-                                            <div class="shapes bg-pink mr-4 mb-3"></div>
-                                            <div class="shapes bg-orange mr-4 mb-3"></div>
-                                            <div class="shapes bg-yellow mr-4 mb-3"></div>
-                                            <div class="shapes bg-green mr-4 mb-3"></div>
-                                            <div class="shapes bg-blue mr-4 mb-3"></div>
-                                            <div class="shapes bg-purple mr-4 mb-3"></div>
+                                        <div class="col-12 row pl-0 pr-0 pt-3 m-0" id="colorItem">
+                                            <div id="bg-gray-light" class="shapes text-center bg-gray-light mx-2 my-2"></div>
+                                            <div id="bg-red" class="shapes text-center bg-red mx-2 my-2"></div>
+                                            <div id="bg-pink" class="shapes text-center bg-pink mx-2 my-2"></div>
+                                            <div id="bg-orange" class="shapes text-center bg-orange mx-2 my-2"></div>
+                                            <div id="bg-yellow" class="shapes text-center bg-yellow mx-2 my-2"></div>
+                                            <div id="bg-green" class="shapes text-center bg-green mx-2 my-2"></div>
+                                            <div id="bg-blue" class="shapes text-center bg-blue mx-2 my-2"></div>
+                                            <div id="bg-purple" class="shapes text-center bg-purple mx-2 my-2"></div>
                                         </div>
-                                        <div class="col-12 row pl-0 pr-0 pt-3 m-0">
-                                            <div class="shapes mr-4 mb-3"></div>
-                                            <div class="shapes mr-4 mb-3" style="border-radius: 50%;"></div>
-                                            <div class="burst mr-4 mb-3"></div>
-                                            <div class="mr-4 mb-3">
-                                                <div class="trapezoid1"></div>
-                                                <div class="trapezoid2"></div>
-                                            </div>
+                                        <div class="col-12 row pl-0 pr-0 pt-3 m-0" id="shapeItem">
+                                            <div id="shape" class="shapes2 text-center mx-2 my-2"></div>
+                                            <div id="circle" class="shapes2 text-center mx-2 my-2" style="border-radius: 50%;"></div>
+                                            @*<div class="burst shapes2 text-center mx-2 my-2"></div>
+                                <div class="trapezoid shapes2 text-center mx-2 my-2">
+                                    <div class="trapezoid1"></div>
+                                    <div class="trapezoid2"></div>
+                                </div>*@
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col-md-12 col-12 p-0">
-                                        <input type="radio" class="mt-3" id="RB_IMAGE" />
+                                        <input type="radio" class="mt-3 rbRepresen" id="RB_IMAGE" value="2" />
                                         <span class="pl-3">Image</span>
                                         <div class="col-12 pl-0 pr-0 pt-3">
                                             <div class="form-control DTLIMG no-padding" style="width: 180px; height: 100%;">
@@ -326,14 +357,18 @@
                                         </div>
                                     </div>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-10 col-md-12 col-12 p-0" style="border-top: 1px solid lightgray;">
-                    <div class="col-12 p-0 row ml-0 mr-0 mt-3" style="justify-content: right;">
-                        <button type="button" class="btn btn-default mr-2" style="width: 120px;">Cancel</button>
-                        <button type="button" class="btn btn-primary" style="width: 120px;">Save</button>
+                    <div class="col-lg-10 col-md-12 col-12 p-0" style="border-top: 1px solid lightgray;">
+                        <div class="col-12 row py-2 px-0 m-0" style="justify-content: right;">
+                            <div class="col-lg-2 col-md-3 col-6 float-right">
+                                <button type="button" class="btn btn-default btn-block" id="btnCancel">Cancel</button>
+                            </div>
+                            <div class="col-lg-2 col-md-3 col-6 float-right">
+                                <button type="button" class="btn btn-primary btn-block" id="btnSave">Save</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -360,6 +395,56 @@
             </div>
         </div>
     </section>
+
+    <div class="modal fade" id="modal_variant" data-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-white">
+                    <h5 id="titleform_workhist">Create Options</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="col-12 row">
+                        <table id="tableVariant" class="table border-0">
+                            <tbody>
+                                <tr name="1">
+                                    <td class="border-0 w-25">
+                                        <div class="form-group my-2 focused">
+                                            <label class="form-label" for="OPTION_NAME">Option Name</label>
+                                            <select class="form-input OPTION_NAME" id="OPTION_NAME">
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td class="border-0">
+                                        <div class="form-group my-2 focused">
+                                            <label class="form-label" for="OPTION_VARIANT"></label>
+                                            <select class="form-input OPTION_VARIANT" id="OPTION_VARIANT">
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td class="text-center border-0" style="width: 1px;">
+                                        <div class="form-group my-2">
+                                            <i type="button" class="fa fa-trash-alt text-gray btnDelete" style="display: none;"></i>
+                                            <i type="button" class="fa fa-plus text-gray btnAdd"></i>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="row col-lg-12 col-md-12 col-12 px-0 justify-content-end">
+                        <button type="button" id="btnCancelVar" class="btn" data-dismiss="modal">
+                            Cancel
+                        </button>
+                        <button type="button" id="btnSaveVar" class="btn text-success">
+                            Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 

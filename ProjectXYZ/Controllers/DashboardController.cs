@@ -10,71 +10,17 @@ namespace ProjectXYZ.Controllers
 {
     public class DashboardController : Controller
     {
+        private string FORMATDATE = System.Configuration.ConfigurationManager.AppSettings["FORMATDATE"];
+
         [AuthorizeActionFilterAttribute]
         // GET: Dashboard
         public ActionResult Index()
         {
+            string email = Session["EmailAddress"].ToString();
+            ViewBag.EMAIL = string.IsNullOrEmpty(email) ? "" : email.Trim();
+            ViewBag.FORMATDATE = FORMATDATE;
+
             return View();
-        }
-
-        // POST: Dashboard/Create
-        [HttpPost]
-        public ActionResult Create(FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add insert logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Dashboard/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: Dashboard/Edit/5
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Dashboard/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Dashboard/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
         }
     }
 }
