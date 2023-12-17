@@ -60,7 +60,7 @@
                 </div>
                 <div class="addRole col-lg-6 col-md-12 col-12">
                     <div class="card">
-                        <div class="card-body pt-0">
+                        <div class="card-body">
                             @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "FormRole" }))//data-resetUrl
                             {
                                 @Html.AntiForgeryToken()
@@ -71,7 +71,7 @@
                                     <input type="text" class="form-input" id="ACCESS_NAME" />
                                 </div>
                                 <div class="row col-12 p-0" style="margin: 1rem 0 1rem 0;">
-                                    <i class="fas fa-mobile-alt text-blue text-left col-1 p-0" style="align-self: center;"></i>
+                                    <i class="fas fa-mobile-alt fa-2x text-blue col-1 p-0 text-center align-self-center"></i>
                                     <div class="col-9 p-0">
                                         <label class="col-form-label">POS</label>
                                         <br />
@@ -84,55 +84,55 @@
                                         </label>
                                     </div>
                                     <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
-                                        <div class="col-1 p-0">
+                                        <div class="col-1 p-0 text-center">
                                             <input type="checkbox" class="cbPOS text-left" id="accept_payments" />
                                         </div>
                                         <span class="col-11 p-0">Access payments</span>
                                     </div>
                                     <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
-                                        <div class="col-1 p-0">
+                                        <div class="col-1 p-0 text-center">
                                             <input type="checkbox" class="cbPOS text-left" id="apply_discount" />
                                         </div>
                                         <span class="col-11 p-0">Apply discounts with restricted access</span>
                                     </div>
                                     <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
-                                        <div class="col-1 p-0">
+                                        <div class="col-1 p-0 text-center">
                                             <input type="checkbox" class="cbPOS text-left" id="change_taxes" />
                                         </div>
                                         <span class="col-11 p-0">Change taxes in a sale</span>
                                     </div>
                                     <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
-                                        <div class="col-1 p-0">
+                                        <div class="col-1 p-0 text-center">
                                             <input type="checkbox" class="cbPOS text-left" id="view_receipt" />
                                         </div>
                                         <span class="col-11 p-0">View all receipts</span>
                                     </div>
                                     <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
-                                        <div class="col-1 p-0">
+                                        <div class="col-1 p-0 text-center">
                                             <input type="checkbox" class="cbPOS text-left" id="reprintresend_receipt" />
                                         </div>
                                         <span class="col-11 p-0">Reprint and resend receipt</span>
                                     </div>
                                     <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
-                                        <div class="col-1 p-0">
+                                        <div class="col-1 p-0 text-center">
                                             <input type="checkbox" class="cbPOS text-left" id="view_shiftreport" />
                                         </div>
                                         <span class="col-11 p-0">View shift report</span>
                                     </div>
                                     <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
-                                        <div class="col-1 p-0">
+                                        <div class="col-1 p-0 text-center">
                                             <input type="checkbox" class="cbPOS text-left" id="manage_items" />
                                         </div>
                                         <span class="col-11 p-0">Manage items</span>
                                     </div>
                                     <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
-                                        <div class="col-1 p-0">
+                                        <div class="col-1 p-0 text-center">
                                             <input type="checkbox" class="cbPOS text-left" id="view_costitems" />
                                         </div>
                                         <span class="col-11 p-0">View cost of items</span>
                                     </div>
                                     <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
-                                        <div class="col-1 p-0">
+                                        <div class="col-1 p-0 text-center">
                                             <input type="checkbox" class="cbPOS text-left" id="change_setting" />
                                         </div>
                                         <span class="col-11 p-0">Change setting</span>
@@ -145,7 +145,7 @@
                                     </div>*@
                                 </div>
                                 <div class="row col-12 p-0" style="margin: 1rem 0 1rem 0;">
-                                    <i class="fas fa-chart-area text-blue text-left col-1 p-0" style="align-self: center;"></i>
+                                    <i class="fas fa-chart-area fa-2x text-blue col-1 p-0 text-center align-self-center"></i>
                                     <div class="col-9 p-0">
                                         <label class="col-form-label">Back Office</label>
                                         <br />
@@ -158,55 +158,55 @@
                                         </label>
                                     </div>
                                     <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
-                                        <div class="col-1 p-0">
+                                        <div class="col-1 p-0 text-center">
                                             <input type="checkbox" class="cbBOFF text-left" id="view_sreport" />
                                         </div>
                                         <span class="col-11 p-0">View sales report</span>
                                     </div>
                                     <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
-                                        <div class="col-1 p-0">
+                                        <div class="col-1 p-0 text-center">
                                             <input type="checkbox" class="cbBOFF text-left" id="manage_itemsBOFF" />
                                         </div>
                                         <span class="col-11 p-0">Manage items</span>
                                     </div>
                                     <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
-                                        <div class="col-1 p-0">
+                                        <div class="col-1 p-0 text-center">
                                             <input type="checkbox" class="cbBOFF text-left" id="view_costitemsBOFF" />
                                         </div>
                                         <span class="col-11 p-0">View cost of items</span>
                                     </div>
                                     <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
-                                        <div class="col-1 p-0">
+                                        <div class="col-1 p-0 text-center">
                                             <input type="checkbox" class="cbBOFF text-left" id="manage_employees" />
                                         </div>
                                         <span class="col-11 p-0">Manage employees</span>
                                     </div>
                                     <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
-                                        <div class="col-1 p-0">
+                                        <div class="col-1 p-0 text-center">
                                             <input type="checkbox" class="cbBOFF text-left" id="manage_customers" />
                                         </div>
                                         <span class="col-11 p-0">Manage customers</span>
                                     </div>
                                     <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
-                                        <div class="col-1 p-0">
+                                        <div class="col-1 p-0 text-center">
                                             <input type="checkbox" class="cbBOFF text-left" id="edit_gnlsetting" />
                                         </div>
                                         <span class="col-11 p-0">Edit general setting</span>
                                     </div>
                                     <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
-                                        <div class="col-1 p-0">
+                                        <div class="col-1 p-0 text-center">
                                             <input type="checkbox" class="cbBOFF text-left" id="manage_paymenttypes" />
                                         </div>
                                         <span class="col-11 p-0">Manage payment types</span>
                                     </div>
                                     <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
-                                        <div class="col-1 p-0">
+                                        <div class="col-1 p-0 text-center">
                                             <input type="checkbox" class="cbBOFF text-left" id="manage_taxes" />
                                         </div>
                                         <span class="col-11 p-0">Manage taxes</span>
                                     </div>
                                     <div class="col-12 row m-0" style="padding: 1rem 0 0.5rem 0;">
-                                        <div class="col-1 p-0">
+                                        <div class="col-1 p-0 text-center">
                                             <input type="checkbox" class="cbBOFF text-left" id="manage_posDevice" />
                                         </div>
                                         <div class="col-11 p-0">

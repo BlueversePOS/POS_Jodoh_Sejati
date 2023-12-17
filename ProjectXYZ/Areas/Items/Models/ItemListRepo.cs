@@ -35,7 +35,7 @@ namespace ProjectXYZ.Areas.Items.Models
             return rtn;
         }
 
-        public DataTable GetCompositeItems()
+        public DataTable GetCompositeItems(string Item_Number)
         {
             DataTable dt = new DataTable();
             string jsonapiresult = "";
@@ -48,11 +48,398 @@ namespace ProjectXYZ.Areas.Items.Models
 
                 var param = new
                 {
-                    UserID = USERID
+                    UserID = USERID,
+                    Item_Number = Item_Number
                 };
 
                 string inputJson = JsonConvert.SerializeObject(param);
                 string urlapi = urlpwoapi + "/api/Service/GetCompositeItems";
+                jsonapiresult = Task.Run(async () => await callAPI(urlapi, inputJson)).Result;
+
+                //JavaScriptSerializer jss = new JavaScriptSerializer();
+                //var d = jss.Deserialize<dynamic>(jsonapiresult);
+                var d = JsonConvert.DeserializeObject<dynamic>(jsonapiresult);
+                if (d is bool)
+                {
+                    if (d == true || d == false)
+                    {
+                        return d;
+                    }
+                    else
+                    {
+                        string errormsg = Convert.ToString(d["msg"]);
+                        throw new Exception(errormsg);
+                    }
+                }
+                else if (jsonapiresult.StartsWith("[")) //jadi table
+                {
+                    if (d == null) //no data
+                    {
+                        return dt;
+                    }
+                    else if (d.Count == 0)
+                    {
+                        return dt;
+                    }
+                    else //with data
+                    {
+                        //JSON Array
+                        dt = (DataTable)JsonConvert.DeserializeObject(jsonapiresult, (typeof(DataTable)));
+                        //dt = d;
+                    }
+                }
+                else if (d.Count > 0) //dataset
+                {
+                    string statuscode = Convert.ToString(d["code"]);
+                    if (statuscode == "200")
+                    {
+                        if (d.ContainsKey("desc"))
+                        {
+                            string errormsg = Convert.ToString(d["desc"]);
+                            return dt;
+                        }
+                        else
+                        {
+                            dynamic hasil = JsonConvert.SerializeObject(d["hasil"]);
+                            dt = (DataTable)JsonConvert.DeserializeObject(hasil, (typeof(DataTable)));
+                            return dt;
+                        }
+                    }
+                    else
+                    {
+                        string errormsg = Convert.ToString(d["desc"]);
+                        throw new Exception(errormsg);
+                    }
+                }
+                else
+                {
+                    string errormsg = "";
+                    if (d.ContainsKey("desc"))
+                    {
+                        errormsg = Convert.ToString(d["desc"]);
+                    }
+                    else if (d.ContainsKey("result"))
+                    {
+                        //var dyn = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(d["results"]);
+                        dynamic nilai = Convert.ToString(d["result"]);
+                        dt = (DataTable)JsonConvert.DeserializeObject(nilai, (typeof(DataTable)));
+                        return dt;
+                    }
+                    else
+                    {
+                        #region TAMBAHAN CHECK
+
+                        var dyn = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(jsonapiresult);
+                        foreach (var key in dyn.Keys)
+                        {
+                            // check if the value is not null or empty.
+                            if (!string.IsNullOrEmpty(dyn[key].Last.Value))
+                            {
+                                var value = dyn[key].Last.Value;
+                                // code to do something with
+
+                                errormsg = errormsg + value + ", ";
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(errormsg))
+                        {
+                            errormsg = errormsg.Remove(errormsg.Length - 2);
+                        }
+
+                        #endregion
+                    }
+                    throw new Exception(errormsg);
+                }
+
+                #endregion
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return dt;
+        }
+
+        public DataTable GetDataItems(FilterItem model)
+        {
+            DataTable dt = new DataTable();
+            string jsonapiresult = "";
+
+            try
+            {
+                #region GetDataJson
+
+                string USERID = HttpContext.Current.Session["USER"].ToString();
+
+                var param = new
+                {
+                    UserID = USERID,
+                    Item_Number = model.Item_Number,
+                    Category_ID = model.Category_ID,
+                    LowStock = model.LowStock
+                };
+
+                string inputJson = JsonConvert.SerializeObject(param);
+                string urlapi = urlpwoapi + "/api/Service/GetDataItems";
+                jsonapiresult = Task.Run(async () => await callAPI(urlapi, inputJson)).Result;
+
+                //JavaScriptSerializer jss = new JavaScriptSerializer();
+                //var d = jss.Deserialize<dynamic>(jsonapiresult);
+                var d = JsonConvert.DeserializeObject<dynamic>(jsonapiresult);
+                if (d is bool)
+                {
+                    if (d == true || d == false)
+                    {
+                        return d;
+                    }
+                    else
+                    {
+                        string errormsg = Convert.ToString(d["msg"]);
+                        throw new Exception(errormsg);
+                    }
+                }
+                else if (jsonapiresult.StartsWith("[")) //jadi table
+                {
+                    if (d == null) //no data
+                    {
+                        return dt;
+                    }
+                    else if (d.Count == 0)
+                    {
+                        return dt;
+                    }
+                    else //with data
+                    {
+                        //JSON Array
+                        dt = (DataTable)JsonConvert.DeserializeObject(jsonapiresult, (typeof(DataTable)));
+                        //dt = d;
+                    }
+                }
+                else if (d.Count > 0) //dataset
+                {
+                    string statuscode = Convert.ToString(d["code"]);
+                    if (statuscode == "200")
+                    {
+                        if (d.ContainsKey("desc"))
+                        {
+                            string errormsg = Convert.ToString(d["desc"]);
+                            return dt;
+                        }
+                        else
+                        {
+                            dynamic hasil = JsonConvert.SerializeObject(d["hasil"]);
+                            dt = (DataTable)JsonConvert.DeserializeObject(hasil, (typeof(DataTable)));
+                            return dt;
+                        }
+                    }
+                    else
+                    {
+                        string errormsg = Convert.ToString(d["desc"]);
+                        throw new Exception(errormsg);
+                    }
+                }
+                else
+                {
+                    string errormsg = "";
+                    if (d.ContainsKey("desc"))
+                    {
+                        errormsg = Convert.ToString(d["desc"]);
+                    }
+                    else if (d.ContainsKey("result"))
+                    {
+                        //var dyn = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(d["results"]);
+                        dynamic nilai = Convert.ToString(d["result"]);
+                        dt = (DataTable)JsonConvert.DeserializeObject(nilai, (typeof(DataTable)));
+                        return dt;
+                    }
+                    else
+                    {
+                        #region TAMBAHAN CHECK
+
+                        var dyn = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(jsonapiresult);
+                        foreach (var key in dyn.Keys)
+                        {
+                            // check if the value is not null or empty.
+                            if (!string.IsNullOrEmpty(dyn[key].Last.Value))
+                            {
+                                var value = dyn[key].Last.Value;
+                                // code to do something with
+
+                                errormsg = errormsg + value + ", ";
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(errormsg))
+                        {
+                            errormsg = errormsg.Remove(errormsg.Length - 2);
+                        }
+
+                        #endregion
+                    }
+                    throw new Exception(errormsg);
+                }
+
+                #endregion
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return dt;
+        }
+
+        public DataTable GetDataItemComposite(string Item_Number)
+        {
+            DataTable dt = new DataTable();
+            string jsonapiresult = "";
+
+            try
+            {
+                #region GetDataJson
+
+                string USERID = HttpContext.Current.Session["USER"].ToString();
+
+                var param = new
+                {
+                    UserID = USERID,
+                    Item_Number = Item_Number
+                };
+
+                string inputJson = JsonConvert.SerializeObject(param);
+                string urlapi = urlpwoapi + "/api/Service/GetDataItemComposite";
+                jsonapiresult = Task.Run(async () => await callAPI(urlapi, inputJson)).Result;
+
+                //JavaScriptSerializer jss = new JavaScriptSerializer();
+                //var d = jss.Deserialize<dynamic>(jsonapiresult);
+                var d = JsonConvert.DeserializeObject<dynamic>(jsonapiresult);
+                if (d is bool)
+                {
+                    if (d == true || d == false)
+                    {
+                        return d;
+                    }
+                    else
+                    {
+                        string errormsg = Convert.ToString(d["msg"]);
+                        throw new Exception(errormsg);
+                    }
+                }
+                else if (jsonapiresult.StartsWith("[")) //jadi table
+                {
+                    if (d == null) //no data
+                    {
+                        return dt;
+                    }
+                    else if (d.Count == 0)
+                    {
+                        return dt;
+                    }
+                    else //with data
+                    {
+                        //JSON Array
+                        dt = (DataTable)JsonConvert.DeserializeObject(jsonapiresult, (typeof(DataTable)));
+                        //dt = d;
+                    }
+                }
+                else if (d.Count > 0) //dataset
+                {
+                    string statuscode = Convert.ToString(d["code"]);
+                    if (statuscode == "200")
+                    {
+                        if (d.ContainsKey("desc"))
+                        {
+                            string errormsg = Convert.ToString(d["desc"]);
+                            return dt;
+                        }
+                        else
+                        {
+                            dynamic hasil = JsonConvert.SerializeObject(d["hasil"]);
+                            dt = (DataTable)JsonConvert.DeserializeObject(hasil, (typeof(DataTable)));
+                            return dt;
+                        }
+                    }
+                    else
+                    {
+                        string errormsg = Convert.ToString(d["desc"]);
+                        throw new Exception(errormsg);
+                    }
+                }
+                else
+                {
+                    string errormsg = "";
+                    if (d.ContainsKey("desc"))
+                    {
+                        errormsg = Convert.ToString(d["desc"]);
+                    }
+                    else if (d.ContainsKey("result"))
+                    {
+                        //var dyn = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(d["results"]);
+                        dynamic nilai = Convert.ToString(d["result"]);
+                        dt = (DataTable)JsonConvert.DeserializeObject(nilai, (typeof(DataTable)));
+                        return dt;
+                    }
+                    else
+                    {
+                        #region TAMBAHAN CHECK
+
+                        var dyn = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(jsonapiresult);
+                        foreach (var key in dyn.Keys)
+                        {
+                            // check if the value is not null or empty.
+                            if (!string.IsNullOrEmpty(dyn[key].Last.Value))
+                            {
+                                var value = dyn[key].Last.Value;
+                                // code to do something with
+
+                                errormsg = errormsg + value + ", ";
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(errormsg))
+                        {
+                            errormsg = errormsg.Remove(errormsg.Length - 2);
+                        }
+
+                        #endregion
+                    }
+                    throw new Exception(errormsg);
+                }
+
+                #endregion
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return dt;
+        }
+
+        public DataTable GetDataItemVariant(string Item_Number)
+        {
+            DataTable dt = new DataTable();
+            string jsonapiresult = "";
+
+            try
+            {
+                #region GetDataJson
+
+                string USERID = HttpContext.Current.Session["USER"].ToString();
+
+                var param = new
+                {
+                    UserID = USERID,
+                    Item_Number = Item_Number
+                };
+
+                string inputJson = JsonConvert.SerializeObject(param);
+                string urlapi = urlpwoapi + "/api/Service/GetDataItemVariant";
                 jsonapiresult = Task.Run(async () => await callAPI(urlapi, inputJson)).Result;
 
                 //JavaScriptSerializer jss = new JavaScriptSerializer();

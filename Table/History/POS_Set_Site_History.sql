@@ -12,6 +12,7 @@ GO
 CREATE TABLE POS_Set_Site_History
 (
 	Site_ID nvarchar(20) NOT NULL, 
+	DefaultSite int NOT NULL,
 	Site_Name nvarchar(100) NOT NULL,
 	Line_Item int NOT NULL,
 	Store_ID nvarchar(20) NOT NULL, 

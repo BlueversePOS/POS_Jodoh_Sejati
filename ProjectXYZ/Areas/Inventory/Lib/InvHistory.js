@@ -134,14 +134,14 @@
     });
 
     $('select').on("select2:open", function () {
-        $(this).parents('.form-group').addClass('focused');
+        $(this).parent('.form-group').addClass('focused');
     });
 
     $('select').on("select2:close", function () {
         var inputValue = $(this).val();
         if (emptyStr(inputValue)) {
             $(this).removeClass('filled');
-            $(this).parents('.form-group').removeClass('focused');
+            $(this).parent('.form-group').removeClass('focused');
         } else {
             $(this).addClass('filled');
         }

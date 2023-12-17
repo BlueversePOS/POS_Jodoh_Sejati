@@ -97,9 +97,9 @@
                                 Currency = emptyStr(value.Currency) ? "" : value.Currency.trim(),
                                 Timezone = emptyStr(value.Timezone) ? "" : value.Timezone.trim();
 
-                            $('#ACCOUNT_NAME').val(Business_Name).parents('.form-group').addClass('focused');
-                            $('#ACCOUNT_EMAIL').val(EmailAddress).parents('.form-group').addClass('focused');
-                            $('#ACCOUNT_PASSWORD').val(Password).parents('.form-group').addClass('focused');
+                            $('#ACCOUNT_NAME').val(Business_Name).parent('.form-group').addClass('focused');
+                            $('#ACCOUNT_EMAIL').val(EmailAddress).parent('.form-group').addClass('focused');
+                            $('#ACCOUNT_PASSWORD').val(Password).parent('.form-group').addClass('focused');
                             $('#ACCOUNT_CURRENCY').val(Currency).trigger('change');
                             $('#ACCOUNT_CURRENCY').siblings("label").hide();
                             if (!emptyStr(Currency)) {
@@ -214,14 +214,14 @@
 
     $('input').focus(function () {
         $(this).prop("autocomplete", "off");
-        $(this).parents('.form-group').addClass('focused');
+        $(this).parent('.form-group').addClass('focused');
     });
 
     $('input').blur(function () {
         var inputValue = $(this).val();
         if (emptyStr(inputValue)) {
             $(this).removeClass('filled');
-            $(this).parents('.form-group').removeClass('focused');
+            $(this).parent('.form-group').removeClass('focused');
         } else {
             $(this).addClass('filled');
         }

@@ -31,7 +31,7 @@
     }
 
     function Clear() {
-        GetData();
+        GetDataItems();
         $('.items').show();
         $('.import').hide();
         $('.itemList').show();
@@ -103,8 +103,18 @@
         }
     };
 
-    function GetData() {
+    function GetDataItems() {
         try {
+            var Item_Number = emptyStr($('#Item_Number').val()) ? "" : $('#Item_Number').val(),
+                Category_ID = emptyStr($("#FILTER_CATEGORY :selected").val()) ? "" : $("#FILTER_CATEGORY :selected").val(),
+                LowStock = emptyStr($("#FILTER_STOCK :selected").val()) ? "" : $("#FILTER_STOCK :selected").val();
+
+            var model = {
+                Item_Number: Item_Number,
+                Category_ID: Category_ID,
+                LowStock: LowStock
+            }
+
             $('#table_items tbody').empty();
             $('#table_items').DataTable().destroy();
 
@@ -115,10 +125,37 @@
                 lengthMenu: [[10, 25, 50], [10, 25, 50]],
                 responsive: true,
                 searchable: true,
-                data: dtValues,
+                ajax: {
+                    type: "POST",
+                    url: rootUrl + 'Items/ItemList/GetDataItems',
+                    "datatype": "json",
+                    //async: false,
+                    data: { 'model': model },
+                    beforeSend: function () {
+                        $("#loading").show();
+                    },
+                    complete: function () {
+                        $("#loading").hide();
+                    },
+                    error: function (xhr) {
+                        var doc = $.parseHTML(xhr.responseText);
+                        if (!emptyStr(doc)) {
+                            var titleNode = doc.filter(function (node) {
+                                return node.localName === "title";
+                            });
+                            var msg = titleNode[0].textContent;
+                            swal("Error", "Error : " + msg, "error");
+                        }
+                        else {
+                            if (xhr.statusText.toUpperCase().trim() != "OK") {
+                                swal({ type: "error", title: "Error", text: xhr.statusText });
+                            }
+                        }
+                    }
+                },
                 columns: [
                     {
-                        data: 'ID',
+                        data: 'Item_Number',
                         orderable: false,
                         render: function (data, type, row) {
                             var ID = emptyStr(data) ? "" : data;
@@ -126,24 +163,48 @@
                         }
                     },
                     {
-                        data: 'ITEM_NAME',
+                        data: 'Item_Name',
                         className: 'no-wrap'
                     },
-                    { data: 'ITEM_CATEGORY', },
+                    { data: 'Category_Name', },
                     {
-                        data: 'ITEM_PRICE',
-                        className: 'text-right'
+                        data: 'Item_Price',
+                        className: 'text-right',
+                        render: function (data, type, row) {
+                            var values = "";
+                            var dtVal = emptyStr(data) ? 0 : data;
+                            if (!emptyStr(dtVal)) {
+                                values = formatCurrency(dtVal);
+                            }
+                            return values;
+                        }
                     },
                     {
-                        data: 'ITEM_COST',
-                        className: 'text-right'
+                        data: 'Item_Cost',
+                        className: 'text-right',
+                        render: function (data, type, row) {
+                            var values = "";
+                            var dtVal = emptyStr(data) ? 0 : data;
+                            if (!emptyStr(dtVal)) {
+                                values = formatCurrency(dtVal);
+                            }
+                            return values;
+                        }
                     },
                     {
-                        data: 'MARGIN_COST',
-                        className: 'text-right'
+                        data: 'Item_Cost',
+                        className: 'text-right',
+                        render: function (data, type, row) {
+                            var values = "";
+                            var dtVal = emptyStr(data) ? 0 : data;
+                            if (!emptyStr(dtVal)) {
+                                values = formatCurrency(dtVal);
+                            }
+                            return values;
+                        }
                     },
                     {
-                        data: 'ITEM_STOCK',
+                        data: 'InStock',
                         className: 'text-right'
                     }
                 ],
@@ -169,6 +230,7 @@
         arrVariant.length = 0;
         $('input[type="text"], input#Item_Number').val("");
         $('input[type="number"]').val(0);
+        $('#SKU').val("");
         $('input[type="radio"], input[type="checkbox"]').prop("checked", false);
         $("select").val('').trigger('change');
         $('.shapes').empty();
@@ -178,202 +240,47 @@
         $('.editVariant').hide();
     }
 
-    function Save() {
-        try {
-            var Item_Number = emptyStr($('#Item_Number').val()) ? "" : $('#Item_Number').val(),
-                ITEMNAME = emptyStr($('#NAME').val()) ? "" : $('#NAME').val(),
-                CATEGORY = emptyStr($('#CATEGORY').val()) ? "" : $('#CATEGORY').val(),
-                DESCRIPTION = emptyStr($('#DESCRIPTION').val()) ? "" : $('#DESCRIPTION').val(),
-                FOR_SALE = $('#FOR_SALE').is(':checked') ? 1 : 0,
-                SOLD_BY = emptyStr($('.rbSoldBy:checked').val()) ? 0 : $('.rbSoldBy:checked').val(),
-                PRICE = emptyStr($('#PRICE').val()) ? formatCurrency(0) : $('#PRICE').val(),
-                COST = emptyStr($('#COST').val()) ? formatCurrency(0) : $('#COST').val(),
-                SKU = emptyStr($('#SKU').val()) ? "" : $('#SKU').val(),
-                BARCODE = emptyStr($('#BARCODE').val()) ? "" : $('#BARCODE').val(),
-                COMPOSITE_ITEM = $('#COMPOSITE_ITEM').is(':checked') ? 1 : 0,
-                TRACK_STOCK = $('#TRACK_STOCK').is(':checked') ? 1 : 0,
-                IN_STOCK = emptyStr($('#IN_STOCK').val()) ? 0 : $('#IN_STOCK').val(),
-                LOW_STOCK = emptyStr($('#LOW_STOCK').val()) ? 0 : $('#LOW_STOCK').val(),
-                PPN_10 = $('#PPN_10').is(':checked') ? 1 : 0,
-                Representation = emptyStr($('.rbRepresen:checked').val()) ? 0 : $('.rbRepresen:checked').val(),
-                colorItem = $('#colorItem').find('i.fa-check').parent('div').attr('id'),
-                shapeItem = $('#shapeItem').find('i.fa-check').parent('div').attr('id');
-            colorItem = emptyStr(colorItem) ? "bg-default" : colorItem;
-            if (TRACK_STOCK == 0) {
-                IN_STOCK = 0;
-                LOW_STOCK = 0
-            }
-
-            //#region Composite Item
-
-            var compItem = [];
-            $.each($('#table_composite tbody tr'), function () {
-                var Item_Number = emptyStr(Item_Number) ? "" : Item_Number;
-                var Item_Composite = emptyStr($(this).find('td:eq(0) input').val()) ? "" : $(this).find('td:eq(0) input').val();
-                var Item_Quantity = emptyStr($(this).find('td:eq(1) input').val()) ? 0 : $(this).find('td:eq(1) input').val();
-                var Item_Cost = emptyStr($(this).find('td:eq(2)').text()) ? formatCurrency(0) : $(this).find('td:eq(2)').text().trim();
-                compItem.push({
-                    'Item_Number': Item_Number,
-                    'Item_Quantity': Item_Quantity,
-                    'Item_Cost': delFormatCurrency(Item_Cost),
-                    'Item_Composite': Item_Composite
-                });
-            });
-
-            //#endregion
-
-            //#region Item Variant
-
-            var varItem = [];
-            var LineItem_Option = 0;
-            $.each(arrVariant, function (index, value) {
-                var Item_Number = emptyStr(Item_Number) ? "" : Item_Number;
-                LineItem_Option = parseInt(index) + 1;
-                var Option_ID = emptyStr(value.OPTION_NAME) ? "" : value.OPTION_NAME.trim();
-                var Option_Name = emptyStr(value.OPTION_NAME_TXT) ? "" : value.OPTION_NAME_TXT.trim();
-                var LineItem_Variant = 0;
-                var Variant_Name = emptyStr(value.OPTION_VARIANT) ? "" : value.OPTION_VARIANT.trim();
-
-                var splitVal;
-                if (!emptyStr(Variant_Name)) {
-                    splitVal = Variant_Name.trim().split(' / ');
-                    //alert(splitVal.length);
-                }
-                for (let i = 0; i < splitVal.length; i++) {
-                    Variant_Name = splitVal[i].trim();
-                    LineItem_Variant = parseInt(i) + 1;
-                    varItem.push({
-                        'Item_Number': Item_Number,
-                        'LineItem_Option': LineItem_Option,
-                        'CB_Available': 0,
-                        'Option_ID': Option_ID,
-                        'Option_Name': Option_Name,
-                        'LineItem_Variant': LineItem_Variant,
-                        'Variant_Name': Variant_Name,
-                        'Item_Price': 0,
-                        'Item_Cost': 0,
-                        'InStock': 0,
-                        'LowStock': 0,
-                        'OptimalStock': 0,
-                        'Item_SKU': "",
-                        'Item_Barcode': "",
-                    });
-                }
-            });
-
-            $.each($('#table_listvariant tbody tr'), function (index, value) {
-                var checked = $(this).find('td:eq(0) input').is(':checked');
-                var LineItem_Option = emptyStr($(this).find('td:eq(0) input').val()) ? "" : $(this).find('td:eq(0) input').val();
-                var Item_Price = emptyStr($(this).find('td:eq(2) input').val()) ? formatCurrency(0) : $(this).find('td:eq(2) input').val();
-                var Item_Cost = emptyStr($(this).find('td:eq(3) input').val()) ? formatCurrency(0) : $(this).find('td:eq(3) input').val();
-                var InStock = emptyStr($(this).find('td:eq(4) input').val()) ? 0 : $(this).find('td:eq(4) input').val();
-                var LowStock = emptyStr($(this).find('td:eq(5) input').val()) ? 0 : $(this).find('td:eq(5) input').val();
-                var OptimalStock = emptyStr($(this).find('td:eq(6) input').val()) ? 0 : $(this).find('td:eq(6) input').val();
-                var Item_SKU = emptyStr($(this).find('td:eq(7) input').val()) ? "" : $(this).find('td:eq(7) input').val();
-                var Item_Barcode = emptyStr($(this).find('td:eq(8) input').val()) ? "" : $(this).find('td:eq(8) input').val();
-                $.each(varItem, function (index, value) {
-                    var lineitem = emptyStr(value.LineItem_Option) ? 0 : value.LineItem_Option;
-                    if (lineitem == LineItem_Option) {
-                        value.CB_Available = checked;
-                        value.Item_Price = delFormatCurrency(Item_Price);
-                        value.Item_Cost = delFormatCurrency(Item_Cost);
-                        value.InStock = InStock;
-                        value.LowStock = LowStock;
-                        value.OptimalStock = OptimalStock;
-                        value.Item_SKU = Item_SKU;
-                        value.Item_Barcode = Item_Barcode;
-                    }
-                });
-            });
-
-            //#endregion
-
-            var model = {
-                'Item_Number': Item_Number,
-                'Item_Name': ITEMNAME,
-                'Item_Description': DESCRIPTION,
-                'UOFM': "",
-                'Category_ID': CATEGORY,
-                'Item_Sales': FOR_SALE,
-                'Item_SoldBy': SOLD_BY,
-                'Item_Price': delFormatCurrency(PRICE),
-                'Item_Cost': delFormatCurrency(COST),
-                'Item_SKU': SKU,
-                'Item_Barcode': BARCODE,
-                'Composite_Item': COMPOSITE_ITEM,
-                'Track_Stock': TRACK_STOCK,
-                'InStock': IN_STOCK,
-                'LowStock': LOW_STOCK,
-                'Tax_10': PPN_10,
-                'Representation': Representation,
-                'Item_Color': colorItem,
-                'Item_Shape': shapeItem,
-                'Item_Image': "",
-                'CompositeItem': compItem,
-                'ItemVariant': varItem
-            };
-
-            //console.log(JSON.stringify(model));
-
-            model = JSON.stringify(model);
-            var hasil = FuncEncrypt(model);
-            
-            $.ajax({
-                url: rootUrl + 'ItemList/SaveItem',
-                type: 'POST',
-                dataType: 'json',
-                contentType: 'application/x-www-form-urlencoded',
-                data: {
-                    'param': hasil
-                },
-                success: function (result) {
-                    if (result.success) {
-                        Clear();
-                        swal({ type: "success", title: "Success", text: "Saved successfully" });
-                    } else {
-                        swal("Error", "Error : " + result.message, "error");
-                    }
-                },
-                beforeSend: function () {
-                    $("#loading").show();
-                },
-                complete: function () {
-                    $("#loading").hide();
-                },
-                error: function (xhr) {
-                    if (xhr.status != "200") {
-                        var doc = $.parseHTML(xhr.responseText);
-                        if (!emptyStr(doc)) {
-                            var titleNode = doc.filter(function (node) {
-                                return node.localName === "title";
-                            });
-                            var msg = titleNode[0].textContent;
-                            swal("Error", "Error : " + msg, "error");
-                        }
-                        else {
-                            if (xhr.statusText.toUpperCase().trim() != "OK") {
-                                swal({ type: "error", title: "Error", text: xhr.statusText });
-                            }
-                        }
-                    }
-                }
-            });
-        } catch (err) {
-            swal({ type: "error", title: "Error", text: err.message });
-        }
-    }
-
     function AddRowListVariants() {
         $('#table_listvariant tbody').empty();
         var dtLength = 0;
         var optionName = "";
-        $.each(arrVariant, function (index, value) {
-            var OPTION_NAME = emptyStr(value.OPTION_NAME) ? "" : value.OPTION_NAME.trim();
-            var OPTION_NAME_TXT = emptyStr(value.OPTION_NAME_TXT) ? "" : value.OPTION_NAME_TXT.trim();
+        var arrays = [];
+        for (let i = 0; i < arrVariant.length; i++) {
+            var Variant_Name = arrVariant[i].OPTION_VARIANT;
+            arrays.push(Variant_Name);
+        }
+        var result = [];
+        generateCombinations(arrays, 0, [], result);
+        var arrResult = [];
+        for (let i = 0; i < result.length; i++) {
+            var variants = "";
+            for (let j = 0; j < result[i].length; j++) {
+                if (!emptyStr(variants)) {
+                    variants = variants + " / " + result[i][j].OPTION_VARIANT;
+                } else {
+                    variants = result[i][j].OPTION_VARIANT;
+                }
+            }
+            arrResult.push({
+                OPTION_VARIANT: variants
+            });
+        }
+        var SKU = emptyStr($('#SKU').val()) ? 0 : $('#SKU').val();
+        var jumZero = 0;
+        var zero = true;
+        var jumSKU = SKU.length;
+        for (let i = 0; i < SKU.length; i++) {
+            if (SKU[i][0] != 0) {
+                zero = false;
+            }
+            jumZero = zero ? parseInt(jumZero) + 1 : jumZero;
+        }
+        console.log(jumZero);
+        $.each(arrResult, function (index, value) {
             var OPTION_VARIANT = emptyStr(value.OPTION_VARIANT) ? "" : value.OPTION_VARIANT.trim();
 
             dtLength = emptyStr(dtLength) ? 1 : parseInt(dtLength) + 1;
-            var newRow = '<tr name="' + dtLength + '">' +
+            var newRow = '<tr name="' + dtLength + '" class="' + index + '">' +
                 '<td class="text-center"><input type="checkbox" class="CBavail" value="' + (parseInt(index) + 1) + '" /></td>' +
                 '<td class="TDvariant">' + OPTION_VARIANT + '</td>' +
                 '<td><input type="text" class="form-input TDprice" name="currency" value="' + formatCurrency(0) + '" /></td>' +
@@ -381,15 +288,28 @@
                 '<td><input type="text" class="form-input TDinstock" name="number" /></td>' +
                 '<td><input type="text" class="form-input TDlowstock" name="number" /></td>' +
                 '<td><input type="text" class="form-input TDoptstock" name="number" /></td>' +
-                '<td><input type="text" class="form-input TDsku" name="number" /></td>' +
+                '<td><input type="text" class="form-input TDsku" name="number" value="' + SKU + '" /></td>' +
                 '<td><input type="text" class="form-input TDbarcode" /></td>' +
                 '</tr>';
             $('#table_listvariant tbody').append(newRow);
             FuncListVariant(dtLength);
+            SKU = parseInt(SKU) + 1;
+            var len = jumZero;
+            var zero = "";
+            for (let i = 0; i < len; i++) {
+                zero = zero + "0";
+            }
+            SKU = zero + SKU;
+            SKU = SKU.slice(-jumSKU);
+        });
+        $.each(arrVariant, function (index, value) {
+            var OPTION_NAME = emptyStr(value.OPTION_NAME) ? "" : value.OPTION_NAME.trim();
+            var OPTION_NAME_TXT = emptyStr(value.OPTION_NAME_TXT) ? "" : value.OPTION_NAME_TXT.trim();
+            var OPTION_VARIANT = emptyStr(value.OPTION_VARIANT) ? "" : value.OPTION_VARIANT.trim();
 
             optionName = emptyStr(optionName) ? OPTION_NAME_TXT : optionName + " / " + OPTION_NAME_TXT;
         });
-        $('#OPTIONNAME').text("Options: " + optionName);
+        $('#OPTIONNAME').val(optionName);
     }
 
     function FuncListVariant(dtLength) {
@@ -490,20 +410,26 @@
     function FuncVariant(currow) {
         $('#tableVariant tbody tr[name="' + currow + '"]').find(".OPTION_NAME").select2({
             dropdownParent: $('#tableVariant tbody tr[name="' + currow + '"]').find(".OPTION_NAME").parent(),
-            placeholder: "Choose Option",
+            placeholder: "Add Option",
+            tags: true,
+            tokenSeparators: [',', ' '],
+            selectOnClose: true,
             multiple: false,
             allowClear: true,
-            width: "100%",
-            data: optOption
+            width: "100%"
+            //, data: optOption
         });
 
         $('#tableVariant tbody tr[name="' + currow + '"]').find(".OPTION_VARIANT").select2({
             dropdownParent: $('#tableVariant tbody tr[name="' + currow + '"]').find(".OPTION_VARIANT").parent(),
-            placeholder: "Choose Variants",
+            placeholder: "Add Variants",
+            tags: true,
+            tokenSeparators: [',', ' '],
+            selectOnClose: true,
             multiple: true,
             allowClear: true,
-            width: "100%",
-            data: optVariant
+            width: "100%"
+            //, data: optVariant
         });
 
         $('#tableVariant tbody tr[name="' + currow + '"]').on('change', '.OPTION_NAME', function () {
@@ -539,15 +465,19 @@
         $('#tableVariant tbody tr[name="' + currow + '"]').on('click', '.btnAdd', function () {
             try {
                 var currow = $(this).closest('tr');
-                currow.find('.btnAdd').hide();
-                currow.find('.btnDelete').show();
-                AddRow();
                 var OPTION_NAME = currow.find('td:eq(0)').find('.OPTION_NAME').val();
                 var OPTION_NAME_TXT = currow.find('td:eq(0)').find('.OPTION_NAME :selected').text();
                 var OPTION_VARIANT = currow.find('td:eq(1)').find('.OPTION_VARIANT').val();
                 OPTION_VARIANT = OPTION_VARIANT.join(", ");
-                currow.find('td:eq(0)').html('<input type="hidden" value="' + OPTION_NAME + '" />' + OPTION_NAME_TXT);
-                currow.find('td:eq(1)').html('<input type="hidden" value="' + OPTION_VARIANT + '" />' + OPTION_VARIANT);
+                if (!emptyStr(OPTION_NAME) && !emptyStr(OPTION_VARIANT)) {
+                    currow.find('.btnAdd').hide();
+                    currow.find('.btnDelete').show();
+                    AddRow();
+                    currow.find('td:eq(0)').html('<input type="hidden" value="' + OPTION_NAME + '" />' + OPTION_NAME_TXT);
+                    currow.find('td:eq(1)').html('<input type="hidden" value="' + OPTION_VARIANT + '" />' + OPTION_VARIANT);
+                } else {
+                    swal({ type: "info", title: "Information", text: "Please fill option and variant" });
+                }
             } catch (err) {
                 swal({ type: "error", title: "Error", text: err.message });
             }
@@ -575,6 +505,7 @@
                         OPTION_VARIANT: emptyStr(OPTION_VARIANT) ? OPTION_VARIANT_TXT : OPTION_VARIANT,
                     });
                 });
+                /*
                 $('#tableVariant tbody').empty();
                 $.each(arrVariant, function (index, value) {
                     var OPTION_NAME = emptyStr(value.OPTION_NAME) ? "" : value.OPTION_NAME.trim(),
@@ -584,7 +515,8 @@
                         AddRow();
                         var newOption = $("<option selected='selected'></option>").val(OPTION_NAME).text(OPTION_NAME_TXT);
                         $('#tableVariant tbody tr:last').find('td:eq(0) select').append(newOption);
-                        $('#tableVariant tbody tr:last').find('td:eq(1) select').val(OPTION_VARIANT).trigger('change');
+                        newOption = $("<option selected='selected'></option>").val(OPTION_VARIANT)
+                        $('#tableVariant tbody tr:last').find('td:eq(1) select').append(OPTION_VARIANT).trigger('change');
                     } else {
                         AddRowValue(OPTION_NAME, OPTION_NAME_TXT, OPTION_VARIANT);
                     }
@@ -601,7 +533,7 @@
                                 }
                             });
                         });
-                }
+                }*/
             } catch (err) {
                 swal({ type: "error", title: "Error", text: err.message });
             }
@@ -610,6 +542,8 @@
 
     function GetCompositeItems() {
         try {
+            var Item_Number = emptyStr($('#Item_Number').val()) ? "" : $('#Item_Number').val();
+
                 $('#table_composite tbody').empty();
                 $('#table_composite').DataTable().destroy();
 
@@ -621,10 +555,11 @@
                     responsive: true,
                     searchable: true,
                     ajax: {
-                        type: "GET",
+                        type: "POST",
                         url: rootUrl + 'Items/ItemList/GetCompositeItems',
                         "datatype": "json",
                         //async: false,
+                        data: { 'Item_Number': Item_Number },
                         error: function (xhr) {
                             var doc = $.parseHTML(xhr.responseText);
                             if (!emptyStr(doc)) {
@@ -652,7 +587,7 @@
                                 var SKU = emptyStr(row.Item_SKU) ? "" : row.Item_SKU.trim();
                                 if (!emptyStr(dtVal)) {
                                     values = '<div class="row m-0">' +
-                                        '<input type="hidden" value="' + dtVal + '" />' +
+                                        '<input type="hidden" id="Item_Composite" value="' + dtVal + '" />' +
                                         '<span class="w-100">' + Desc + '</span>' +
                                         '<span class="w-100">SKU ' + SKU + '</span>' +
                                         '</div>';
@@ -722,11 +657,509 @@
                                 }
                             }
                         });
+
+                        GetDataItemComposite();
                     }
                 });
                 $('#table_composite').attr('style', 'width: 100%');
         } catch (err) {
             swal({ type: "error", title: "Error", text: err.message });
+        }
+    }
+
+    function Save() {
+        try {
+            var Item_Number = emptyStr($('#Item_Number').val()) ? "" : $('#Item_Number').val(),
+                ITEMNAME = emptyStr($('#NAME').val()) ? "" : $('#NAME').val(),
+                CATEGORY = emptyStr($('#CATEGORY').val()) ? "" : $('#CATEGORY').val(),
+                DESCRIPTION = emptyStr($('#DESCRIPTION').val()) ? "" : $('#DESCRIPTION').val(),
+                FOR_SALE = $('#FOR_SALE').is(':checked') ? 1 : 0,
+                SOLD_BY = emptyStr($('.rbSoldBy:checked').val()) ? 0 : $('.rbSoldBy:checked').val(),
+                PRICE = emptyStr($('#PRICE').val()) ? formatCurrency(0) : $('#PRICE').val(),
+                COST = emptyStr($('#COST').val()) ? formatCurrency(0) : $('#COST').val(),
+                SKU = emptyStr($('#SKU').val()) ? "" : $('#SKU').val(),
+                BARCODE = emptyStr($('#BARCODE').val()) ? "" : $('#BARCODE').val(),
+                COMPOSITE_ITEM = $('#COMPOSITE_ITEM').is(':checked') ? 1 : 0,
+                TRACK_STOCK = $('#TRACK_STOCK').is(':checked') ? 1 : 0,
+                IN_STOCK = emptyStr($('#IN_STOCK').val()) ? 0 : $('#IN_STOCK').val(),
+                LOW_STOCK = emptyStr($('#LOW_STOCK').val()) ? 0 : $('#LOW_STOCK').val(),
+                PPN_10 = $('#PPN_10').is(':checked') ? 1 : 0,
+                Representation = emptyStr($('.rbRepresen:checked').val()) ? 0 : $('.rbRepresen:checked').val(),
+                colorItem = $('#colorItem').find('i.fa-check').parent('div').attr('id'),
+                shapeItem = $('#shapeItem').find('i.fa-check').parent('div').attr('id');
+            colorItem = emptyStr(colorItem) ? "bg-default" : colorItem;
+            if (TRACK_STOCK == 0) {
+                IN_STOCK = 0;
+                LOW_STOCK = 0
+            }
+
+            //#region Composite Item
+
+            var compItem = [];
+            $.each($('#table_composite tbody tr'), function () {
+                var Item_Number = emptyStr(Item_Number) ? "" : Item_Number;
+                var Item_Composite = emptyStr($(this).find('td:eq(0) input').val()) ? "" : $(this).find('td:eq(0) input').val();
+                var Item_Quantity = emptyStr($(this).find('td:eq(1) input').val()) ? 0 : $(this).find('td:eq(1) input').val();
+                var Item_Cost = emptyStr($(this).find('td:eq(2)').text()) ? formatCurrency(0) : $(this).find('td:eq(2)').text().trim();
+                compItem.push({
+                    'Item_Number': Item_Number,
+                    'Item_Quantity': Item_Quantity,
+                    'Item_Cost': delFormatCurrency(Item_Cost),
+                    'Item_Composite': Item_Composite
+                });
+            });
+
+            //#endregion
+
+            //#region Item Variant
+
+            var varItem = [];
+            var LineItem_Option = 0;
+            var LineItem_Variant = 0;
+            var Option_ID = $('#OPTIONNAME').val();
+            $.each($('#table_listvariant tbody tr'), function (index, value2) {
+                var checked = $(this).find('td:eq(0) input').is(':checked') ? 1 : 0;
+                LineItem_Option = parseInt(index) + 1;
+                var Variant_Name = emptyStr($(this).find('td:eq(1)').text()) ? "" : $(this).find('td:eq(1)').text();
+                var Item_Price = emptyStr($(this).find('td:eq(2) input').val()) ? formatCurrency(0) : $(this).find('td:eq(2) input').val();
+                var Item_Cost = emptyStr($(this).find('td:eq(3) input').val()) ? formatCurrency(0) : $(this).find('td:eq(3) input').val();
+                var InStock = emptyStr($(this).find('td:eq(4) input').val()) ? 0 : $(this).find('td:eq(4) input').val();
+                var LowStock = emptyStr($(this).find('td:eq(5) input').val()) ? 0 : $(this).find('td:eq(5) input').val();
+                var OptimalStock = emptyStr($(this).find('td:eq(6) input').val()) ? 0 : $(this).find('td:eq(6) input').val();
+                var Item_SKU = emptyStr($(this).find('td:eq(7) input').val()) ? "" : $(this).find('td:eq(7) input').val();
+                var Item_Barcode = emptyStr($(this).find('td:eq(8) input').val()) ? "" : $(this).find('td:eq(8) input').val();
+                LineItem_Variant = parseInt(LineItem_Variant) + 1;
+                varItem.push({
+                    'Item_Number': Item_Number,
+                    'LineItem_Option': LineItem_Option,
+                    'CB_Available': checked,
+                    'Option_ID': Option_ID,
+                    'Option_Name': Option_ID,
+                    'LineItem_Variant': LineItem_Variant,
+                    'Variant_Name': Variant_Name,
+                    'Item_Price': delFormatCurrency(Item_Price),
+                    'Item_Cost': delFormatCurrency(Item_Cost),
+                    'InStock': InStock,
+                    'LowStock': LowStock,
+                    'OptimalStock': OptimalStock,
+                    'Item_SKU': Item_SKU,
+                    'Item_Barcode': Item_Barcode,
+                });
+            });
+
+            //#endregion
+
+            var model = {
+                'Item_Number': Item_Number,
+                'Item_Name': ITEMNAME,
+                'Item_Description': DESCRIPTION,
+                'UOFM': "",
+                'Category_ID': CATEGORY,
+                'Item_Sales': FOR_SALE,
+                'Item_SoldBy': SOLD_BY,
+                'Item_Price': delFormatCurrency(PRICE),
+                'Item_Cost': delFormatCurrency(COST),
+                'Item_SKU': SKU,
+                'Item_Barcode': BARCODE,
+                'Composite_Item': COMPOSITE_ITEM,
+                'Track_Stock': TRACK_STOCK,
+                'InStock': IN_STOCK,
+                'LowStock': LOW_STOCK,
+                'Tax_10': PPN_10,
+                'Representation': Representation,
+                'Item_Color': colorItem,
+                'Item_Shape': shapeItem,
+                'Item_Image': "",
+                'CompositeItem': compItem,
+                'ItemVariant': varItem
+            };
+
+            //console.log(JSON.stringify(model));
+
+            model = JSON.stringify(model);
+            var hasil = FuncEncrypt(model);
+
+            $.ajax({
+                url: rootUrl + 'Items/ItemList/SaveItem',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/x-www-form-urlencoded',
+                data: {
+                    'param': hasil
+                },
+                success: function (result) {
+                    if (result.success) {
+                        ClearValues();
+                        Clear();
+                        swal({ type: "success", title: "Success", text: "Saved successfully" });
+                    } else {
+                        swal("Error", "Error : " + result.message, "error");
+                    }
+                },
+                beforeSend: function () {
+                    $("#loading").show();
+                },
+                complete: function () {
+                    $("#loading").hide();
+                },
+                error: function (xhr) {
+                    if (xhr.status != "200") {
+                        var doc = $.parseHTML(xhr.responseText);
+                        if (!emptyStr(doc)) {
+                            var titleNode = doc.filter(function (node) {
+                                return node.localName === "title";
+                            });
+                            var msg = titleNode[0].textContent;
+                            swal("Error", "Error : " + msg, "error");
+                        }
+                        else {
+                            if (xhr.statusText.toUpperCase().trim() != "OK") {
+                                swal({ type: "error", title: "Error", text: xhr.statusText });
+                            }
+                        }
+                    }
+                }
+            });
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    }
+
+    function GetDetailItems() {
+        try {
+            var Item_Number = emptyStr($('#Item_Number').val()) ? "" : $('#Item_Number').val();
+
+            var model = {
+                Item_Number: Item_Number,
+                Category_ID: "",
+                LowStock: 0
+            }
+
+            //console.log(JSON.stringify(model));
+
+            model = JSON.stringify(model);
+            var hasil = FuncEncrypt(model);
+
+            $.ajax({
+                url: rootUrl + 'Items/ItemList/GetDetailItems',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    'param': hasil
+                },
+                success: function (result) {
+                    if (result.success) {
+                        /*Item_Number, Item_Name, Item_Description, UOFM, Category_ID, Item_Sales, Item_SoldBy, Item_Price, Item_Cost, Item_SKU, Item_Barcode, 
+                        Composite_Item, Track_Stock, InStock, LowStock, Tax_10, Representation, Item_Color, Item_Shape, Item_Image*/
+                        $.each(result.data, function (index, value) {
+                            var Item_Number = emptyStr(value.Item_Number) ? "" : value.Item_Number.trim(),
+                                Item_Name = emptyStr(value.Item_Name) ? "" : value.Item_Name.trim(),
+                                Item_Description = emptyStr(value.Item_Description) ? "" : value.Item_Description.trim(),
+                                UOFM = emptyStr(value.UOFM) ? "" : value.UOFM.trim(),
+                                Category_ID = emptyStr(value.Category_ID) ? "" : value.Category_ID.trim(),
+                                Category_Name = emptyStr(value.Category_Name) ? "" : value.Category_Name.trim(),
+                                Item_Sales = emptyStr(value.Item_Sales) ? 0 : value.Item_Sales,
+                                Item_SoldBy = emptyStr(value.Item_SoldBy) ? 0 : value.Item_SoldBy,
+                                Item_Price = emptyStr(value.Item_Price) ? 0 : value.Item_Price,
+                                Item_Cost = emptyStr(value.Item_Cost) ? 0 : value.Item_Cost,
+                                Item_SKU = emptyStr(value.Item_SKU) ? "" : value.Item_SKU.trim(),
+                                Item_Barcode = emptyStr(value.Item_Barcode) ? "" : value.Item_Barcode.trim(),
+                                Composite_Item = emptyStr(value.Composite_Item) ? 0 : value.Composite_Item,
+                                Track_Stock = emptyStr(value.Track_Stock) ? 0 : value.Track_Stock,
+                                InStock = emptyStr(value.InStock) ? 0 : value.InStock,
+                                LowStock = emptyStr(value.LowStock) ? 0 : value.LowStock,
+                                Tax_10 = emptyStr(value.Tax_10) ? 0 : value.Tax_10,
+                                Representation = emptyStr(value.Representation) ? 0 : value.Representation,
+                                Item_Color = emptyStr(value.Item_Color) ? "" : value.Item_Color.trim(),
+                                Item_Shape = emptyStr(value.Item_Shape) ? "" : value.Item_Shape.trim(),
+                                Item_Image = emptyStr(value.Item_Image) ? "" : value.Item_Image.trim();
+
+                            $('#Item_Number').val(Item_Number);
+                            $('#NAME').val(Item_Name);
+                            $('#CATEGORY').val();
+                            var newOption = $("<option selected='selected'></option>").val(Category_ID).text(Category_Name);
+                            $('#CATEGORY').append(newOption).trigger('change');
+                            $('#DESCRIPTION').val(Item_Description);
+                            $('#FOR_SALE').prop('checked', Item_Sales);
+                            $('.rbSoldBy[value=' + Item_SoldBy + ']').prop('checked', true);
+                            $('#PRICE').val(formatCurrency(Item_Price));
+                            $('#COST').val(formatCurrency(Item_Cost));
+                            $('#SKU').val(Item_SKU);
+                            $('#BARCODE').val(Item_Barcode);
+                            $('#COMPOSITE_ITEM').prop('checked', Composite_Item);
+                            $('#TRACK_STOCK').prop('checked', Track_Stock);
+                            $('#IN_STOCK').val(InStock);
+                            $('#LOW_STOCK').val(LowStock);
+                            $('#PPN_10').prop('checked', Tax_10);
+                            $('.rbRepresen[value=' + Representation + ']').prop('checked', true);
+                            if (!emptyStr(Item_Shape)) {
+                                $('#' + Item_Color).trigger('click');
+                            }
+                            if (!emptyStr(Item_Shape)) {
+                                $('#' + Item_Shape).trigger('click');
+                            }
+                            $.each($('.form-input'), function () {
+                                $(this).removeClass('filled').parent('.form-group').removeClass('focused');
+                                if (!emptyStr($(this).val())) {
+                                    $(this).parent('.form-group').addClass('focused');
+                                }
+                            });
+                            $('#Item_Number').trigger('focus').trigger('blur');
+                        });
+                    } else {
+                        swal("Error", "Error : " + result.message, "error");
+                    }
+                },
+                beforeSend: function () {
+                    $("#loading").show();
+                },
+                complete: function () {
+                    $("#loading").hide();
+                },
+                error: function (xhr) {
+                    if (xhr.status != "200") {
+                        var doc = $.parseHTML(xhr.responseText);
+                        if (!emptyStr(doc)) {
+                            var titleNode = doc.filter(function (node) {
+                                return node.localName === "title";
+                            });
+                            var msg = titleNode[0].textContent;
+                            swal("Error", "Error : " + msg, "error");
+                        }
+                        else {
+                            if (xhr.statusText.toUpperCase().trim() != "OK") {
+                                swal({ type: "error", title: "Error", text: xhr.statusText });
+                            }
+                        }
+                    }
+                }
+            }).done(function () {
+                GetDataItemVariant();
+            });
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    }
+
+    function GetDataItemComposite() {
+        try {
+            var Item_Number = emptyStr($('#Item_Number').val()) ? "" : $('#Item_Number').val();
+
+            $.ajax({
+                url: rootUrl + 'Items/ItemList/GetDataItemComposite',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    'Item_Number': Item_Number
+                },
+                success: function (result) {
+                    if (result.success) {
+                        $.each(result.data, function (index, value) {
+                            var Item_Number = emptyStr(value.Item_Number) ? "" : value.Item_Number.trim(),
+                                Item_Cost = emptyStr(value.Item_Cost) ? 0 : value.Item_Cost,
+                                Item_Composite = emptyStr(value.Item_Composite) ? "" : value.Item_Composite.trim(),
+                                Item_Quantity = emptyStr(value.Item_Quantity) ? 0 : value.Item_Quantity;
+
+                            $.each($('#table_items tbody tr'), function () {
+                                var Item_CompositeTBL = emptyStr($(this).find('td:eq(0) input').val()) ? "" : $(this).find('td:eq(0) input').val();
+                                if (Item_Composite == Item_CompositeTBL) {
+                                    $(this).find('td:eq(1) input').val(Item_Quantity);
+                                }
+                            });
+                        });
+                    } else {
+                        swal("Error", "Error : " + result.message, "error");
+                    }
+                },
+                beforeSend: function () {
+                    $("#loading").show();
+                },
+                complete: function () {
+                    $("#loading").hide();
+                },
+                error: function (xhr) {
+                    if (xhr.status != "200") {
+                        var doc = $.parseHTML(xhr.responseText);
+                        if (!emptyStr(doc)) {
+                            var titleNode = doc.filter(function (node) {
+                                return node.localName === "title";
+                            });
+                            var msg = titleNode[0].textContent;
+                            swal("Error", "Error : " + msg, "error");
+                        }
+                        else {
+                            if (xhr.statusText.toUpperCase().trim() != "OK") {
+                                swal({ type: "error", title: "Error", text: xhr.statusText });
+                            }
+                        }
+                    }
+                }
+            });
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    }
+
+    function GetDataItemVariant() {
+        try {
+            var Item_Number = emptyStr($('#Item_Number').val()) ? "" : $('#Item_Number').val();
+
+            $.ajax({
+                url: rootUrl + 'Items/ItemList/GetDataItemVariant',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    'Item_Number': Item_Number
+                },
+                success: function (result) {
+                    if (result.success) {
+                        var arrVariant2 = [];
+                        $.each(result.data, function (index, value) {
+                            var Item_Number = emptyStr(value.Item_Number) ? "" : value.Item_Number.trim(),
+                                Option_ID = emptyStr(value.Option_ID) ? "" : value.Option_ID.trim(),
+                                Option_Name = emptyStr(value.Option_Name) ? "" : value.Option_Name.trim(),
+                                Variant_Name = emptyStr(value.Variant_Name) ? "" : value.Variant_Name.trim();
+                            var splitVal = Option_ID.trim().split(' / ');
+                            var splitVal2 = Variant_Name.trim().split(' / ');
+                            for (let i = 0; i < splitVal.length; i++) {
+                                var Options = emptyStr(splitVal[i].trim()) ? "" : splitVal[i].trim();
+                                var Variants = emptyStr(splitVal2[i].trim()) ? "" : splitVal2[i].trim();
+                                arrVariant2.push({
+                                    Idx: i,
+                                    OPTION_NAME: Options,
+                                    OPTION_NAME_TXT: Options,
+                                    OPTION_VARIANT: Variants
+                                });
+                            }
+                        });
+                        if (arrVariant2.length > 0) {
+                            $.each(arrVariant2, function (i, x) {
+                                var Idx = emptyStr(x.Idx) ? 0 : x.Idx;
+                                var OPTION_NAME = emptyStr(x.OPTION_NAME) ? "" : x.OPTION_NAME.trim();
+                                var OPTION_NAME_TXT = emptyStr(x.OPTION_NAME_TXT) ? "" : x.OPTION_NAME_TXT.trim();
+                                var OPTION_VARIANT = emptyStr(x.OPTION_VARIANT) ? "" : x.OPTION_VARIANT.trim();
+
+                                var exists = false;
+                                if (arrVariant.length > 0) {
+                                    $.map(arrVariant, function (y) {
+                                        var Idx2 = emptyStr(y.Idx) ? 0 : y.Idx;
+                                        var OPTION_NAME2 = emptyStr(y.OPTION_NAME) ? "" : y.OPTION_NAME.trim();
+                                        var OPTION_NAME_TXT2 = emptyStr(y.OPTION_NAME_TXT) ? "" : y.OPTION_NAME_TXT.trim();
+                                        var OPTION_VARIANT2 = emptyStr(y.OPTION_VARIANT) ? "" : y.OPTION_VARIANT.trim();
+                                        var splitVal3 = emptyStr(OPTION_VARIANT2.split(' / ')) ? OPTION_VARIANT2 : OPTION_VARIANT2.trim().split(' / ');
+                                        var varEx = false;
+                                        for (let i = 0; i < splitVal3.length; i++) {
+                                            if (Idx == Idx2 && OPTION_VARIANT == splitVal3[i]) {
+                                                varEx = true;
+                                            }
+                                        }
+                                        if (!varEx && Idx == Idx2) {
+                                            if (!emptyStr(y.OPTION_VARIANT)) {
+                                                y.OPTION_VARIANT = y.OPTION_VARIANT + " / " + OPTION_VARIANT
+                                            } else {
+                                                y.OPTION_VARIANT = OPTION_VARIANT;
+                                            }
+                                        }
+                                        if (Idx == Idx2) {
+                                            exists = true;
+                                        }
+                                    });
+                                }
+                                if (!exists) {
+                                    arrVariant.push({
+                                        Idx: Idx,
+                                        OPTION_NAME: OPTION_NAME,
+                                        OPTION_NAME_TXT: OPTION_NAME_TXT,
+                                        OPTION_VARIANT: OPTION_VARIANT
+                                    });
+                                }
+                            });
+                        }
+                        for (let i = 0; i < arrVariant.length; i++) {
+                            delete arrVariant[i]["Idx"];
+                        }
+                        //console.log(arrVariant);
+                        AddRowListVariants();
+                        $('.addVariant').hide();
+                        $('.editVariant').show();
+                        $.each(result.data, function (index, value) {
+                            var Item_Number = emptyStr(value.Item_Number) ? "" : value.Item_Number.trim(),
+                                LineItem_Option = emptyStr(value.LineItem_Option) ? 0 : value.LineItem_Option,
+                                CB_Available = emptyStr(value.CB_Available) ? 0 : value.CB_Available,
+                                Option_ID = emptyStr(value.Option_ID) ? "" : value.Option_ID.trim(),
+                                Option_Name = emptyStr(value.Option_Name) ? "" : value.Option_Name.trim(),
+                                LineItem_Variant = emptyStr(value.LineItem_Variant) ? 0 : value.LineItem_Variant,
+                                Variant_Name = emptyStr(value.Variant_Name) ? "" : value.Variant_Name.trim(),
+                                Item_Price = emptyStr(value.Item_Price) ? 0 : value.Item_Price,
+                                Item_Cost = emptyStr(value.Item_Cost) ? 0 : value.Item_Cost,
+                                InStock = emptyStr(value.InStock) ? 0 : value.InStock,
+                                LowStock = emptyStr(value.LowStock) ? 0 : value.LowStock,
+                                OptimalStock = emptyStr(value.OptimalStock) ? 0 : value.OptimalStock,
+                                Item_SKU = emptyStr(value.Item_SKU) ? "" : value.Item_SKU.trim(),
+                                Item_Barcode = emptyStr(value.Item_Barcode) ? "" : value.Item_Barcode.trim();
+                            $.each($('#table_listvariant tbody tr'), function () {
+                                var optVar = $(this).find('td:eq(1)').text().trim();
+                                var currow = $(this);
+                                if (optVar == Variant_Name) {
+                                    currow.find('td:eq(0) input').prop('checked', CB_Available);
+                                    currow.find('.TDprice').val(formatCurrency(Item_Price));
+                                    currow.find('.TDcost').val(formatCurrency(Item_Cost));
+                                    currow.find('.TDinstock').val(InStock);
+                                    currow.find('.TDlowstock').val(LowStock);
+                                    currow.find('.TDoptstock').val(OptimalStock);
+                                    currow.find('.TDsku').val(Item_SKU);
+                                    currow.find('.TDbarcode').val(Item_Barcode);
+                                }
+                            });
+                        });
+                    } else {
+                        swal("Error", "Error : " + result.message, "error");
+                    }
+                },
+                beforeSend: function () {
+                    $("#loading").show();
+                },
+                complete: function () {
+                    $("#loading").hide();
+                },
+                error: function (xhr) {
+                    if (xhr.status != "200") {
+                        var doc = $.parseHTML(xhr.responseText);
+                        if (!emptyStr(doc)) {
+                            var titleNode = doc.filter(function (node) {
+                                return node.localName === "title";
+                            });
+                            var msg = titleNode[0].textContent;
+                            swal("Error", "Error : " + msg, "error");
+                        }
+                        else {
+                            if (xhr.statusText.toUpperCase().trim() != "OK") {
+                                swal({ type: "error", title: "Error", text: xhr.statusText });
+                            }
+                        }
+                    }
+                }
+            });
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    }
+
+    function generateCombinations(arrays, currentIndex, currentCombination, result) {
+        if (currentIndex === arrays.length) {
+            result.push([...currentCombination]);
+            return;
+        }
+
+        var splitVal = [];
+        splitVal = arrays[currentIndex].trim().split(' / ');
+        for (let i = 0; i < splitVal.length; i++) {
+            if (!emptyStr(splitVal[i]) && splitVal[i] != "/") {
+                var variant = splitVal[i];
+                currentCombination.push({ OPTION_VARIANT: variant });
+                generateCombinations(arrays, currentIndex + 1, currentCombination, result);
+                currentCombination.pop();
+            }
         }
     }
 
@@ -783,10 +1216,18 @@
         width: "100%"
     });
 
+    $("#FILTER_SEARCH").on("click", function () {
+        try {
+            GetDataItems();
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    });
+
     $('input').focus(function () {
         try {
             $(this).prop("autocomplete", "off");
-            $(this).parents('.form-group').addClass('focused');
+            $(this).parent('.form-group').addClass('focused');
         } catch (err) {
             swal({ type: "error", title: "Error", text: err.message });
         }
@@ -797,7 +1238,7 @@
             var inputValue = $(this).val();
             if (emptyStr(inputValue)) {
                 $(this).removeClass('filled');
-                $(this).parents('.form-group').removeClass('focused');
+                $(this).parent('.form-group').removeClass('focused');
             } else {
                 $(this).addClass('filled');
             }
@@ -1002,9 +1443,14 @@
 
     $('#addVariant').on('click', function () {
         try {
-            $('#modal_variant').modal('show');
-            $('#tableVariant tbody').empty();
-            AddRow();
+            var SKU = emptyStr($('#SKU').val()) ? "" : $('#SKU').val();
+            if (emptyStr(SKU)) {
+                swal({ type: "info", title: "Information", text: "Please fill SKU first" });
+            } else {
+                $('#modal_variant').modal('show');
+                $('#tableVariant tbody').empty();
+                AddRow();
+            }
         } catch (err) {
             swal({ type: "error", title: "Error", text: err.message });
         }
@@ -1012,46 +1458,53 @@
 
     $('#editVariant').on('click', function () {
         try {
-            $('#tableVariant tbody').empty();
-            var arrVar = [];
-            $.each(arrVariant, function (index, value) {
-                var OPTION_NAME = emptyStr(value.OPTION_NAME) ? "" : value.OPTION_NAME.trim(),
-                    OPTION_NAME_TXT = emptyStr(value.OPTION_NAME_TXT) ? "" : value.OPTION_NAME_TXT.trim(),
-                    OPTION_VARIANT = emptyStr(value.OPTION_VARIANT) ? "" : value.OPTION_VARIANT;
-                if (index == (parseInt(arrVariant.length) - 1)) {
-                    AddRow();
-                    var newOption = $("<option selected='selected'></option>").val(OPTION_NAME).text(OPTION_NAME_TXT);
-                    $('#tableVariant tbody tr:last').find('td:eq(0) select').append(newOption);
-                    //$('#tableVariant tbody tr:last').find('td:eq(1) select').val(OPTION_VARIANT).trigger('change');
-                    var splitVal;
-                    if (!emptyStr(OPTION_VARIANT)) {
-                        splitVal = OPTION_VARIANT.trim().split(' / ');
-                        //alert(splitVal.length);
+            var SKU = emptyStr($('#SKU').val()) ? "" : $('#SKU').val();
+            if (emptyStr(SKU)) {
+                swal({ type: "info", title: "Information", text: "Please fill SKU first" });
+            } else {
+                $('#tableVariant tbody').empty();
+                var arrVar = [];
+                $.each(arrVariant, function (index, value) {
+                    var OPTION_NAME = emptyStr(value.OPTION_NAME) ? "" : value.OPTION_NAME.trim(),
+                        OPTION_NAME_TXT = emptyStr(value.OPTION_NAME_TXT) ? "" : value.OPTION_NAME_TXT.trim(),
+                        OPTION_VARIANT = emptyStr(value.OPTION_VARIANT) ? "" : value.OPTION_VARIANT;
+                    if (index == (parseInt(arrVariant.length) - 1)) {
+                        AddRow();
+                        var newOption = $("<option selected='selected'></option>").val(OPTION_NAME).text(OPTION_NAME_TXT);
+                        $('#tableVariant tbody tr:last').find('td:eq(0) select').append(newOption);
+                        //$('#tableVariant tbody tr:last').find('td:eq(1) select').val(OPTION_VARIANT).trigger('change');
+                        var splitVal;
+                        if (!emptyStr(OPTION_VARIANT)) {
+                            splitVal = OPTION_VARIANT.trim().split(' / ');
+                            //alert(splitVal.length);
+                        }
+                        for (let i = 0; i < splitVal.length; i++) {
+                            OPTION_VARIANT = splitVal[i].trim();
+                            var newOption = $("<option selected='selected'></option>").val(OPTION_VARIANT).text(OPTION_VARIANT);
+                            $('#tableVariant tbody tr:last').find('td:eq(1) select').append(newOption);
+                            //arrVar.push( OPTION_VARIANT );
+                        }
+                        $('#tableVariant tbody tr:last').find('td:eq(1) select').trigger('change');
+                    } else {
+                        OPTION_VARIANT = OPTION_VARIANT.replaceAll(" / ", ", ");
+                        AddRowValue(OPTION_NAME, OPTION_NAME_TXT, OPTION_VARIANT);
                     }
-                    for (let i = 0; i < splitVal.length; i++) {
-                        OPTION_VARIANT = splitVal[i].trim();
-                        arrVar.push( OPTION_VARIANT );
-                    }
-                    $('#tableVariant tbody tr:last').find('td:eq(1) select').val(arrVar).trigger('change');
-                } else {
-                    OPTION_VARIANT = OPTION_VARIANT.replaceAll(" / ", ", ");
-                    AddRowValue(OPTION_NAME, OPTION_NAME_TXT, OPTION_VARIANT);
-                }
-            });
-            if (optOption2.length > 0) {
-                $.map(optOption2,
-                    function (x) {
-                        optOption = $.grep(optOption, function (e) {
-                            var id = emptyStr(e.id) ? "" : e.id.trim();
-                            if (id != x.id) {
-                                return true;
-                            } else {
-                                return false;
-                            }
+                });
+                if (optOption2.length > 0) {
+                    $.map(optOption2,
+                        function (x) {
+                            optOption = $.grep(optOption, function (e) {
+                                var id = emptyStr(e.id) ? "" : e.id.trim();
+                                if (id != x.id) {
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            });
                         });
-                    });
+                }
+                $('#modal_variant').modal('show');
             }
-            $('#modal_variant').modal('show');
         } catch (err) {
             swal({ type: "error", title: "Error", text: err.message });
         }
@@ -1079,6 +1532,8 @@
                     OPTION_VARIANT: emptyStr(OPTION_VARIANT) ? OPTION_VARIANT_TXT : OPTION_VARIANT,
                 });
             });
+            //console.log(arrays);
+            //console.log(result);
             AddRowListVariants();
             $('.addVariant').hide();
             $('.editVariant').show();
@@ -1091,6 +1546,20 @@
         try {
             var checked = $(this).is(':checked');
             $('#table_listvariant tbody').find('.CBavail').prop('checked', checked);
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    });
+
+    $('#table_items tbody').on('dblclick', 'tr', function () {
+        try {
+            var currow = $(this).closest('tr');
+            var Item_Number = currow.find('td:eq(0) input').val();
+            $('.itemList').hide();
+            $('.itemAdd').show();
+            ClearValues();
+            $('#Item_Number').val(Item_Number);
+            GetDetailItems();
         } catch (err) {
             swal({ type: "error", title: "Error", text: err.message });
         }

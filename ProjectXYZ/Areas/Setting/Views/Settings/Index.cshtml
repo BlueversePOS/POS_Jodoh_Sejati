@@ -1,4 +1,4 @@
-﻿
+﻿@model ProjectXYZ.Models.UserAccount
 @{
     ViewBag.Title = "Settings";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -41,7 +41,7 @@
             padding-top: 16px;
         }
 
-        .divChoosen.active > div{
+        .divChoosen.active > div {
             background: lightgray;
         }
 
@@ -124,58 +124,64 @@
                             <h5>Features</h5>
                         </div>
                         <div class="card-body">
-                            <div class="col-12 row p-0 m-0">
-                                <div class="col-1 pt-3">
-                                    <i class="far fa-clock text-gray"></i>
+                            @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "FormFeatures" }))//data-resetUrl
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                <input type="hidden" id="Feature_ID" />
+                                <div class="col-12 row p-0 m-0">
+                                    <div class="col-1 pt-3">
+                                        <i class="far fa-clock text-gray"></i>
+                                    </div>
+                                    <div class="col-10 pl-2">
+                                        <label class="col-form-label font-weight-normal pb-0">Shifts</label>
+                                        <br />
+                                        <span style="font-size: 9pt; color: darkgrey;">Track cash that goes in and out of your drawer.</span>
+                                    </div>
+                                    <div class="col-1 pt-3">
+                                        <input type="checkbox" id="Shifts" />
+                                    </div>
                                 </div>
-                                <div class="col-10 pl-2">
-                                    <label class="col-form-label font-weight-normal pb-0">Shifts</label>
-                                    <br />
-                                    <span style="font-size: 9pt; color: darkgrey;">Track cash that goes in and out of your drawer.</span>
+                                <div class="col-12 row p-0 m-0">
+                                    <div class="col-1 pt-3">
+                                        <i class="fa fa-stopwatch text-gray"></i>
+                                    </div>
+                                    <div class="col-10 pl-2">
+                                        <label class="col-form-label font-weight-normal pb-0">Time clock</label>
+                                        <br />
+                                        <span style="font-size: 9pt; color: darkgrey;">Track employees clock in/out time and calculate their total work hours.</span>
+                                    </div>
+                                    <div class="col-1 pt-3">
+                                        <input type="checkbox" id="TimeClock" />
+                                    </div>
                                 </div>
-                                <div class="col-1 pt-3">
-                                    <input type="checkbox" id="Shifts" />
+                                <div class="col-12 row p-0 m-0">
+                                    <div class="col-1 pt-3">
+                                        <i class="fa fa-envelope text-gray"></i>
+                                    </div>
+                                    <div class="col-10 pl-2">
+                                        <label class="col-form-label font-weight-normal pb-0">Low stock notifications</label>
+                                        <br />
+                                        <span style="font-size: 9pt; color: darkgrey;">Get daily email on items that are low or out of stock.</span>
+                                    </div>
+                                    <div class="col-1 pt-3">
+                                        <input type="checkbox" id="LowStock" />
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-12 row p-0 m-0">
-                                <div class="col-1 pt-3">
-                                    <i class="fa fa-stopwatch text-gray"></i>
+                                <div class="col-12 row p-0 m-0">
+                                    <div class="col-1 pt-3">
+                                        <i class="fa fa-clock text-gray"></i>
+                                    </div>
+                                    <div class="col-10 pl-2">
+                                        <label class="col-form-label font-weight-normal pb-0">Negative stock alerts</label>
+                                        <br />
+                                        <span style="font-size: 9pt; color: darkgrey;">Warn cashiers attempting to sell more inventory than available in stock.</span>
+                                    </div>
+                                    <div class="col-1 pt-3">
+                                        <input type="checkbox" id="NegativeStock" />
+                                    </div>
                                 </div>
-                                <div class="col-10 pl-2">
-                                    <label class="col-form-label font-weight-normal pb-0">Time clock</label>
-                                    <br />
-                                    <span style="font-size: 9pt; color: darkgrey;">Track employees clock in/out time and calculate their total work hours.</span>
-                                </div>
-                                <div class="col-1 pt-3">
-                                    <input type="checkbox" id="TimeClock" />
-                                </div>
-                            </div>
-                            <div class="col-12 row p-0 m-0">
-                                <div class="col-1 pt-3">
-                                    <i class="fa fa-envelope text-gray"></i>
-                                </div>
-                                <div class="col-10 pl-2">
-                                    <label class="col-form-label font-weight-normal pb-0">Low stock notifications</label>
-                                    <br />
-                                    <span style="font-size: 9pt; color: darkgrey;">Get daily email on items that are low or out of stock.</span>
-                                </div>
-                                <div class="col-1 pt-3">
-                                    <input type="checkbox" id="LowStock" />
-                                </div>
-                            </div>
-                            <div class="col-12 row p-0 m-0">
-                                <div class="col-1 pt-3">
-                                    <i class="fa fa-clock text-gray"></i>
-                                </div>
-                                <div class="col-10 pl-2">
-                                    <label class="col-form-label font-weight-normal pb-0">Negative stock alerts</label>
-                                    <br />
-                                    <span style="font-size: 9pt; color: darkgrey;">Warn cashiers attempting to sell more inventory than available in stock.</span>
-                                </div>
-                                <div class="col-1 pt-3">
-                                    <input type="checkbox" id="NegativeStock" />
-                                </div>
-                            </div>
+                            }
                         </div>
                     </div>
                     <div class="col-12 p-0" style="border-top: 1px solid lightgray;">
@@ -203,48 +209,51 @@
                                                         <th class="text-left w-100" style="vertical-align: middle;">Name</th>
                                                     </tr>
                                                 </thead>
+                                                <tbody></tbody>
                                             </table>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-12 paymentAdd">
-                                    <div class="col-12 text-center">
-                                        <img src="~/Content/icons/wallet.png" alt="wallet" width="80" height="80" />
-                                    </div>
-                                    <div class="form-group col-12 p-0">
-                                        <label class="form-label" for="PAYMENT_TYPE">Payment type</label>
-                                        <select class="form-input" id="PAYMENT_TYPE">
-                                            <option id="1">Card</option>
-                                            <option id="2">Cash</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-12 p-0">
-                                        <label class="form-label" for="PAYMENT_NAME">Name</label>
-                                        <input type="text" class="form-input" id="PAYMENT_NAME" />
-                                    </div>
-                                    <div class="col-12 row m-0 p-0">
-                                        <div class="col-10 p-0">
-                                            <label class="col-form-label font-weight-normal">Stores</label>
+                                    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "FormPayType" }))//data-resetUrl
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                        <div class="col-12 text-center">
+                                            <img src="~/Content/icons/wallet.png" alt="wallet" width="80" height="80" />
                                         </div>
-                                        <div class="col-2 p-0" style="align-self: center;">
-                                            <i class="fas fa-chevron-down" type="button" id="store-collapse" style="float:right"></i>
+                                        <input type="hidden" id="Payment_ID" />
+                                        <div class="form-group mt-0 col-12 p-0 focused">
+                                            <label class="form-label" for="Payment_Type">Payment type</label>
+                                            <select class="form-input" id="Payment_Type">
+                                                <option id="1">Card</option>
+                                                <option id="2">Cash</option>
+                                            </select>
                                         </div>
-                                        <div class="col-12 row m-0 store-collapse p-0" style="padding: 1rem 0 0.5rem 0; border-bottom: 1px solid lightgrey;">
-                                            <ul id="treeview" class="col-12 p-0">
-                                                <li>
-                                                    <input type="checkbox" id="AllStores" class="tree-node" />
-                                                    <label class="font-weight-normal pl-3" for="AllStores">Available in all stores</label>
-                                                    <ul>
-                                                        <li>
-                                                            <input type="checkbox" id="PokeToys" class="tree-node" />
-                                                            <label class="font-weight-normal pl-3" for="PokeToys">PokeToys</label>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                            </ul>
+                                        <div class="form-group mt-0 col-12 p-0">
+                                            <label class="form-label" for="Payment_Name">Name</label>
+                                            <input type="text" class="form-input" id="Payment_Name" />
                                         </div>
-                                        <span type="button" class="col-12 text-right" id="showLessMore" style="padding: 0.5rem 0 0.5rem 0;">Show Less</span>
-                                    </div>
+                                        <div class="col-12 row m-0 p-0">
+                                            <div class="col-10 p-0">
+                                                <label class="col-form-label font-weight-normal">Stores</label>
+                                            </div>
+                                            <div class="col-2 p-0" style="align-self: center;">
+                                                <i class="fas fa-chevron-down" type="button" id="store-collapse" style="float:right"></i>
+                                            </div>
+                                            <div class="col-12 row m-0 store-collapse p-0" style="padding: 1rem 0 0.5rem 0; border-bottom: 1px solid lightgrey;">
+                                                <ul id="treeview" class="col-12 p-0">
+                                                    <li>
+                                                        <input type="checkbox" id="AllStores" />
+                                                        <label class="font-weight-normal pl-3" for="AllStores">Available in all stores</label>
+                                                        <ul>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <span type="button" class="col-12 text-right" id="showLessMore" style="padding: 0.5rem 0 0.5rem 0;">Show Less</span>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -275,22 +284,33 @@
                                                         <th class="text-left" style="vertical-align: middle;">Status</th>
                                                     </tr>
                                                 </thead>
+                                                <tbody></tbody>
                                             </table>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-12 POSAdd">
-                                    <div class="col-12" style="text-align: -webkit-center;">
-                                        <div>
-                                            <div class="shapes2 bg-purple" style="border-radius: 50%; padding-top: 24px;">
-                                                <i class="fas fa-tablet-alt fa-2x"></i>
+                                    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "FormDevice" }))//data-resetUrl
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                        <input type="hidden" id="POS_Device_ID" />
+                                        <div class="col-12" style="text-align: -webkit-center;">
+                                            <div>
+                                                <div class="shapes2 bg-purple" style="border-radius: 50%; padding-top: 24px;">
+                                                    <i class="fas fa-tablet-alt fa-2x"></i>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group col-12 p-0">
-                                        <label class="form-label" for="DEVICE_NAME">Name</label>
-                                        <input type="text" class="form-input" id="DEVICE_NAME" />
-                                    </div>
+                                        <div class="form-group mt-0 col-12 p-0">
+                                            <label class="form-label" for="POS_Device_Name">Name</label>
+                                            <input type="text" class="form-input" id="POS_Device_Name" />
+                                        </div>
+                                        <div class="form-group mt-0 col-12 p-0">
+                                            <label class="form-label" for="DEVICE_STOREID">Store ID</label>
+                                            <select class="form-input" id="DEVICE_STOREID"></select>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -332,29 +352,43 @@
                                                         <th class="text-left" style="vertical-align: middle; width: 15%;">Tax rate</th>
                                                     </tr>
                                                 </thead>
+                                                <tbody></tbody>
                                             </table>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-12 taxesAdd">
-                                    <div class="row m-0" style="margin: 1rem 0 1rem 0;">
-                                        <div class="form-group m-0 col-lg-8 col-md-7 col-12 pl-0 pr-lg-1 pr-md-1 pr-0">
-                                            <label class="form-label" for="TAXES_NAME">Name</label>
-                                            <input type="text" class="form-input" id="TAXES_NAME" />
+                                    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "FormTaxes" }))//data-resetUrl
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                        <input type="hidden" id="Tax_ID" />
+                                        <div class="row m-0" style="margin: 1rem 0 1rem 0;">
+                                            <div class="form-group mt-0 col-lg-8 col-md-7 col-12 pl-0 pr-lg-1 pr-md-1 pr-0">
+                                                <label class="form-label" for="Tax_Name">Name</label>
+                                                <input type="text" class="form-input" id="Tax_Name" />
+                                            </div>
+                                            <div class="form-group mt-0 col-lg-4 col-md-5 col-12 pr-0 pl-lg-1 pl-md-1 pl-0">
+                                                <label class="form-label" for="Tax_Rate">Tax rate %</label>
+                                                <input type="text" class="form-input" id="Tax_Rate" />
+                                            </div>
                                         </div>
-                                        <div class="form-group m-0 col-lg-4 col-md-5 col-12 pr-0 pl-lg-1 pl-md-1 pl-0">
-                                            <label class="form-label" for="TAXES_RATE">Tax rate %</label>
-                                            <input type="text" class="form-input" id="TAXES_RATE" />
+                                        <div class="form-group mt-0 col-12 p-0">
+                                            <label class="form-label" for="Tax_Type">Type</label>
+                                            <select class="form-input" id="Tax_Type">
+                                                <option value="1">Included in the price</option>
+                                                <option value="2">Added to the price</option>
+                                            </select>
                                         </div>
-                                    </div>
-                                    <div class="form-group col-12 p-0" style="margin: 1rem 0 1rem 0;">
-                                        <label class="form-label" for="TAXES_TYPE">Type</label>
-                                        <select class="form-input" id="TAXES_TYPE"></select>
-                                    </div>
-                                    <div class="form-group col-12 p-0" style="margin: 1rem 0 1rem 0;">
-                                        <label class="form-label" for="TAXES_OPTION">Option</label>
-                                        <select class="form-input" id="TAXES_OPTION"></select>
-                                    </div>
+                                        <div class="form-group mt-0 col-12 p-0">
+                                            <label class="form-label" for="Tax_Option">Option</label>
+                                            <select class="form-input" id="Tax_Option">
+                                                <option value="1">Apply the tax to the new items</option>
+                                                <option value="2">Apply the tax to existing items</option>
+                                                <option value="3">Apply the tax to all new and existing items</option>
+                                            </select>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -383,26 +417,32 @@
                                                         <th class="text-left" style="vertical-align: middle;">Name</th>
                                                     </tr>
                                                 </thead>
+                                                <tbody></tbody>
                                             </table>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-12 salesAdd">
-                                    <div class="col-12 text-center">
-                                        <img src="~/Content/icons/shopping-bag-sales.png" alt="shopping-bag" width="80" height="80" />
-                                    </div>
-                                    <div class="form-group col-12 p-0">
-                                        <label class="form-label" for="SALESTYPE_ID">Sales Type ID</label>
-                                        <input type="text" class="form-input" id="SALESTYPE_ID" />
-                                    </div>
-                                    <div class="form-group col-12 p-0">
-                                        <label class="form-label" for="SALESTYPE_NAME">Name</label>
-                                        <input type="text" class="form-input" id="SALESTYPE_NAME" />
-                                    </div>
-                                    <div class="form-group col-12 p-0">
-                                        <label class="form-label" for="SALESTYPE_STOREID">Store ID</label>
-                                        <select class="form-input" id="SALESTYPE_STOREID"></select>
-                                    </div>
+                                    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "FormStype" }))//data-resetUrl
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                        <div class="col-12 text-center">
+                                            <img src="~/Content/icons/shopping-bag-sales.png" alt="shopping-bag" width="80" height="80" />
+                                        </div>
+                                        <div class="form-group mt-0 col-12 p-0">
+                                            <label class="form-label" for="SALESTYPE_ID">Sales Type ID</label>
+                                            <input type="text" class="form-input" id="SALESTYPE_ID" disabled />
+                                        </div>
+                                        <div class="form-group mt-0 col-12 p-0">
+                                            <label class="form-label" for="SALESTYPE_NAME">Name</label>
+                                            <input type="text" class="form-input" id="SALESTYPE_NAME" />
+                                        </div>
+                                        <div class="form-group mt-0 col-12 p-0">
+                                            <label class="form-label" for="SALESTYPE_STOREID">Store ID</label>
+                                            <select class="form-input" id="SALESTYPE_STOREID"></select>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -433,71 +473,85 @@
                                                         <th class="text-left" style="vertical-align: middle;">Number of POS</th>
                                                     </tr>
                                                 </thead>
+                                                <tbody></tbody>
                                             </table>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-12 storesAdd">
-                                    <div class="col-12 text-center">
-                                        <i class="fas fa-store-alt fa-3x text-blue text-left col-2 p-0"></i>
-                                    </div>
-                                    <div class="form-group" style="margin: 1rem 0 1rem 0;">
-                                        <label class="form-label" for="STORE_NAME">Name</label>
-                                        <input type="text" class="form-input" id="STORE_NAME" />
-                                    </div>
-                                    <div class="row col-12 p-0" style="margin: 1rem 0 1rem 0;">
-                                        <i class="fas fa-map-marker-alt text-gray text-left col-lg-1 col-md-2 col-2 p-0" style="align-self: center;"></i>
-                                        <div class="form-group m-0 col-lg-11 col-md-10 col-10 p-0">
-                                            <label class="form-label" for="STORE_ADDRESS">Address</label>
-                                            <input type="text" class="form-input" id="STORE_ADDRESS" />
+                                    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "FormStore" }))//data-resetUrl
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                        <div class="col-12 text-center">
+                                            <i class="fas fa-store-alt fa-3x text-blue text-left col-2 p-0"></i>
                                         </div>
-                                    </div>
-                                    <div class="col-12 p-0 row" style="margin: 1rem 0 0.5rem 0;">
-                                        <i class="text-gray col-lg-1 p-0"></i>
-                                        <div class="col-lg-5 col-md-12 col-12 p-0">
-                                            <div class="form-group m-0 mb-1 col-12 p-0">
-                                                <label class="form-label" for="STORE_CITY">City</label>
-                                                <input type="text" class="form-input" id="STORE_CITY" />
+                                        <input type="hidden" id="Store_ID" />
+                                        <div class="form-group mt-0">
+                                            <label class="form-label" for="STORE_NAME">Name</label>
+                                            <input type="text" class="form-input" id="STORE_NAME" />
+                                        </div>
+                                        <div class="row col-12 p-0">
+                                            <i class="fas fa-map-marker-alt text-gray text-left col-lg-1 col-md-2 col-2 p-0" style="align-self: center;"></i>
+                                            <div class="form-group mt-0 col-lg-11 col-md-10 col-10 p-0">
+                                                <label class="form-label" for="STORE_ADDRESS">Address</label>
+                                                <input type="text" class="form-input" id="STORE_ADDRESS" />
                                             </div>
                                         </div>
-                                        <span class="col-lg-1"></span>
-                                        <div class="col-lg-5 col-md-12 col-12 p-0">
-                                            <div class="form-group m-0 col-12 p-0">
-                                                <label class="form-label" for="STORE_PROVINCE">Province</label>
-                                                <input type="text" class="form-input" id="STORE_PROVINCE" />
+                                        <div class="col-12 p-0 row">
+                                            <i class="text-gray col-lg-1 p-0"></i>
+                                            <div class="col-lg-5 col-md-12 col-12 p-0">
+                                                <div class="form-group mt-0 col-12 p-0">
+                                                    <label class="form-label" for="STORE_CITY">City</label>
+                                                    <input type="text" class="form-input" id="STORE_CITY" />
+                                                </div>
+                                            </div>
+                                            <span class="col-lg-1"></span>
+                                            <div class="col-lg-5 col-md-12 col-12 p-0">
+                                                <div class="form-group mt-0 col-12 p-0">
+                                                    <label class="form-label" for="STORE_PROVINCE">Province</label>
+                                                    <input type="text" class="form-input" id="STORE_PROVINCE" />
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-12 p-0 row" style="margin: 0.5rem 0 1rem 0;">
-                                        <i class="text-gray col-lg-1 p-0"></i>
-                                        <div class="col-lg-5 col-md-12 col-12 p-0">
-                                            <div class="form-group m-0 mb-1 col-12 p-0">
-                                                <label class="form-label" for="STORE_POSTALCODE">Postal Code</label>
-                                                <input type="text" class="form-input" id="STORE_POSTALCODE" />
+                                        <div class="col-12 p-0 row">
+                                            <i class="text-gray col-lg-1 p-0"></i>
+                                            <div class="col-lg-5 col-md-12 col-12 p-0">
+                                                <div class="form-group mt-0 col-12 p-0">
+                                                    <label class="form-label" for="STORE_POSTALCODE">Postal Code</label>
+                                                    <input type="text" class="form-input" id="STORE_POSTALCODE" />
+                                                </div>
+                                            </div>
+                                            <span class="col-lg-1"></span>
+                                            <div class="col-lg-5 col-md-12 col-12 p-0">
+                                                <div class="form-group mt-0 col-12 p-0 focused">
+                                                    <label class="form-label" for="STORE_COUNTRY">Country</label>
+                                                    <div>
+                                                        @Html.DropDownListFor(Model => Model.Country, ViewBag.Countries as IEnumerable<SelectListItem>, "Select Country",
+                                             new
+                                             {
+                                                 @class = "w-100 form-input",
+                                                 @id = "STORE_COUNTRY"
+                                             })
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <span class="col-lg-1"></span>
-                                        <div class="col-lg-5 col-md-12 col-12 p-0">
-                                            <div class="form-group m-0 col-12 p-0">
-                                                <label class="form-label" for="STORE_COUNTRY">Country</label>
-                                                <select class="form-input" id="STORE_COUNTRY"></select>
+                                        <div class="mt-0 col-12 p-0 row">
+                                            <i class="fas fa-phone text-gray text-left col-lg-1 col-md-2 col-2 p-0" style="align-self: center;"></i>
+                                            <div class="form-group mt-0 col-lg-11 col-md-10 col-10 p-0">
+                                                <label class="form-label" for="STORE_PHONE">Phone</label>
+                                                <input type="tel" class="form-input" id="STORE_PHONE" />
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group col-12 p-0 row" style="margin: 1rem 0 1rem 0;">
-                                        <i class="fas fa-phone text-gray text-left col-lg-1 col-md-2 col-2 p-0" style="align-self: center;"></i>
-                                        <div class="form-group m-0 col-lg-11 col-md-10 col-10 p-0">
-                                            <label class="form-label" for="STORE_PHONE">Phone</label>
-                                            <input type="tel" class="form-input" id="STORE_PHONE" />
+                                        <div class="mt-0 col-12 p-0 row">
+                                            <i class="fas fa-file-alt text-gray text-left col-lg-1 col-md-2 col-2 p-0" style="align-self: center;"></i>
+                                            <div class="form-group mt-0 col-lg-11 col-md-10 col-10 p-0">
+                                                <label class="form-label" for="STORE_DESCRIPTION">Description</label>
+                                                <input type="text" class="form-input" id="STORE_DESCRIPTION" />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group col-12 p-0 row" style="margin: 1rem 0 1rem 0;">
-                                        <i class="fas fa-file-alt text-gray text-left col-lg-1 col-md-2 col-2 p-0" style="align-self: center;"></i>
-                                        <div class="form-group m-0 col-lg-11 col-md-10 col-10 p-0">
-                                            <label class="form-label" for="STORE_DESCRIPTION">Description</label>
-                                            <input type="text" class="form-input" id="STORE_DESCRIPTION" />
-                                        </div>
-                                    </div>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -528,26 +582,35 @@
                                                         <th class="text-left" style="vertical-align: middle;">Store</th>
                                                     </tr>
                                                 </thead>
+                                                <tbody></tbody>
                                             </table>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-12 siteAdd">
-                                    <div class="col-12 text-center">
-                                        <img src="~/Content/icons/warehouse.png" alt="wallet" width="80" height="80" />
-                                    </div>
-                                    <div class="form-group" style="margin: 1rem 0 1rem 0;">
-                                        <label class="form-label" for="SITE_ID">Site ID</label>
-                                        <input type="text" class="form-input" id="SITE_ID" />
-                                    </div>
-                                    <div class="form-group" style="margin: 1rem 0 1rem 0;">
-                                        <label class="form-label" for="SITE_NAME">Name</label>
-                                        <input type="text" class="form-input" id="SITE_NAME" />
-                                    </div>
-                                    <div class="form-group" style="margin: 1rem 0 1rem 0;">
-                                        <label class="form-label" for="STORE_ID">Store ID</label>
-                                        <select class="form-input" id="STORE_ID"></select>
-                                    </div>
+                                    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "FormSite" }))//data-resetUrl
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                        <div class="col-12 text-center">
+                                            <img src="~/Content/icons/warehouse.png" alt="wallet" width="80" height="80" />
+                                        </div>
+                                        <div class="col-12 text-right">
+                                            <input type="checkbox" id="DefaultSite" /> Default Site
+                                        </div>
+                                        <div class="form-group mt-0">
+                                            <label class="form-label" for="SITE_ID">Site ID</label>
+                                            <input type="text" class="form-input" id="SITE_ID" disabled />
+                                        </div>
+                                        <div class="form-group mt-0">
+                                            <label class="form-label" for="SITE_NAME">Name</label>
+                                            <input type="text" class="form-input" id="SITE_NAME" />
+                                        </div>
+                                        <div class="form-group mt-0">
+                                            <label class="form-label" for="STORE_ID">Store ID</label>
+                                            <select class="form-input" id="STORE_ID"></select>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </div>

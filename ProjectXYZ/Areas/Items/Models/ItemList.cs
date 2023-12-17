@@ -56,4 +56,12 @@ namespace ProjectXYZ.Areas.Items.Models
         public string Item_SKU { get; set; } = string.Empty;
         public string Item_Barcode { get; set; } = string.Empty;
     }
+
+    public class FilterItem
+    {
+        public string UserID { get; set; }
+        public string Item_Number { get; set; } = string.Empty;
+        public string Category_ID { get; set; } = string.Empty;
+        public int LowStock { get; set; }
+    }
 }

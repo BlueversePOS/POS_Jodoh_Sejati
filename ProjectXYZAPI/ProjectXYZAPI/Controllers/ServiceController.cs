@@ -14,6 +14,7 @@ using System.Net;
 using System.Threading.Tasks;
 using WinSCP;
 using static ProjectXYZAPI.FunctionHelper;
+using Microsoft.OpenApi.Writers;
 
 namespace ProjectXYZAPI.Controllers
 {
@@ -228,6 +229,27 @@ namespace ProjectXYZAPI.Controllers
             }
         }
 
+        [Route("GetAccessRightDetail")]
+        [HttpPost]
+        public dynamic GetAccessRightDetail([FromBody] AccessRight param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.GetAccessRightDetail(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
         [Route("SaveAccessRight")]
         [HttpPost]
         public dynamic SaveAccessRight([FromBody] AccessRight param)
@@ -236,6 +258,48 @@ namespace ProjectXYZAPI.Controllers
             {
                 DataTable dt = null;
                 dt = repo.SaveAccessRight(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("SaveEmployee")]
+        [HttpPost]
+        public dynamic SaveEmployee([FromBody] Employee param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.SaveEmployee(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("GetEmployee")]
+        [HttpPost]
+        public dynamic GetEmployee([FromBody] Employee param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.GetEmployee(param);
                 return dt;
             }
             catch (Exception ex)
@@ -307,27 +371,6 @@ namespace ProjectXYZAPI.Controllers
             {
                 DataTable dt = null;
                 dt = repo.GetDataDiscount();
-                return dt;
-            }
-            catch (Exception ex)
-            {
-                dynamic result = new
-                {
-                    code = (int)HttpStatusCode.BadRequest,
-                    desc = ex.Message.ToString()
-                };
-                return result;
-            }
-        }
-
-        [Route("GetCompositeItems")]
-        [HttpPost]
-        public dynamic GetCompositeItems(string authorization)
-        {
-            try
-            {
-                DataTable dt = null;
-                dt = repo.GetCompositeItems();
                 return dt;
             }
             catch (Exception ex)
@@ -425,6 +468,90 @@ namespace ProjectXYZAPI.Controllers
             }
         }
 
+        [Route("GetCompositeItems")]
+        [HttpPost]
+        public dynamic GetCompositeItems([FromBody] FilterItem param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.GetCompositeItems(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("GetDataItems")]
+        [HttpPost]
+        public dynamic GetDataItems([FromBody] FilterItem param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.GetDataItems(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("GetDataItemComposite")]
+        [HttpPost]
+        public dynamic GetDataItemComposite([FromBody] FilterItem param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.GetDataItemComposite(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("GetDataItemVariant")]
+        [HttpPost]
+        public dynamic GetDataItemVariant([FromBody] FilterItem param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.GetDataItemVariant(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
         #endregion
 
         #region Customers
@@ -494,6 +621,282 @@ namespace ProjectXYZAPI.Controllers
 
         #endregion
 
+        #region Setting
+
+        [Route("GetDataFeatures")]
+        [HttpPost]
+        public dynamic GetDataFeatures([FromBody] Param param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.GetDataFeatures(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("SaveFeatures")]
+        [HttpPost]
+        public dynamic SaveFeatures([FromBody] Features param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.SaveFeatures(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("GetDataPaymentType")]
+        [HttpPost]
+        public dynamic GetDataPaymentType([FromBody] Param param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.GetDataPaymentType(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("SavePaymentType")]
+        [HttpPost]
+        public dynamic SavePaymentType([FromBody] PaymentType param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.SavePaymentType(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("GetDataTaxes")]
+        [HttpPost]
+        public dynamic GetDataTaxes([FromBody] Param param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.GetDataTaxes(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("GetDataStores")]
+        [HttpPost]
+        public dynamic GetDataStores([FromBody] Param param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.GetDataStores(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("SaveStore")]
+        [HttpPost]
+        public dynamic SaveStore([FromBody] Stores param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.SaveStore(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("GetDataSalesType")]
+        [HttpPost]
+        public dynamic GetDataSalesType([FromBody] Param param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.GetDataSalesType(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("SaveSalesType")]
+        [HttpPost]
+        public dynamic SaveSalesType([FromBody] SalesType param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.SaveSalesType(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("GetDataSites")]
+        [HttpPost]
+        public dynamic GetDataSites([FromBody] Param param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.GetDataSites(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("SaveSite")]
+        [HttpPost]
+        public dynamic SaveSite([FromBody] Sites param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.SaveSite(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("GetDataDevices")]
+        [HttpPost]
+        public dynamic GetDataDevices([FromBody] Param param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.GetDataDevices(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("SaveDevice")]
+        [HttpPost]
+        public dynamic SaveDevice([FromBody] Devices param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.SaveDevice(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        #endregion
     }
 
 }

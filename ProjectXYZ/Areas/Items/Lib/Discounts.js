@@ -276,13 +276,13 @@
                                 Discount_Value = emptyStr(value.Discount_Value) ? 0 : value.Discount_Value,
                                 Restricted_Access = emptyStr(value.Restricted_Access) ? 0 : value.Restricted_Access;
 
-                            $('#DISCOUNT_NAME').val(Discount_Name).parents('.form-group').addClass('focused');
+                            $('#DISCOUNT_NAME').val(Discount_Name).parent('.form-group').addClass('focused');
                             $('.rbDiscType[value="' + Discount_Type + '"]').prop("checked", true);
                             $('#RESTRICTED_ACCESS').prop("checked", Restricted_Access);
                             if (Discount_Type == 1) {
-                                $('#DISCOUNT_VALUE').val(formatPer(Discount_Value)).parents('.form-group').addClass('focused');
+                                $('#DISCOUNT_VALUE').val(formatPer(Discount_Value)).parent('.form-group').addClass('focused');
                             } else if (Discount_Type == 2) {
-                                $('#DISCOUNT_VALUE').val(formatCurrency(Discount_Value)).parents('.form-group').addClass('focused');
+                                $('#DISCOUNT_VALUE').val(formatCurrency(Discount_Value)).parent('.form-group').addClass('focused');
                             }
                         });
                     }
@@ -387,14 +387,14 @@
 
     $('input').on('focus', function () {
         $(this).prop("autocomplete", "off");
-        $(this).parents('.form-group').addClass('focused');
+        $(this).parent('.form-group').addClass('focused');
     });
 
     $('input').on('blur', function () {
         var inputValue = $(this).val();
         if (emptyStr(inputValue)) {
             $(this).removeClass('filled');
-            $(this).parents('.form-group').removeClass('focused');
+            $(this).parent('.form-group').removeClass('focused');
         } else {
             $(this).addClass('filled');
         }
@@ -432,9 +432,9 @@
             checked = $('.rbDiscType:checked').val();
             var values = 0;
             if (checked == 1) {
-                $('#DISCOUNT_VALUE').val(formatPer(values)).parents('.form-group').addClass('focused');
+                $('#DISCOUNT_VALUE').val(formatPer(values)).parent('.form-group').addClass('focused');
             } else if (checked == 2) {
-                $('#DISCOUNT_VALUE').val(formatCurrency(values)).parents('.form-group').addClass('focused');
+                $('#DISCOUNT_VALUE').val(formatCurrency(values)).parent('.form-group').addClass('focused');
             }
         } catch (err) {
             swal({ type: "error", title: "Error", text: err.message });

@@ -11,7 +11,7 @@ GO
 
 CREATE TABLE POS_Set_Features_History
 (
-	Feature_ID int NOT NULL,
+	Feature_ID nvarchar(20) NOT NULL,
 	Line_Item int NOT NULL,
 	Feature_Shift int NOT NULL, 
 	Feature_TimeClock int NOT NULL,

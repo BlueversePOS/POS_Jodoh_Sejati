@@ -16,6 +16,7 @@ CREATE TABLE POS_Set_Stores_History
 	Line_Item int NOT NULL,
 	[Address] nvarchar(300) NOT NULL,
 	Country nvarchar(100) NOT NULL,
+	CountryName nvarchar(100) NOT NULL,
 	Province nvarchar(100) NOT NULL,
 	City nvarchar(100) NOT NULL,
 	Postal_Code nvarchar(10) NOT NULL,

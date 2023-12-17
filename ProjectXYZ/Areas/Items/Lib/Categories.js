@@ -171,7 +171,7 @@
                                 Category_Name = emptyStr(value.Category_Name) ? "" : value.Category_Name.trim(),
                                 Category_Color = emptyStr(value.Category_Color) ? "bg-default" : value.Category_Color;
 
-                            $("#CATEGORY_NAME").val(Category_Name).parents('.form-group').addClass('focused');
+                            $("#CATEGORY_NAME").val(Category_Name).parent('.form-group').addClass('focused');
                             var check = '<i class="fa fa-check pt-3"></i>';
                             if (!emptyStr(Category_Color)) {
                                 $("#" + Category_Color).append(check);
@@ -269,14 +269,14 @@
     }
 
     $('input').on('focus', function () {
-        $(this).parents('.form-group').addClass('focused');
+        $(this).parent('.form-group').addClass('focused');
     });
 
     $('input').on('blur', function () {
         var inputValue = $(this).val();
         if (emptyStr(inputValue)) {
             $(this).removeClass('filled');
-            $(this).parents('.form-group').removeClass('focused');
+            $(this).parent('.form-group').removeClass('focused');
         } else {
             $(this).addClass('filled');
         }

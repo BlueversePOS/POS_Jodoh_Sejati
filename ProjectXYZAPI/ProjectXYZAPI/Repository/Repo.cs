@@ -15,6 +15,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Security.Policy;
 
 namespace ProjectXYZAPI.Repository
 {
@@ -662,7 +663,7 @@ namespace ProjectXYZAPI.Repository
             return dt;
         }
 
-        public DataTable SaveAccessRight(AccessRight param)
+        public DataTable GetAccessRightDetail(AccessRight param)
         {
             DataTable dt = new DataTable();
 
@@ -670,32 +671,10 @@ namespace ProjectXYZAPI.Repository
             {
                 ConnSql("");
 
-                SqlCommand cmd = new SqlCommand("Web_AccessRight_SaveData", conn);
+                SqlCommand cmd = new SqlCommand("Web_AccessRight_Getdatadetail", conn);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.CommandTimeout = 0;
-                cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
                 cmd.Parameters.AddWithValue("@Role_ID", param.Role_ID ?? "");
-                cmd.Parameters.AddWithValue("@Role_Name", param.Role_Name ?? "");
-                cmd.Parameters.AddWithValue("@POS_Flag", param.POS_Flag);
-                cmd.Parameters.AddWithValue("@POS_AccessPayments", param.POS_AccessPayments);
-                cmd.Parameters.AddWithValue("@POS_ApplyDiscount", param.POS_ApplyDiscount);
-                cmd.Parameters.AddWithValue("@POS_ChangeTaxes", param.POS_ChangeTaxes);
-                cmd.Parameters.AddWithValue("@POS_ViewReceipt", param.POS_ViewReceipt);
-                cmd.Parameters.AddWithValue("@POS_ReprintSendReceipt", param.POS_ReprintSendReceipt);
-                cmd.Parameters.AddWithValue("@POS_ViewShift", param.POS_ViewShift);
-                cmd.Parameters.AddWithValue("@POS_ManageItemsPOS", param.POS_ManageItemsPOS);
-                cmd.Parameters.AddWithValue("@POS_ViewCostPOS", param.POS_ViewCostPOS);
-                cmd.Parameters.AddWithValue("@POS_ChangeSetting", param.POS_ChangeSetting);
-                cmd.Parameters.AddWithValue("@BckOffice_Flag", param.BckOffice_Flag);
-                cmd.Parameters.AddWithValue("@BckOffice_ViewSales", param.BckOffice_ViewSales);
-                cmd.Parameters.AddWithValue("@BckOffice_ManageItemsOff", param.BckOffice_ManageItemsOff);
-                cmd.Parameters.AddWithValue("@BckOffice_ViewCostOff", param.BckOffice_ViewCostOff);
-                cmd.Parameters.AddWithValue("@BckOffice_ManageEmployee", param.BckOffice_ManageEmployee);
-                cmd.Parameters.AddWithValue("@BckOffice_ManageCustomers", param.BckOffice_ManageCustomers);
-                cmd.Parameters.AddWithValue("@BckOffice_EditSetting", param.BckOffice_EditSetting);
-                cmd.Parameters.AddWithValue("@BckOffice_ManagePayTypes", param.BckOffice_ManagePayTypes);
-                cmd.Parameters.AddWithValue("@BckOffice_ManageTaxes", param.BckOffice_ManageTaxes);
-                cmd.Parameters.AddWithValue("@BckOffice_POSDevices", param.BckOffice_POSDevices);
 
                 SqlDataAdapter adp = new SqlDataAdapter();
                 adp.SelectCommand = cmd;
@@ -727,6 +706,201 @@ namespace ProjectXYZAPI.Repository
 
                     conn.Dispose();
                     conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable SaveAccessRight(AccessRight param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                trans = conn.BeginTransaction();
+                SqlCommand cmd = new SqlCommand("Web_AccessRight_SaveData", conn, trans);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
+                cmd.Parameters.AddWithValue("@Role_ID", param.Role_ID ?? "");
+                cmd.Parameters.AddWithValue("@Role_Name", param.Role_Name ?? "");
+                cmd.Parameters.AddWithValue("@POS_Flag", param.POS_Flag);
+                cmd.Parameters.AddWithValue("@POS_AccessPayments", param.POS_AccessPayments);
+                cmd.Parameters.AddWithValue("@POS_ApplyDiscount", param.POS_ApplyDiscount);
+                cmd.Parameters.AddWithValue("@POS_ChangeTaxes", param.POS_ChangeTaxes);
+                cmd.Parameters.AddWithValue("@POS_ViewReceipt", param.POS_ViewReceipt);
+                cmd.Parameters.AddWithValue("@POS_ReprintSendReceipt", param.POS_ReprintSendReceipt);
+                cmd.Parameters.AddWithValue("@POS_ViewShift", param.POS_ViewShift);
+                cmd.Parameters.AddWithValue("@POS_ManageItemsPOS", param.POS_ManageItemsPOS);
+                cmd.Parameters.AddWithValue("@POS_ViewCostPOS", param.POS_ViewCostPOS);
+                cmd.Parameters.AddWithValue("@POS_ChangeSetting", param.POS_ChangeSetting);
+                cmd.Parameters.AddWithValue("@BckOffice_Flag", param.BckOffice_Flag);
+                cmd.Parameters.AddWithValue("@BckOffice_ViewSales", param.BckOffice_ViewSales);
+                cmd.Parameters.AddWithValue("@BckOffice_ManageItemsOff", param.BckOffice_ManageItemsOff);
+                cmd.Parameters.AddWithValue("@BckOffice_ViewCostOff", param.BckOffice_ViewCostOff);
+                cmd.Parameters.AddWithValue("@BckOffice_ManageEmployee", param.BckOffice_ManageEmployee);
+                cmd.Parameters.AddWithValue("@BckOffice_ManageCustomers", param.BckOffice_ManageCustomers);
+                cmd.Parameters.AddWithValue("@BckOffice_EditSetting", param.BckOffice_EditSetting);
+                cmd.Parameters.AddWithValue("@BckOffice_ManagePayTypes", param.BckOffice_ManagePayTypes);
+                cmd.Parameters.AddWithValue("@BckOffice_ManageTaxes", param.BckOffice_ManageTaxes);
+                cmd.Parameters.AddWithValue("@BckOffice_POSDevices", param.BckOffice_POSDevices);
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+
+                trans.Commit();
+            }
+            catch (Exception ex)
+            {
+                if (trans != null)
+                {
+                    trans.Rollback();
+                }
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+                if (trans != null)
+                {
+                    trans.Dispose();
+                    trans = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable GetEmployee(Employee param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("Web_Employee_Getdata", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@Employee_ID", param.Employee_ID ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable SaveEmployee(Employee param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                trans = conn.BeginTransaction();
+                SqlCommand cmd = new SqlCommand("Web_Employee_SaveData", conn, trans);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
+                cmd.Parameters.AddWithValue("@Employee_ID", param.Employee_ID ?? "");
+                cmd.Parameters.AddWithValue("@Employee_Name", param.Employee_Name ?? "");
+                cmd.Parameters.AddWithValue("@Email", param.Email ?? "");
+                cmd.Parameters.AddWithValue("@Phone", param.Phone ?? "");
+                cmd.Parameters.AddWithValue("@Role_ID", param.Role_ID ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+
+                trans.Commit();
+            }
+            catch (Exception ex)
+            {
+                if (trans != null)
+                {
+                    trans.Rollback();
+                }
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+                if (trans != null)
+                {
+                    trans.Dispose();
+                    trans = null;
                 }
             }
             return dt;
@@ -793,7 +967,8 @@ namespace ProjectXYZAPI.Repository
                 param.PASSWORD = Encrypt(param.PASSWORD);
                 ConnSql("");
 
-                SqlCommand cmd = new SqlCommand("Web_Account_SaveData", conn);
+                trans = conn.BeginTransaction();
+                SqlCommand cmd = new SqlCommand("Web_Account_SaveData", conn, trans);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.CommandTimeout = 0;
                 cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
@@ -806,9 +981,15 @@ namespace ProjectXYZAPI.Repository
                 SqlDataAdapter adp = new SqlDataAdapter();
                 adp.SelectCommand = cmd;
                 adp.Fill(dt);
+
+                trans.Commit();
             }
             catch (Exception ex)
             {
+                if (trans != null)
+                {
+                    trans.Rollback();
+                }
                 #region LOG
                 string thismethod = GetActualAsyncMethodName();
                 RequestLog log = new RequestLog
@@ -833,6 +1014,11 @@ namespace ProjectXYZAPI.Repository
 
                     conn.Dispose();
                     conn = null;
+                }
+                if (trans != null)
+                {
+                    trans.Dispose();
+                    trans = null;
                 }
             }
             return dt;
@@ -889,7 +1075,7 @@ namespace ProjectXYZAPI.Repository
             return dt;
         }
 
-        public DataTable GetCompositeItems()
+        public DataTable SaveDiscount(Discount param)
         {
             DataTable dt = new DataTable();
 
@@ -897,16 +1083,29 @@ namespace ProjectXYZAPI.Repository
             {
                 ConnSql("");
 
-                SqlCommand cmd = new SqlCommand("Web_Items_GetDataComposite", conn);
+                trans = conn.BeginTransaction();
+                SqlCommand cmd = new SqlCommand("Web_Discounts_SaveData", conn, trans);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
+                cmd.Parameters.AddWithValue("@Discount_ID", param.DISCOUNT_ID ?? "");
+                cmd.Parameters.AddWithValue("@Discount_Name", param.DISCOUNT_NAME ?? "");
+                cmd.Parameters.AddWithValue("@Discount_Type", param.DISCOUNT_TYPE);
+                cmd.Parameters.AddWithValue("@Discount_Value", param.DISCOUNT_VALUE);
+                cmd.Parameters.AddWithValue("@Restricted_Access", param.RESTRICTED_ACCESS);
 
                 SqlDataAdapter adp = new SqlDataAdapter();
                 adp.SelectCommand = cmd;
                 adp.Fill(dt);
+
+                trans.Commit();
             }
             catch (Exception ex)
             {
+                if (trans != null)
+                {
+                    trans.Rollback();
+                }
                 #region LOG
                 string thismethod = GetActualAsyncMethodName();
                 RequestLog log = new RequestLog
@@ -932,58 +1131,10 @@ namespace ProjectXYZAPI.Repository
                     conn.Dispose();
                     conn = null;
                 }
-            }
-            return dt;
-        }
-
-        public DataTable SaveDiscount(Discount param)
-        {
-            DataTable dt = new DataTable();
-
-            try
-            {
-                ConnSql("");
-
-                SqlCommand cmd = new SqlCommand("Web_Discounts_SaveData", conn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.CommandTimeout = 0;
-                cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
-                cmd.Parameters.AddWithValue("@Discount_ID", param.DISCOUNT_ID ?? "");
-                cmd.Parameters.AddWithValue("@Discount_Name", param.DISCOUNT_NAME ?? "");
-                cmd.Parameters.AddWithValue("@Discount_Type", param.DISCOUNT_TYPE);
-                cmd.Parameters.AddWithValue("@Discount_Value", param.DISCOUNT_VALUE);
-                cmd.Parameters.AddWithValue("@Restricted_Access", param.RESTRICTED_ACCESS);
-
-                SqlDataAdapter adp = new SqlDataAdapter();
-                adp.SelectCommand = cmd;
-                adp.Fill(dt);
-            }
-            catch (Exception ex)
-            {
-                #region LOG
-                string thismethod = GetActualAsyncMethodName();
-                RequestLog log = new RequestLog
+                if (trans != null)
                 {
-                    url = thismethod,
-                    Body = "",
-                    db = "",
-                    user = "",
-                    msg = ex.Message
-                };
-                Insert_Request_Logs(log);
-                #endregion
-
-                throw ex;
-            }
-            finally
-            {
-                if (conn != null)
-                {
-                    if (conn.State == ConnectionState.Open)
-                        conn.Close();
-
-                    conn.Dispose();
-                    conn = null;
+                    trans.Dispose();
+                    trans = null;
                 }
             }
             return dt;
@@ -1095,6 +1246,7 @@ namespace ProjectXYZAPI.Repository
             {
                 ConnSql("");
 
+                trans = conn.BeginTransaction();
                 #region Convert Composite Item
 
                 DataTable dtTblComp = new DataTable();
@@ -1169,7 +1321,7 @@ namespace ProjectXYZAPI.Repository
 
                 #endregion
 
-                SqlCommand cmd = new SqlCommand("Web_Items_SaveData", conn);
+                SqlCommand cmd = new SqlCommand("Web_Items_SaveData", conn, trans);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.CommandTimeout = 0;
                 cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
@@ -1205,6 +1357,211 @@ namespace ProjectXYZAPI.Repository
                 dtlprm2.Value = dtTblVar;
                 dtlprm2.ParameterName = "@VARTYPE";
                 cmd.Parameters.Add(dtlprm2);
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+
+                trans.Commit();
+            }
+            catch (Exception ex)
+            {
+                if (trans != null)
+                {
+                    trans.Rollback();
+                }
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+                if (trans != null)
+                {
+                    trans.Dispose();
+                    trans = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable GetCompositeItems(FilterItem param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("Web_Items_GetDataComposite", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@Item_Number", param.Item_Number ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable GetDataItems(FilterItem param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("Web_Items_GetDataList", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@Item_Number", param.Item_Number ?? "");
+                cmd.Parameters.AddWithValue("@Category_ID", param.Category_ID ?? "");
+                cmd.Parameters.AddWithValue("@StockAlert", param.LowStock);
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable GetDataItemComposite(FilterItem param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("Web_Items_GetItemComposite", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@Item_Number", param.Item_Number ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable GetDataItemVariant(FilterItem param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("Web_Items_GetItemVariant", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@Item_Number", param.Item_Number ?? "");
 
                 SqlDataAdapter adp = new SqlDataAdapter();
                 adp.SelectCommand = cmd;
@@ -1349,7 +1706,8 @@ namespace ProjectXYZAPI.Repository
             {
                 ConnSql("");
 
-                SqlCommand cmd = new SqlCommand("Web_Customer_SaveData", conn);
+                trans = conn.BeginTransaction();
+                SqlCommand cmd = new SqlCommand("Web_Customer_SaveData", conn, trans);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.CommandTimeout = 0;
                 cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
@@ -1364,6 +1722,69 @@ namespace ProjectXYZAPI.Repository
                 cmd.Parameters.AddWithValue("@Postal_Code", param.Postal_Code ?? "");
                 cmd.Parameters.AddWithValue("@Customer_Code", param.Customer_Code ?? "");
                 cmd.Parameters.AddWithValue("@Note", param.Note ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+
+                trans.Commit();
+            }
+            catch (Exception ex)
+            {
+                if (trans != null)
+                {
+                    trans.Rollback();
+                }
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+                if (trans != null)
+                {
+                    trans.Dispose();
+                    trans = null;
+                }
+            }
+            return dt;
+        }
+
+        #endregion
+
+        #region Setting
+
+        public DataTable GetDataFeatures(Param param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("Web_Sett_FeaturesGetData", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@Feature_ID", param.ID ?? "");
 
                 SqlDataAdapter adp = new SqlDataAdapter();
                 adp.SelectCommand = cmd;
@@ -1395,6 +1816,718 @@ namespace ProjectXYZAPI.Repository
 
                     conn.Dispose();
                     conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable SaveFeatures(Features param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                trans = conn.BeginTransaction();
+                SqlCommand cmd = new SqlCommand("Web_Sett_SaveDataFeature", conn, trans);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
+                cmd.Parameters.AddWithValue("@Feature_ID", param.Feature_ID ?? "");
+                cmd.Parameters.AddWithValue("@Feature_Shift", param.Feature_Shift);
+                cmd.Parameters.AddWithValue("@Feature_TimeClock", param.Feature_TimeClock);
+                cmd.Parameters.AddWithValue("@Feature_LowStock", param.Feature_LowStock);
+                cmd.Parameters.AddWithValue("@Feature_NegativeStock", param.Feature_NegativeStock);
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+
+                trans.Commit();
+            }
+            catch (Exception ex)
+            {
+                if (trans != null)
+                {
+                    trans.Rollback();
+                }
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+                if (trans != null)
+                {
+                    trans.Dispose();
+                    trans = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable GetDataPaymentType(Param param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("Web_Sett_PayTypeGetData", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@Payment_ID", param.ID ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable SavePaymentType(PaymentType param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                #region Convert Store
+
+                DataTable dtTbl = new DataTable();
+
+                if (param.payStore != null)
+                {
+                    var tblFiltered = (from N in param.payStore.AsEnumerable()
+                                       select new
+                                       {
+                                           N.LineItem,
+                                           N.AllStore,
+                                           N.Store_ID,
+                                           N.Store_Name
+                                       }).ToList();
+
+                    dtTbl = ListToDataTable(tblFiltered);
+                }
+                else
+                {
+                    dtTbl.Columns.Add("LineItem", typeof(int));
+                    dtTbl.Columns.Add("AllStore", typeof(int));
+                    dtTbl.Columns.Add("Store_ID", typeof(string));
+                    dtTbl.Columns.Add("Store_Name", typeof(string));
+                }
+
+                #endregion
+                ConnSql("");
+
+                trans = conn.BeginTransaction();
+                SqlCommand cmd = new SqlCommand("Web_Sett_SaveDataPayment", conn, trans);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
+                cmd.Parameters.AddWithValue("@Payment_ID", param.Payment_ID ?? "");
+                cmd.Parameters.AddWithValue("@Payment_Type", param.Payment_Type ?? "");
+                cmd.Parameters.AddWithValue("@Payment_Name", param.Payment_Name ?? "");
+                cmd.Parameters.AddWithValue("@AllStore", param.AllStore);
+
+                var dtlprm = cmd.CreateParameter();
+                dtlprm.TypeName = "dbo.PAYTYPE";
+                dtlprm.Value = dtTbl;
+                dtlprm.ParameterName = "@PAYTYPE";
+                cmd.Parameters.Add(dtlprm);
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+
+                trans.Commit();
+            }
+            catch (Exception ex)
+            {
+                if (trans != null)
+                {
+                    trans.Rollback();
+                }
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+                if (trans != null)
+                {
+                    trans.Dispose();
+                    trans = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable GetDataTaxes(Param param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("Web_Sett_TaxesGetData", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@Tax_ID", param.ID ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable GetDataStores(Param param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("Web_Sett_StoresGetData", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@Store_ID", param.ID ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable SaveStore(Stores param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                trans = conn.BeginTransaction();
+                SqlCommand cmd = new SqlCommand("Web_Sett_SaveDataStore", conn, trans);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
+                cmd.Parameters.AddWithValue("@Store_ID", param.Store_ID ?? "");
+                cmd.Parameters.AddWithValue("@Store_Name", param.Store_Name ?? "");
+                cmd.Parameters.AddWithValue("@Address", param.Address ?? "");
+                cmd.Parameters.AddWithValue("@Country", param.Country ?? "");
+                cmd.Parameters.AddWithValue("@CountryName", param.CountryName ?? "");
+                cmd.Parameters.AddWithValue("@Province", param.Province ?? "");
+                cmd.Parameters.AddWithValue("@City", param.City ?? "");
+                cmd.Parameters.AddWithValue("@Postal_Code", param.Postal_Code ?? "");
+                cmd.Parameters.AddWithValue("@Phone", param.Phone ?? "");
+                cmd.Parameters.AddWithValue("@Description", param.Description ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+
+                trans.Commit();
+            }
+            catch (Exception ex)
+            {
+                if (trans != null)
+                {
+                    trans.Rollback();
+                }
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+                if (trans != null)
+                {
+                    trans.Dispose();
+                    trans = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable GetDataSalesType(Param param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("Web_Sett_SalesTypeGetData", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@SalesType_ID", param.ID ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable SaveSalesType(SalesType param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                trans = conn.BeginTransaction();
+                SqlCommand cmd = new SqlCommand("Web_Sett_SaveDataSalesType", conn, trans);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
+                cmd.Parameters.AddWithValue("@SalesType_ID", param.SalesType_ID ?? "");
+                cmd.Parameters.AddWithValue("@SalesType_Name", param.SalesType_Name ?? "");
+                cmd.Parameters.AddWithValue("@Store_ID", param.Store_ID ?? "");
+                cmd.Parameters.AddWithValue("@Store_Name", param.Store_Name ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+
+                trans.Commit();
+            }
+            catch (Exception ex)
+            {
+                if (trans != null)
+                {
+                    trans.Rollback();
+                }
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+                if (trans != null)
+                {
+                    trans.Dispose();
+                    trans = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable GetDataSites(Param param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("Web_Sett_SitesGetData", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@Site_ID", param.ID ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable SaveSite(Sites param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                trans = conn.BeginTransaction();
+                SqlCommand cmd = new SqlCommand("Web_Sett_SaveDataSite", conn, trans);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
+                cmd.Parameters.AddWithValue("@Site_ID", param.Site_ID ?? "");
+                cmd.Parameters.AddWithValue("@Site_Name", param.Site_Name ?? "");
+                cmd.Parameters.AddWithValue("@DefaultSite", param.DefaultSite);
+                cmd.Parameters.AddWithValue("@Store_ID", param.Store_ID ?? "");
+                cmd.Parameters.AddWithValue("@Store_Name", param.Store_Name ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+
+                trans.Commit();
+            }
+            catch (Exception ex)
+            {
+                if (trans != null)
+                {
+                    trans.Rollback();
+                }
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+                if (trans != null)
+                {
+                    trans.Dispose();
+                    trans = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable GetDataDevices(Param param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("Web_Sett_DevicesGetData", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@POS_Device_ID", param.ID ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable SaveDevice(Devices param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                trans = conn.BeginTransaction();
+                SqlCommand cmd = new SqlCommand("Web_Sett_SaveDataDevice", conn, trans);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
+                cmd.Parameters.AddWithValue("@POS_Device_ID", param.POS_Device_ID ?? "");
+                cmd.Parameters.AddWithValue("@POS_Device_Name", param.POS_Device_Name ?? "");
+                cmd.Parameters.AddWithValue("@Store_ID", param.Store_ID ?? "");
+                cmd.Parameters.AddWithValue("@Store_Name", param.Store_Name ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+
+                trans.Commit();
+            }
+            catch (Exception ex)
+            {
+                if (trans != null)
+                {
+                    trans.Rollback();
+                }
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+                if (trans != null)
+                {
+                    trans.Dispose();
+                    trans = null;
                 }
             }
             return dt;

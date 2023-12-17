@@ -17,7 +17,6 @@ CREATE TABLE POS_Employee_History
 	Email nvarchar(250) NOT NULL,
 	Phone nvarchar(20) NOT NULL,
 	Role_ID nvarchar(20) NOT NULL,
-	Role_Name nvarchar(100) NOT NULL,
 	Created_User nvarchar(30),
 	Created_Date DATETIME,
 	CONSTRAINT PK_POS_Employee_History PRIMARY KEY NONCLUSTERED (Employee_ID ASC, Line_Item ASC),

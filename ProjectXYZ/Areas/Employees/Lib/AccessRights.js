@@ -82,6 +82,12 @@
                     type: "GET",
                     url: rootUrl + 'AccessRights/GetAccessRight',
                     "datatype": "json",
+                    beforeSend: function () {
+                        $("#loading").show();
+                    },
+                    complete: function () {
+                        $("#loading").hide();
+                    },
                     error: function (xhr) {
                         if (xhr.status != "200") {
                             var doc = $.parseHTML(xhr.responseText);
@@ -155,8 +161,103 @@
     }
 
     function ClearValues() {
+        $('#Role_ID').val("");
         $('#ACCESS_NAME').val("");
         $('.switch').find("input[type=checkbox]").prop("checked", false);
+    }
+
+    function GetDetailData() {
+        try {
+            var Role_ID = emptyStr($('#Role_ID').val()) ? "" : $('#Role_ID').val();
+
+            $.ajax({
+                url: rootUrl + "Employees/AccessRights/GetAccessRightDetail",
+                type: "POST",
+                //async: false,
+                dataType: "json",
+                data: {
+                    Role_ID: Role_ID
+                },
+                success: function (result) {
+                    if (result.success) {
+                        $.each(result.data, function (index, value) {
+                            var Role_ID = emptyStr(value.Role_ID) ? "" : value.Role_ID.trim(),
+                                Role_Name = emptyStr(value.Role_Name) ? "" : value.Role_Name.trim(),
+                                POS_Flag = emptyStr(value.POS_Flag) ? 0 : value.POS_Flag,
+                                POS_AccessPayments = emptyStr(value.POS_AccessPayments) ? 0 : value.POS_AccessPayments,
+                                POS_ApplyDiscount = emptyStr(value.POS_ApplyDiscount) ? 0 : value.POS_ApplyDiscount,
+                                POS_ChangeTaxes = emptyStr(value.POS_ChangeTaxes) ? 0 : value.POS_ChangeTaxes,
+                                POS_ViewReceipt = emptyStr(value.POS_ViewReceipt) ? 0 : value.POS_ViewReceipt,
+                                POS_ReprintSendReceipt = emptyStr(value.POS_ReprintSendReceipt) ? 0 : value.POS_ReprintSendReceipt,
+                                POS_ViewShift = emptyStr(value.POS_ViewShift) ? 0 : value.POS_ViewShift,
+                                POS_ManageItemsPOS = emptyStr(value.POS_ManageItemsPOS) ? 0 : value.POS_ManageItemsPOS,
+                                POS_ViewCostPOS = emptyStr(value.POS_ViewCostPOS) ? 0 : value.POS_ViewCostPOS,
+                                POS_ChangeSetting = emptyStr(value.POS_ChangeSetting) ? 0 : value.POS_ChangeSetting,
+                                BckOffice_Flag = emptyStr(value.BckOffice_Flag) ? 0 : value.BckOffice_Flag,
+                                BckOffice_ViewSales = emptyStr(value.BckOffice_ViewSales) ? 0 : value.BckOffice_ViewSales,
+                                BckOffice_ManageItemsOff = emptyStr(value.BckOffice_ManageItemsOff) ? 0 : value.BckOffice_ManageItemsOff,
+                                BckOffice_ViewCostOff = emptyStr(value.BckOffice_ViewCostOff) ? 0 : value.BckOffice_ViewCostOff,
+                                BckOffice_ManageEmployee = emptyStr(value.BckOffice_ManageEmployee) ? 0 : value.BckOffice_ManageEmployee,
+                                BckOffice_ManageCustomers = emptyStr(value.BckOffice_ManageCustomers) ? 0 : value.BckOffice_ManageCustomers,
+                                BckOffice_EditSetting = emptyStr(value.BckOffice_EditSetting) ? 0 : value.BckOffice_EditSetting,
+                                BckOffice_ManagePayTypes = emptyStr(value.BckOffice_ManagePayTypes) ? 0 : value.BckOffice_ManagePayTypes,
+                                BckOffice_ManageTaxes = emptyStr(value.BckOffice_ManageTaxes) ? 0 : value.BckOffice_ManageTaxes,
+                                BckOffice_POSDevices = emptyStr(value.BckOffice_POSDevices) ? 0 : value.BckOffice_POSDevices;
+
+                            $('#ACCESS_NAME').val(Role_Name).trigger('focus');
+                            $('#ACCESS_POS').prop('checked', POS_Flag);
+                            $('#accept_payments').prop('checked', POS_AccessPayments);
+                            $('#apply_discount').prop('checked', POS_ApplyDiscount);
+                            $('#change_taxes').prop('checked', POS_ChangeTaxes);
+                            $('#view_receipt').prop('checked', POS_ViewReceipt);
+                            $('#reprintresend_receipt').prop('checked', POS_ReprintSendReceipt);
+                            $('#view_shiftreport').prop('checked', POS_ViewShift);
+                            $('#manage_items').prop('checked', POS_ManageItemsPOS);
+                            $('#view_costitems').prop('checked', POS_ViewCostPOS);
+                            $('#change_setting').prop('checked', POS_ChangeSetting);
+                            $('#ACCESS_BACKOFFICE').prop('checked', BckOffice_Flag);
+                            $('#view_sreport').prop('checked', BckOffice_ViewSales);
+                            $('#manage_itemsBOFF').prop('checked', BckOffice_ManageItemsOff);
+                            $('#view_costitemsBOFF').prop('checked', BckOffice_ViewCostOff);
+                            $('#manage_employees').prop('checked', BckOffice_ManageEmployee);
+                            $('#manage_customers').prop('checked', BckOffice_ManageCustomers);
+                            $('#edit_gnlsetting').prop('checked', BckOffice_EditSetting);
+                            $('#manage_paymenttypes').prop('checked', BckOffice_ManagePayTypes);
+                            $('#manage_taxes').prop('checked', BckOffice_ManageTaxes);
+                            $('#manage_posDevice').prop('checked', BckOffice_POSDevices);
+                        });
+                    }
+                    else {
+                        swal({ type: "error", title: "Error", text: result.message });
+                    }
+                },
+                beforeSend: function () {
+                    $("#loading").show();
+                },
+                complete: function () {
+                    $("#loading").hide();
+                },
+                error: function (xhr) {
+                    if (xhr.status != "200") {
+                        var doc = $.parseHTML(xhr.responseText);
+                        if (!emptyStr(doc)) {
+                            var titleNode = doc.filter(function (node) {
+                                return node.localName === "title";
+                            });
+                            var msg = titleNode[0].textContent;
+                            swal("Error", "Error : " + msg, "error");
+                        }
+                        else {
+                            if (xhr.statusText.toUpperCase().trim() != "OK") {
+                                swal({ type: "error", title: "Error", text: xhr.statusText });
+                            }
+                        }
+                    }
+                }
+            });
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
     }
 
     function Save() {
@@ -261,28 +362,28 @@
 
     $('input').focus(function () {
         $(this).prop("autocomplete", "off");
-        $(this).parents('.form-group').addClass('focused');
+        $(this).parent('.form-group').addClass('focused');
     });
 
     $('input').blur(function () {
         var inputValue = $(this).val();
         if (emptyStr(inputValue)) {
             $(this).removeClass('filled');
-            $(this).parents('.form-group').removeClass('focused');
+            $(this).parent('.form-group').removeClass('focused');
         } else {
             $(this).addClass('filled');
         }
     });
 
     $('select').on("select2:open", function () {
-        $(this).parents('.form-group').addClass('focused');
+        $(this).parent('.form-group').addClass('focused');
     });
 
     $('select').on("select2:close", function () {
         var inputValue = $(this).val();
         if (emptyStr(inputValue)) {
             $(this).removeClass('filled');
-            $(this).parents('.form-group').removeClass('focused');
+            $(this).parent('.form-group').removeClass('focused');
         } else {
             $(this).addClass('filled');
         }
@@ -293,6 +394,20 @@
             $(".listRole").hide();
             $(".addRole").show();
             ClearValues();
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    });
+
+    $('#table_access tbody').on('dblclick', 'tr', function () {
+        try {
+            var currow = $(this).closest('tr');
+            var Role_ID = currow.find('td:eq(0) input').val();
+            ClearValues();
+            $('#Role_ID').val(Role_ID);
+            $(".listRole").hide();
+            $(".addRole").show();
+            GetDetailData();
         } catch (err) {
             swal({ type: "error", title: "Error", text: err.message });
         }

@@ -29,5 +29,5 @@ CREATE TABLE POS_ItemVariant
 	Created_Date DATETIME,
 	Modified_User nvarchar(30),
 	Modified_Date DATETIME,
-	CONSTRAINT PK_POS_ItemVariant PRIMARY KEY NONCLUSTERED (Item_Number),
+	CONSTRAINT PK_POS_ItemVariant PRIMARY KEY NONCLUSTERED (Item_Number, LineItem_Option),
 )

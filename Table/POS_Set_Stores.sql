@@ -15,6 +15,7 @@ CREATE TABLE POS_Set_Stores
 	Store_Name nvarchar(100) NOT NULL,
 	[Address] nvarchar(300) NOT NULL,
 	Country nvarchar(100) NOT NULL,
+	CountryName nvarchar(100) NOT NULL,
 	Province nvarchar(100) NOT NULL,
 	City nvarchar(100) NOT NULL,
 	Postal_Code nvarchar(10) NOT NULL,

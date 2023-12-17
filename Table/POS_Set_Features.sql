@@ -11,7 +11,7 @@ GO
 
 CREATE TABLE POS_Set_Features
 (
-	Feature_ID int NOT NULL,
+	Feature_ID nvarchar(20) NOT NULL,
 	Feature_Shift int NOT NULL, 
 	Feature_TimeClock int NOT NULL,
 	Feature_LowStock int NOT NULL,

@@ -85,26 +85,27 @@ BEGIN
 		WHERE Item_Number=@Item_Number
 
 		INSERT INTO POS_CompositeItem(Item_Number, Item_Quantity, Item_Cost, Item_Composite, Created_User, Created_Date, Modified_User, Modified_Date)
-		SELECT Item_Number, Item_Quantity, Item_Cost, Item_Composite, @UserID, DATEADD(HOUR,1,GETDATE()), @UserID, DATEADD(HOUR,1,GETDATE())
-		FROM @COMPTYPE WHERE Item_Number=@Item_Number
+		SELECT @Item_Number, Item_Quantity, Item_Cost, Item_Composite, @UserID, DATEADD(HOUR,1,GETDATE()), @UserID, DATEADD(HOUR,1,GETDATE())
+		FROM @COMPTYPE --WHERE Item_Number=@Item_Number
 
 		INSERT INTO POS_CompositeItem_History(Item_Number, Line_Item, Item_Quantity, Item_Cost, Item_Composite, Created_User, Created_Date)
-		SELECT Item_Number, ROW_NUMBER() OVER(ORDER BY Item_Number), Item_Quantity, Item_Cost, Item_Composite, @UserID, DATEADD(HOUR,1,GETDATE())
-		FROM @COMPTYPE WHERE Item_Number=@Item_Number
+		SELECT @Item_Number, ROW_NUMBER() OVER(ORDER BY Item_Number), Item_Quantity, Item_Cost, Item_Composite, @UserID, DATEADD(HOUR,1,GETDATE())
+		FROM @COMPTYPE --WHERE Item_Number=@Item_Number
 
 		DELETE FROM POS_ItemVariant
+		WHERE Item_Number=@Item_Number
 
 		INSERT INTO POS_ItemVariant(Item_Number, LineItem_Option, CB_Available, Option_ID, Option_Name, LineItem_Variant, Variant_Name, 
 		Item_Price, Item_Cost, InStock, LowStock, OptimalStock, Item_SKU, Item_Barcode, Created_User, Created_Date, Modified_User, Modified_Date)
-		SELECT Item_Number, LineItem_Option, CB_Available, Option_ID, Option_Name, LineItem_Variant, Variant_Name, 
+		SELECT @Item_Number, LineItem_Option, CB_Available, Option_ID, Option_Name, LineItem_Variant, Variant_Name, 
 		Item_Price, Item_Cost, InStock, LowStock, OptimalStock, Item_SKU, Item_Barcode, @UserID, DATEADD(HOUR,1,GETDATE()), @UserID, DATEADD(HOUR,1,GETDATE())
-		FROM @VARTYPE WHERE Item_Number=@Item_Number
+		FROM @VARTYPE --WHERE Item_Number=@Item_Number
 
 		INSERT INTO POS_ItemVariant_History(Item_Number, LineItem_Option, Line_Item, CB_Available, Option_ID, Option_Name, LineItem_Variant, Variant_Name, 
 		Item_Price, Item_Cost, InStock, LowStock, OptimalStock, Item_SKU, Item_Barcode, Created_User, Created_Date)
-		SELECT Item_Number, LineItem_Option, ROW_NUMBER() OVER(ORDER BY Item_Number), CB_Available, Option_ID, Option_Name, LineItem_Variant, Variant_Name, 
+		SELECT @Item_Number, LineItem_Option, ROW_NUMBER() OVER(ORDER BY Item_Number), CB_Available, Option_ID, Option_Name, LineItem_Variant, Variant_Name, 
 		Item_Price, Item_Cost, InStock, LowStock, OptimalStock, Item_SKU, Item_Barcode, @UserID, DATEADD(HOUR,1,GETDATE())
-		FROM @VARTYPE WHERE Item_Number=@Item_Number
+		FROM @VARTYPE --WHERE Item_Number=@Item_Number
 			
 		SELECT CODE='200', Item_Number=@Item_Number
 

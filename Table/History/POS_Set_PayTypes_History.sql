@@ -21,5 +21,5 @@ CREATE TABLE POS_Set_PayTypes_History
 	Store_Name nvarchar(100) NOT NULL, 
 	Created_User nvarchar(30),
 	Created_Date DATETIME,
-	CONSTRAINT PK_POS_Set_PayTypes_History PRIMARY KEY NONCLUSTERED (Payment_ID ASC, Line_Item ASC),
+	CONSTRAINT PK_POS_Set_PayTypes_History PRIMARY KEY NONCLUSTERED (Payment_ID ASC, Line_Item ASC, LineItem ASC),
 )
