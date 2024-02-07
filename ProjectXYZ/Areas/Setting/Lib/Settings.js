@@ -20,6 +20,7 @@
     const dtValuesSITE = [
         { SITE_ID: "GD001", SITE_NAME: "Gudang Display", STORES_ID: "PokeToys" }
     ];
+    var validCodes = [8, 9, 13, 46, 37, 39, 46, 18, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105];
 
     //#region FUNCTION
 
@@ -78,12 +79,68 @@
         }
     };
 
+    function GetNumberMaster(hasil) {
+        try {
+            var ID = "";
+            $.ajax({
+                url: rootUrl + "Setting/Settings/GetNumberMaster",
+                type: "POST",
+                async: false,
+                dataType: "json",
+                data: { 'param': hasil },
+                beforeSend: function () {
+                    $("#loading").show();
+                },
+                complete: function () {
+                    $("#loading").hide();
+                },
+                success: function (result) {
+                    if (result.success) {
+                        $.each(result.data, function (index, value) {
+                            var NEWNUMBER = emptyStr(value.NEWNUMBER) ? "" : value.NEWNUMBER.trim();
+                            ID = NEWNUMBER;
+                        });
+                    }
+                    else {
+                        swal({ type: "error", title: "Error", text: result.message });
+                    }
+                },
+                beforeSend: function () {
+                    $("#loading").show();
+                },
+                complete: function () {
+                    $("#loading").hide();
+                },
+                error: function (xhr) {
+                    if (xhr.status != "200") {
+                        var doc = $.parseHTML(xhr.responseText);
+                        if (!emptyStr(doc)) {
+                            var titleNode = doc.filter(function (node) {
+                                return node.localName === "title";
+                            });
+                            var msg = titleNode[0].textContent;
+                            swal("Error", "Error : " + msg, "error");
+                        }
+                        else {
+                            if (xhr.statusText.toUpperCase().trim() != "OK") {
+                                swal({ type: "error", title: "Error", text: xhr.statusText });
+                            }
+                        }
+                    }
+                }
+            });
+            return ID;
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    }
+
     //#region Payment Type
 
     function ClearPaymentType() {
         $('#Payment_ID').val("");
         $('#Payment_Name').val("").parent('.form-group').removeClass('focused');
-        $('#Payment_Type').val("").parent('.form-group').removeClass('focused');
+        $('#Payment_Type').val("");
         $('#AllStores').prop('checked', false);
     }
 
@@ -329,7 +386,6 @@
                         AllStore: AllStore,
                         Store_ID: Store_ID,
                         Store_Name: Store_Name
-
                     });
                 }
             });
@@ -458,15 +514,7 @@
                             return '<input type="checkbox" id="cbItem" value="' + ID + '" />';
                         }
                     },
-                    { data: 'POS_Device_Name' },
-                    {
-                        data: 'POS_Device_ID',
-                        render: function (data, type, row) {
-                            var status = emptyStr(data) ? 0 : data;
-                            status = status == 1 ? "Activated" : "";
-                            return status;
-                        }
-                    }
+                    { data: 'POS_Device_Name' }
                 ],
                 order: [],
                 dom: "<'row'<'col-12'>>" +
@@ -633,6 +681,20 @@
 
     //#region Taxes
 
+    function ClearTaxes() {
+        $('#Tax_ID').val("");
+        $('#Tax_Name').val("");
+        $('#Tax_Rate').val("");
+        $('#Tax_Type').val("");
+        $('#Tax_Option').val("");
+        $.each($('.form-input'), function () {
+            $(this).removeClass('filled').parent('.form-group').removeClass('focused');
+            if (!emptyStr($(this).val())) {
+                $(this).parent('.form-group').addClass('focused');
+            }
+        });
+    }
+
     function GetDataTaxes() {
         try {
             $('#table_taxes tbody').empty();
@@ -731,11 +793,84 @@
         }
     }
 
+    function GetDetailsTaxes() {
+        try {
+            var Tax_ID = emptyStr($('#Tax_ID').val()) ? "" : $('#Tax_ID').val();
+
+            $.ajax({
+                url: rootUrl + "Setting/Settings/GetDataTaxes",
+                type: "POST",
+                //async: false,
+                dataType: "json",
+                data: {
+                    ID: Tax_ID
+                },
+                beforeSend: function () {
+                    $("#loading").show();
+                },
+                complete: function () {
+                    $("#loading").hide();
+                },
+                success: function (result) {
+                    if (result.success) {
+                        $.each(result.data, function (index, value) {
+                            var Tax_ID = emptyStr(value.Tax_ID) ? "" : value.Tax_ID.trim(),
+                                Tax_Name = emptyStr(value.Tax_Name) ? "" : value.Tax_Name.trim(),
+                                Tax_Rate = emptyStr(value.Tax_Rate) ? 0 : value.Tax_Rate,
+                                Tax_Type = emptyStr(value.Tax_Type) ? 0 : value.Tax_Type,
+                                Tax_Option = emptyStr(value.Tax_Option) ? 0 : value.Tax_Option;
+
+                            $('#Tax_ID').val(Tax_ID);
+                            $('#Tax_Name').val(Tax_Name);
+                            $('#Tax_Rate').val(Tax_Rate);
+                            $('#Tax_Type').val(Tax_Type);
+                            $('#Tax_Option').val(Tax_Option);
+                        });
+                        $.each($('.form-input'), function () {
+                            $(this).removeClass('filled').parent('.form-group').removeClass('focused');
+                            if (!emptyStr($(this).val())) {
+                                $(this).parent('.form-group').addClass('focused');
+                            }
+                        });
+                    }
+                    else {
+                        swal({ type: "error", title: "Error", text: result.message });
+                    }
+                },
+                beforeSend: function () {
+                    $("#loading").show();
+                },
+                complete: function () {
+                    $("#loading").hide();
+                },
+                error: function (xhr) {
+                    if (xhr.status != "200") {
+                        var doc = $.parseHTML(xhr.responseText);
+                        if (!emptyStr(doc)) {
+                            var titleNode = doc.filter(function (node) {
+                                return node.localName === "title";
+                            });
+                            var msg = titleNode[0].textContent;
+                            swal("Error", "Error : " + msg, "error");
+                        }
+                        else {
+                            if (xhr.statusText.toUpperCase().trim() != "OK") {
+                                swal({ type: "error", title: "Error", text: xhr.statusText });
+                            }
+                        }
+                    }
+                }
+            });
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    }
+
     function SaveTaxes() {
         try {
             var Tax_ID = emptyStr($('#Tax_ID').val()) ? "" : $('#Tax_ID').val(),
                 Tax_Name = emptyStr($('#Tax_Name').val()) ? "" : $('#Tax_Name').val(),
-                Tax_Rate = $('#Tax_Rate').is(":checked") ? 1 : 0,
+                Tax_Rate = emptyStr($('#Tax_Rate').val()) ? "" : $('#Tax_Rate').val(),
                 Tax_Type = emptyStr($('#Tax_Type').val()) ? "" : $('#Tax_Type').val(),
                 Tax_Option = emptyStr($('#Tax_Option').val()) ? "" : $('#Tax_Option').val();
 
@@ -806,7 +941,7 @@
     //#region Sales Type
 
     function ClearSales() {
-        $('#SALESTYPE_ID').val("").parent('.form-group').removeClass('focused');
+        $('#SALESTYPE_ID').val("");
         $('#SALESTYPE_NAME').val("").parent('.form-group').removeClass('focused');
         $('#SALESTYPE_STOREID :selected').val("");
         $('#SALESTYPE_STOREID').val("").trigger('select2:close');
@@ -1663,6 +1798,7 @@
     $('input').focus(function () {
         try {
             $(this).parent('.form-group').addClass('focused');
+            $(this).prop("autocomplete", "off");
         } catch (err) {
             swal({ type: "error", title: "Error", text: err.message });
         }
@@ -1679,6 +1815,26 @@
             }
         } catch (err) {
             swal({ type: "error", title: "Error", text: err.message });
+        }
+    });
+
+    $("input[name='number'], input[type='tel']").on("keydown", function (e) {
+        var charCode = (typeof e.which == "undefined") ? e.keyCode : e.which;
+        var charStr = String.fromCharCode(charCode);
+        if (!validCodes.includes(charCode)) {
+            if (!charStr.match(/^[0-9]+$/)) {
+                e.preventDefault();
+            }
+        }
+    });
+
+    $("input[name='number'], input[type='tel']").on("paste", function (e) {
+        var charCode = (typeof e.which == "undefined") ? e.keyCode : e.which;
+        var charStr = String.fromCharCode(charCode);
+        if (!validCodes.includes(charCode)) {
+            if (!charStr.match(/^[0-9]+$/)) {
+                e.preventDefault();
+            }
         }
     });
 
@@ -2089,6 +2245,7 @@
             $(".taxesEmpty").hide();
             $(".taxesList").hide();
             $(".taxesAdd").show();
+            ClearTaxes();
         } catch (err) {
             swal({ type: "error", title: "Error", text: err.message });
         }
@@ -2110,7 +2267,7 @@
             var IsValid = true;
             var Tax_ID = emptyStr($('#Tax_ID').val()) ? "" : $('#Tax_ID').val(),
                 Tax_Name = emptyStr($('#Tax_Name').val()) ? "" : $('#Tax_Name').val(),
-                Tax_Rate = $('#Tax_Rate').is(":checked") ? 1 : 0,
+                Tax_Rate = emptyStr($('#Tax_Rate').val()) ? "" : $('#Tax_Rate').val(),
                 Tax_Type = emptyStr($('#Tax_Type').val()) ? "" : $('#Tax_Type').val(),
                 Tax_Option = emptyStr($('#Tax_Option').val()) ? "" : $('#Tax_Option').val();
 
@@ -2150,6 +2307,21 @@
         }
     });
 
+    $('#table_taxes tbody').on('dblclick', 'tr', function () {
+        try {
+            var currow = $(this).closest('tr');
+            var Tax_ID = currow.find('td:eq(0) input').val();
+            $(".taxesEmpty").hide();
+            $(".taxesList").hide();
+            $(".taxesAdd").show();
+            ClearTaxes();
+            $('#Tax_ID').val(Tax_ID);
+            GetDetailsTaxes();
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    });
+
     //#endregion
 
     //#region Sales Type
@@ -2159,6 +2331,15 @@
             $(".salesList").hide();
             $(".salesAdd").show();
             ClearSales();
+            var model = {
+                'TABLE': 'POS_Set_SalesType',
+                'FIELD': 'SalesType_ID',
+                'DOCID': 'STYP'
+            }
+            model = JSON.stringify(model);
+            var hasil = FuncEncrypt(model);
+            var NEWNUMBER = GetNumberMaster(hasil);
+            $('#SALESTYPE_ID').val(NEWNUMBER).parent('.form-group').addClass('focused');
         } catch (err) {
             swal({ type: "error", title: "Error", text: err.message });
         }
@@ -2381,6 +2562,15 @@
             $(".siteList").hide();
             $(".siteAdd").show();
             ClearSite();
+            var model = {
+                'TABLE': 'POS_Set_Site',
+                'FIELD': 'Site_ID',
+                'DOCID': 'SITE'
+            }
+            model = JSON.stringify(model);
+            var hasil = FuncEncrypt(model);
+            var NEWNUMBER = GetNumberMaster(hasil);
+            $('#SITE_ID').val(NEWNUMBER).parent('.form-group').addClass('focused');
         } catch (err) {
             swal({ type: "error", title: "Error", text: err.message });
         }

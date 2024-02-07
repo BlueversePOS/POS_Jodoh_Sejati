@@ -7,9 +7,16 @@ CREATE OR ALTER proc [dbo].[Web_Items_GetDataList]
 AS
 BEGIN
 	BEGIN TRY
-		SELECT A.*, COALESCE(B.Category_Name, '') Category_Name
+		SELECT A.*, COALESCE(B.Category_Name, '') Category_Name, COALESCE(C.Tax_Name, '') Tax_Name
 		FROM POS_Item A
 		LEFT JOIN POS_CategoryItem B ON A.Category_ID=B.Category_ID
+		LEFT JOIN POS_Set_Taxes C ON A.Tax_ID=C.Tax_ID
+		LEFT JOIN 
+		(
+			select top 1 Site_ID 
+			from POS_Set_Site
+			where DefaultSite=1
+		) D ON A.Site_ID=D.Site_ID
 		WHERE 1=1
 		and (CASE WHEN LEN(RTRIM(@Item_Number)) > 0 THEN A.Item_Number ELSE '' END = 
 		CASE WHEN LEN(RTRIM(@Item_Number)) > 0 THEN @Item_Number ELSE '' END
@@ -31,6 +38,7 @@ BEGIN
 			RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
 	END CATCH
 END
+GO
 /*
 EXEC Web_Items_GetDataList '', '', 0
 */

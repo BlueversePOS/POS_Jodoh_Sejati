@@ -221,6 +221,43 @@ namespace ProjectXYZ.Areas.Setting.Controllers
         }
 
         [AuthorizeActionFilterAttribute]
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        [Obsolete]
+        public JsonResult SaveTaxes(string param)
+        {
+            bool success = false;
+            Taxes model = new Taxes();
+            try
+            {
+                string decryptmodel = func.Decrypt(param);
+                model = JsonConvert.DeserializeObject<Taxes>(decryptmodel);
+
+                DataTable ObjList = dtaccess.SaveTaxes(model);
+                List<DataRow> rows = ObjList.Select().ToList();
+
+                var list = (from DataRow ro in rows
+                            select new
+                            {
+                                CODE = ro["CODE"],
+                                Tax_ID = ro["Tax_ID"]
+                            }).ToList();
+
+                success = true;
+                var jsonResult = Json(new { success = success, message = "" }, JsonRequestBehavior.AllowGet);
+                jsonResult.MaxJsonLength = int.MaxValue;
+                return jsonResult;
+            }
+            catch (Exception ex)
+            {
+
+                var jsonResult = Json(new { success = success, message = ex.Message }, JsonRequestBehavior.AllowGet);
+                jsonResult.MaxJsonLength = int.MaxValue;
+                return jsonResult;
+            }
+        }
+
+        [AuthorizeActionFilterAttribute]
         [Obsolete]
         public JsonResult GetDataStores(string ID)
         {
@@ -317,6 +354,41 @@ namespace ProjectXYZ.Areas.Setting.Controllers
                                 SalesType_Name = ro["SalesType_Name"],
                                 Store_ID = ro["Store_ID"],
                                 Store_Name = ro["Store_Name"]
+                            }).ToList();
+
+                success = true;
+                var jsonResult = Json(new { success = success, data = list }, JsonRequestBehavior.AllowGet);
+                jsonResult.MaxJsonLength = int.MaxValue;
+                return jsonResult;
+            }
+            catch (Exception ex)
+            {
+
+                var jsonResult = Json(new { success = success, message = ex.Message }, JsonRequestBehavior.AllowGet);
+                jsonResult.MaxJsonLength = int.MaxValue;
+                return jsonResult;
+            }
+        }
+
+        [AuthorizeActionFilterAttribute]
+        [Obsolete]
+        public JsonResult GetNumberMaster(string param)
+        {
+            bool success = false;
+            SettingsDocID model = new SettingsDocID();
+            try
+            {
+                string decryptmodel = func.Decrypt(param);
+                model = JsonConvert.DeserializeObject<SettingsDocID>(decryptmodel);
+
+                DataTable ObjList = dtaccess.GetNumberMaster(model);
+                List<DataRow> rows = ObjList.Select().ToList();
+
+                int i = 1;
+                var list = (from DataRow ro in rows
+                            select new
+                            {
+                                NEWNUMBER = ro["NEWNUMBER"]
                             }).ToList();
 
                 success = true;

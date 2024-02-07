@@ -48,6 +48,16 @@ namespace ProjectXYZ.Areas.Setting.Models
         public string Store_Name { get; set; }
     }
 
+    public class Taxes
+    {
+        public string UserID { get; set; }
+        public string Tax_ID { get; set; }
+        public string Tax_Name { get; set; }
+        public decimal Tax_Rate { get; set; }
+        public int Tax_Type { get; set; }
+        public int Tax_Option { get; set; }
+    }
+
     public class Stores
     {
         public string UserID { get; set; }
@@ -80,5 +90,11 @@ namespace ProjectXYZ.Areas.Setting.Models
         public string POS_Device_Name { get; set; }
         public string Store_ID { get; set; }
         public string Store_Name { get; set; }
+    }
+    public class SettingsDocID
+    {
+        public string DOCID { get; set; }
+        public string FIELD { get; set; }
+        public string TABLE { get; set; }
     }
 }

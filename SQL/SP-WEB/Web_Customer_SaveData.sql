@@ -77,10 +77,10 @@ BEGIN
 		RAISERROR (@ErrorMessage,@ErrorSeverity,@ErrorState)
 	END CATCH
 END
+GO
 /*
 begin tran
 exec Web_Customer_SaveData @UserID=N'USER1',@Customer_ID=N'',@Customer_Name=N'Test Customer',@Email=N'testcust@amail.com',
 @Phone=N'089765467873',@Address=N'dimana bae',@Country=N'',@Province=N'',@City=N'',@Postal_Code=N'17125',@Customer_Code=N'CUST001',@Note=N''
 rollback
 */
-GO

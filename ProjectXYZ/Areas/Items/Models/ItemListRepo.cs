@@ -578,7 +578,7 @@ namespace ProjectXYZ.Areas.Items.Models
                     Track_Stock = model.Track_Stock,
                     InStock = model.InStock,
                     LowStock = model.LowStock,
-                    Tax_10 = model.Tax_10,
+                    Tax_ID = model.Tax_ID,
                     Representation = model.Representation,
                     Item_Color = model.Item_Color,
                     Item_Shape = model.Item_Shape,

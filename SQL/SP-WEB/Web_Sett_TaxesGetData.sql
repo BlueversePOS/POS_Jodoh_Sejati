@@ -21,6 +21,7 @@ BEGIN
 			RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
 	END CATCH
 END
+GO
 /*
 EXEC Web_Sett_TaxesGetData ''
 */

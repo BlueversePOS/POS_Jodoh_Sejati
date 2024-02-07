@@ -22,7 +22,7 @@ namespace ProjectXYZ.Areas.Items.Models
         public int Track_Stock { get; set; }
         public int InStock { get; set; }
         public int LowStock { get; set; }
-        public int Tax_10 { get; set; }
+        public string Tax_ID { get; set; }
         public int Representation { get; set; }
         public string Item_Color { get; set; } = string.Empty;
         public string Item_Shape { get; set; } = string.Empty;
@@ -63,5 +63,13 @@ namespace ProjectXYZ.Areas.Items.Models
         public string Item_Number { get; set; } = string.Empty;
         public string Category_ID { get; set; } = string.Empty;
         public int LowStock { get; set; }
+    }
+
+    public class Dokumen
+    {
+        public string DOCID { get; set; } = string.Empty;
+        public HttpPostedFileBase DOCFILE { get; set; }
+        public string DOCFILEPATH { get; set; } = string.Empty;
+        public DateTime DOCDATE { get; set; }
     }
 }

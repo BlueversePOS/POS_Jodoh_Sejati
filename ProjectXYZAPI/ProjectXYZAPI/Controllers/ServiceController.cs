@@ -183,14 +183,35 @@ namespace ProjectXYZAPI.Controllers
             }
         }
 
-        [Route("ResetPassword")]
+        [Route("CheckEmailUser")]
         [HttpPost]
-        public dynamic ResetPassword([FromBody] UserLogin param)
+        public dynamic CheckEmailUser([FromBody] UserLogin param)
         {
             try
             {
                 DataTable dt = null;
-                dt = repo.ResetPassword(param);
+                dt = repo.CheckEmailUser(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("UpdatePasswordUser")]
+        [HttpPost]
+        public dynamic UpdatePasswordUser([FromBody] UserLogin param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.UpdatePasswordUser(param);
                 return dt;
             }
             catch (Exception ex)
@@ -728,6 +749,27 @@ namespace ProjectXYZAPI.Controllers
             }
         }
 
+        [Route("SaveTaxes")]
+        [HttpPost]
+        public dynamic SaveTaxes([FromBody] Taxes param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.SaveTaxes(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
         [Route("GetDataStores")]
         [HttpPost]
         public dynamic GetDataStores([FromBody] Param param)
@@ -895,6 +937,337 @@ namespace ProjectXYZAPI.Controllers
                 return result;
             }
         }
+
+        #endregion
+
+        #region Generate Number
+
+        [Route("GetNumberMaster")]
+        [HttpPost]
+        public dynamic GetNumberMaster([FromBody] GenerateNumberParam param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.GetNumberMaster(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("GenerateNumberTRX")]
+        [HttpPost]
+        public dynamic GenerateNumberTRX([FromBody] GenerateNumber param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.GenerateNumberTRX(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("GenerateNumberPerDay")]
+        [HttpPost]
+        public dynamic GenerateNumberPerDay([FromBody] GenerateNumber param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.GenerateNumberPerDay(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        #endregion
+
+        #region Transaction
+
+        [Route("GetReason")]
+        [HttpPost]
+        public dynamic GetReason([FromBody] Param param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.GetReason();
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("SaveOpenShift")]
+        [HttpPost]
+        public dynamic SaveOpenShift([FromBody] ShiftParam param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.SaveOpenShift(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("SaveCloseShift")]
+        [HttpPost]
+        public dynamic SaveCloseShift([FromBody] ShiftParam param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.SaveCloseShift(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("SaveSummaryShift")]
+        [HttpPost]
+        public dynamic SaveSummaryShift([FromBody] SummShiftParam param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.SaveSummaryShift(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("SaveSetupPrinter")]
+        [HttpPost]
+        public dynamic SaveSetupPrinter([FromBody] SetupPrint param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.SaveSetupPrinter(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("SaveTransaction")]
+        [HttpPost]
+        public dynamic SaveTransaction([FromBody] TrxHeader param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.SaveTransaction(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("SaveTrxPost")]
+        [HttpPost]
+        public dynamic SaveTrxPost([FromBody] TrxPost param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.SaveTrxPost(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        #region Stock Adjusment
+
+        [Route("AdjGetDataList")]
+        [HttpPost]
+        public dynamic AdjGetDataList([FromBody] SAFilterItem param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.AdjGetDataList(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("AdjGetDataHeader")]
+        [HttpPost]
+        public dynamic AdjGetDataHeader([FromBody] SAFilterItem param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.AdjGetDataHeader(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("AdjGetDataDetail")]
+        [HttpPost]
+        public dynamic AdjGetDataDetail([FromBody] SAFilterItem param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.AdjGetDataDetail(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("SaveAdj")]
+        [HttpPost]
+        public dynamic SaveAdj([FromBody] SAHeader param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.SaveAdj(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        #endregion
+
+        #region Transfer Item
+
+        [Route("TrfItemGetItemBySite")]
+        [HttpPost]
+        public dynamic TrfItemGetItemBySite([FromBody] TrfItemFilter param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.TrfItemGetItemBySite(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        #endregion
 
         #endregion
     }

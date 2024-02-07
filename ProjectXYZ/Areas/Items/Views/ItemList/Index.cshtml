@@ -1,13 +1,13 @@
 ﻿
 @{
-    ViewBag.Title = "Dashboard";
+    ViewBag.Title = "Item List";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Dashboard</title>
+    <title>Item List</title>
     <style>
         .breadcrumb-item + .nav-item::before {
             content: ">";
@@ -281,7 +281,7 @@
                                         <table id="table_listvariant" class="table table-hover wrap">
                                             <thead>
                                                 <tr>
-                                                    <th class="text-center" style="vertical-align: middle;"><input type="checkbox" id="CBavailALL" /> Available</th>
+                                                    <th class="text-center no-wrap" style="vertical-align: middle;"><input type="checkbox" id="CBavailALL" /> Available</th>
                                                     <th class="no-wrap" style="vertical-align: middle;">Variant</th>
                                                     <th class="no-wrap" style="vertical-align: middle;">Price</th>
                                                     <th class="no-wrap" style="vertical-align: middle;">Cost</th>
@@ -306,13 +306,10 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <div class="col-12 p-0">
-                                <div class="col-12 row p-0" style="justify-content: space-between;">
-                                    <span class="col-form-label col-11" for="PPN_10">PPN 10% (10 %)</span>
-                                    <label class="switch mt-2">
-                                        <input type="checkbox" id="PPN_10" value="0">
-                                        <span class="slider round"></span>
-                                    </label>
+                            <div class="col-lg-6 col-md-8 col-12 p-0">
+                                <div class="form-group focused">
+                                    <label class="form-label" for="Tax_ID">Tax</label>
+                                    <select class="form-input" id="Tax_ID"></select>
                                 </div>
                             </div>
                         </div>
@@ -352,13 +349,18 @@
                                     <div class="col-lg-4 col-md-12 col-12 p-0">
                                         <input type="radio" class="mt-3 rbRepresen" id="RB_IMAGE" value="2" />
                                         <span class="pl-3">Image</span>
-                                        <div class="col-12 pl-0 pr-0 pt-3">
-                                            <div class="form-control DTLIMG no-padding" style="width: 180px; height: 100%;">
-                                                <div class="col-lg-12 pickfoto" style="padding-top: 160px;">
-                                                    <a class="glyphicon glyphicon-camera" style="width: 40px; height: 40px;"></a>
+                                        <div class="col-12 pl-0 pr-0 pt-3 pict">
+                                            <div class="form-control DTLIMG p-1" style="width: 180px; height: 220px;">
+                                                <div class="col-lg-12 pickfoto pt-4">
+                                                    <a class="fas fa-camera" style="width: 40px; height: 40px;"></a>
+                                                    <br />
+                                                    <button type="button" class="btn btn-primary" onclick="document.getElementById('uploadFoto').click()">Browse File</button>
                                                     <input type="file" name="uploadFoto" id="uploadFoto" style="display:none;" />
                                                     <input type="text" id="pathFoto" hidden />
                                                 </div>
+                                            </div>
+                                            <div class="col-lg-12 changefoto pt-2 text-center" style="width: 180px;">
+                                                <button type="button" class="btn btn-primary" onclick="document.getElementById('uploadFoto').click()">Change File</button>
                                             </div>
                                         </div>
                                     </div>

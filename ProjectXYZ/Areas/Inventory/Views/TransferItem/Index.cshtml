@@ -40,19 +40,16 @@
                                     <div class="form-group col-lg-3 col-md-6 col-12 m-0 pl-0">
                                         <span class="col-12 pl-0 spanselect">Status</span>
                                         <select class="form-control select2" id="status">
-                                            <option id="">All</option>
                                         </select>
                                     </div>
                                     <div class="form-group col-lg-3 col-md-6 col-12 m-0 pl-0">
                                         <span class="col-12 pl-0 spanselect">Source site</span>
                                         <select class="form-control select2" id="source_site">
-                                            <option id="">All</option>
                                         </select>
                                     </div>
                                     <div class="form-group col-lg-3 col-md-6 col-12 m-0 pl-0">
                                         <span class="col-12 pl-0 spanselect">Destination site</span>
                                         <select class="form-control select2" id="dest_site">
-                                            <option id="">All</option>
                                         </select>
                                     </div>
                                     <a class="text-gray pl-2 pb-1" style="align-self: end;"><i class="fa fa-search"></i></a>
@@ -72,7 +69,7 @@
                                             <th style="vertical-align:middle;">Source site</th>
                                             <th style="vertical-align:middle;">Destination site</th>
                                             <th style="vertical-align:middle;">Status</th>
-                                            <th style="vertical-align:middle;">Quantity</th>
+                                            <th class="text-right" style="vertical-align:middle;">Quantity</th>
                                         </tr>
                                     </thead>
                                 </table>
@@ -85,10 +82,9 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="col-12 row m-0">
-                            <div class="form-group col-lg-6 col-md-6 col-12 m-0 pl-0">
-                                <span class="col-12 pl-0 spanselect">Source site</span>
+                            <div class="form-group col-lg-6 col-md-6 col-12 m-0 pl-0 focused">
+                                <label class="form-label" for="TF_SOURCE_SITE">Source site</label>
                                 <select class="form-control select2" id="TF_SOURCE_SITE">
-                                    <option id="">All</option>
                                 </select>
                                 <div class="form-group col-12 pb-2 pl-0 pr-0">
                                     <label class="form-label" for="TFDATEITEM">Date of transfer item</label>
@@ -103,10 +99,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group col-lg-6 col-md-6 col-12 m-0 pl-0">
-                                <span class="col-12 pl-0 spanselect">Destination site</span>
+                            <div class="form-group col-lg-6 col-md-6 col-12 m-0 pl-0 focused">
+                                <label class="form-label" for="TF_DEST_SITE">Destination site</label>
                                 <select class="form-control select2" id="TF_DEST_SITE">
-                                    <option id="">All</option>
                                 </select>
                             </div>
                             <div class="form-group col-12 m-0 pl-0">
@@ -128,9 +123,9 @@
                                     <thead>
                                         <tr>
                                             <th style="vertical-align:middle;">Item</th>
-                                            <th style="vertical-align:middle;">Source stock</th>
-                                            <th style="vertical-align:middle;">Destination stock</th>
-                                            <th style="vertical-align:middle;">Quantity</th>
+                                            <th class="text-right" style="vertical-align:middle;">Source stock</th>
+                                            <th class="text-right" style="vertical-align:middle;">Destination stock</th>
+                                            <th class="text-right" style="vertical-align:middle;">Quantity</th>
                                         </tr>
                                     </thead>
                                 </table>

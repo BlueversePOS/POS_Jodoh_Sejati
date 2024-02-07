@@ -159,7 +159,44 @@
         placeholder: "All",
         multiple: false,
         allowClear: true,
-        width: "100%"
+        width: "100%",
+        ajax: {
+            url: rootUrl + 'Inventory/TransferItem/GetDataSites',
+            type: 'POST',
+            dataType: 'json',
+            data: function (params) {
+                return {
+                    Prefix: params.term
+                }
+            },
+            processResults: function (data) {
+                return {
+                    results: $.map(data.data,
+                        function (obj) {
+                            var nilai = obj.Site_ID.trim();
+                            var textnilai = obj.Site_Name.trim();
+                            return { id: nilai, text: textnilai };
+                        })
+                };
+            },
+            error: function (xhr) {
+                if (xhr.status != "200") {
+                    var doc = $.parseHTML(xhr.responseText);
+                    if (!emptyStr(doc)) {
+                        var titleNode = doc.filter(function (node) {
+                            return node.localName === "title";
+                        });
+                        var msg = titleNode[0].textContent;
+                        swal("Error", "Error : " + msg, "error");
+                    }
+                    else {
+                        if (xhr.statusText.toUpperCase().trim() != "OK") {
+                            swal({ type: "error", title: "Error", text: xhr.statusText });
+                        }
+                    }
+                }
+            }
+        }
     });
 
     $("#dest_site").select2({
@@ -167,23 +204,156 @@
         placeholder: "All",
         multiple: false,
         allowClear: true,
-        width: "100%"
+        width: "100%",
+        ajax: {
+            url: rootUrl + 'Inventory/TransferItem/GetDataSites',
+            type: 'POST',
+            dataType: 'json',
+            data: function (params) {
+                return {
+                    Prefix: params.term
+                }
+            },
+            processResults: function (data) {
+                return {
+                    results: $.map(data.data,
+                        function (obj) {
+                            var nilai = obj.Site_ID.trim();
+                            var textnilai = obj.Site_Name.trim();
+                            return { id: nilai, text: textnilai };
+                        })
+                };
+            },
+            error: function (xhr) {
+                if (xhr.status != "200") {
+                    var doc = $.parseHTML(xhr.responseText);
+                    if (!emptyStr(doc)) {
+                        var titleNode = doc.filter(function (node) {
+                            return node.localName === "title";
+                        });
+                        var msg = titleNode[0].textContent;
+                        swal("Error", "Error : " + msg, "error");
+                    }
+                    else {
+                        if (xhr.statusText.toUpperCase().trim() != "OK") {
+                            swal({ type: "error", title: "Error", text: xhr.statusText });
+                        }
+                    }
+                }
+            }
+        }
     });
 
     $("#TF_SOURCE_SITE").select2({
         dropdownParent: $("#TF_SOURCE_SITE").parent(),
-        placeholder: "All",
+        placeholder: "select site",
         multiple: false,
         allowClear: true,
-        width: "100%"
+        width: "100%",
+        ajax: {
+            url: rootUrl + 'Inventory/TransferItem/GetDataSites',
+            type: 'POST',
+            dataType: 'json',
+            data: function (params) {
+                return {
+                    Prefix: params.term
+                }
+            },
+            processResults: function (data) {
+                var DEST_SITE = emptyStr($("#TF_DEST_SITE").val()) ? "" : $("#TF_DEST_SITE").val();
+                if (data.data.length != 0 && !emptyStr(DEST_SITE)) {
+                    data.data = $.grep(data.data, function (e) {
+                        var Site_ID = e.Site_ID.trim();
+                        if (Site_ID != DEST_SITE) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    });
+                }
+                return {
+                    results: $.map(data.data,
+                        function (obj) {
+                            var nilai = obj.Site_ID.trim();
+                            var textnilai = obj.Site_Name.trim();
+                            return { id: nilai, text: textnilai };
+                        })
+                };
+            },
+            error: function (xhr) {
+                if (xhr.status != "200") {
+                    var doc = $.parseHTML(xhr.responseText);
+                    if (!emptyStr(doc)) {
+                        var titleNode = doc.filter(function (node) {
+                            return node.localName === "title";
+                        });
+                        var msg = titleNode[0].textContent;
+                        swal("Error", "Error : " + msg, "error");
+                    }
+                    else {
+                        if (xhr.statusText.toUpperCase().trim() != "OK") {
+                            swal({ type: "error", title: "Error", text: xhr.statusText });
+                        }
+                    }
+                }
+            }
+        }
     });
 
     $("#TF_DEST_SITE").select2({
         dropdownParent: $("#TF_DEST_SITE").parent(),
-        placeholder: "All",
+        placeholder: "select site",
         multiple: false,
         allowClear: true,
-        width: "100%"
+        width: "100%",
+        ajax: {
+            url: rootUrl + 'Inventory/TransferItem/GetDataSites',
+            type: 'POST',
+            dataType: 'json',
+            data: function (params) {
+                return {
+                    Prefix: params.term
+                }
+            },
+            processResults: function (data) {
+                var SOURCE_SITE = emptyStr($("#TF_SOURCE_SITE").val()) ? "" : $("#TF_SOURCE_SITE").val();
+                if (data.data.length != 0 && !emptyStr(SOURCE_SITE)) {
+                    data.data = $.grep(data.data, function (e) {
+                        var Site_ID = e.Site_ID.trim();
+                        if (Site_ID != SOURCE_SITE) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    });
+                }
+                return {
+                    results: $.map(data.data,
+                        function (obj) {
+                            var nilai = obj.Site_ID.trim();
+                            var textnilai = obj.Site_Name.trim();
+                            return { id: nilai, text: textnilai };
+                        })
+                };
+            },
+            error: function (xhr) {
+                if (xhr.status != "200") {
+                    var doc = $.parseHTML(xhr.responseText);
+                    if (!emptyStr(doc)) {
+                        var titleNode = doc.filter(function (node) {
+                            return node.localName === "title";
+                        });
+                        var msg = titleNode[0].textContent;
+                        swal("Error", "Error : " + msg, "error");
+                    }
+                    else {
+                        if (xhr.statusText.toUpperCase().trim() != "OK") {
+                            swal({ type: "error", title: "Error", text: xhr.statusText });
+                        }
+                    }
+                }
+            }
+        }
     });
 
     $('input').focus(function () {

@@ -5,9 +5,10 @@ CREATE OR ALTER proc [dbo].[Web_Items_GetItemVariant]
 AS
 BEGIN
 	BEGIN TRY
-		SELECT *
-		FROM POS_ItemVariant
-		WHERE RTRIM(Item_Number) = RTRIM(@Item_Number)
+		SELECT A.*, COALESCE(B.Item_Name, '') Item_Name, COALESCE(B.Item_Description, '') Item_Description, 0 FLAG
+		FROM POS_ItemVariant A
+		LEFT JOIN POS_Item B ON A.Item_Number=B.Item_Number
+		WHERE RTRIM(A.Item_Number) = RTRIM(@Item_Number)
 		ORDER BY Item_Number asc
 	END TRY
 	BEGIN	CATCH
@@ -22,6 +23,7 @@ BEGIN
 			RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
 	END CATCH
 END
+GO
 /*
-EXEC Web_Items_GetItemVariant
+EXEC Web_Items_GetItemVariant 'ITM0001'
 */

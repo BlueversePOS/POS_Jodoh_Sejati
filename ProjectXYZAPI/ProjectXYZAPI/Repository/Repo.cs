@@ -11,11 +11,9 @@ using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Text;
 using static ProjectXYZAPI.FunctionHelper;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Security.Policy;
 
 namespace ProjectXYZAPI.Repository
 {
@@ -564,7 +562,7 @@ namespace ProjectXYZAPI.Repository
             return dt;
         }
 
-        public DataTable ResetPassword(UserLogin param)
+        public DataTable CheckEmailUser(UserLogin param)
         {
             DataTable dt = new DataTable();
 
@@ -572,10 +570,59 @@ namespace ProjectXYZAPI.Repository
             {
                 ConnSql("");
 
-                SqlCommand cmd = new SqlCommand("Web_Reset_Password", conn);
+                SqlCommand cmd = new SqlCommand("Web_CheckEmailUser", conn);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.CommandTimeout = 0;
                 cmd.Parameters.AddWithValue("@EmailAddress", param.EmailAddress ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = JsonConvert.SerializeObject(param),
+                    db = "",
+                    user = param.EmailAddress.ToString(),
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable UpdatePasswordUser(UserLogin param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("Web_UpdatePasswordUser", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@EmailAddress", param.EmailAddress ?? "");
+                cmd.Parameters.AddWithValue("@PASSWORD", param.PASSWORD ?? "");
 
                 SqlDataAdapter adp = new SqlDataAdapter();
                 adp.SelectCommand = cmd;
@@ -1340,7 +1387,7 @@ namespace ProjectXYZAPI.Repository
                 cmd.Parameters.AddWithValue("@Track_Stock", param.Track_Stock);
                 cmd.Parameters.AddWithValue("@InStock", param.InStock);
                 cmd.Parameters.AddWithValue("@LowStock", param.LowStock);
-                cmd.Parameters.AddWithValue("@Tax_10", param.Tax_10);
+                cmd.Parameters.AddWithValue("@Tax_ID", param.Tax_ID);
                 cmd.Parameters.AddWithValue("@Representation", param.Representation);
                 cmd.Parameters.AddWithValue("@Item_Color", param.Item_Color ?? "");
                 cmd.Parameters.AddWithValue("@Item_Shape", param.Item_Shape ?? "");
@@ -2078,6 +2125,71 @@ namespace ProjectXYZAPI.Repository
             return dt;
         }
 
+        public DataTable SaveTaxes(Taxes param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                trans = conn.BeginTransaction();
+                SqlCommand cmd = new SqlCommand("Web_Sett_SaveDataTaxes", conn, trans);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
+                cmd.Parameters.AddWithValue("@Tax_ID", param.Tax_ID ?? "");
+                cmd.Parameters.AddWithValue("@Tax_Name", param.Tax_Name ?? "");
+                cmd.Parameters.AddWithValue("@Tax_Rate", param.Tax_Rate);
+                cmd.Parameters.AddWithValue("@Tax_Type", param.Tax_Type);
+                cmd.Parameters.AddWithValue("@Tax_Option", param.Tax_Option);
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+
+                trans.Commit();
+            }
+            catch (Exception ex)
+            {
+                if (trans != null)
+                {
+                    trans.Rollback();
+                }
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+                if (trans != null)
+                {
+                    trans.Dispose();
+                    trans = null;
+                }
+            }
+            return dt;
+        }
+
         public DataTable GetDataStores(Param param)
         {
             DataTable dt = new DataTable();
@@ -2535,5 +2647,1173 @@ namespace ProjectXYZAPI.Repository
 
         #endregion
 
+        #region Generate Number
+
+        public DataTable GetNumberMaster(GenerateNumberParam param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("Web_Generate_NewNumber", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@TABLE", param.TABLE ?? "");
+                cmd.Parameters.AddWithValue("@FIELD", param.FIELD ?? "");
+                cmd.Parameters.AddWithValue("@DOCID", param.DOCID ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable GenerateNumberTRX(GenerateNumber param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("TRX_GenerateNumber_Master", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@DOCID", param.DOCID ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable GenerateNumberPerDay(GenerateNumber param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("TRX_GenerateNumberPerDay_Master", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@DOCID", param.DOCID ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        #endregion
+
+        #region Transaction
+
+        public DataTable GetReason()
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("Web_Trx_GetReason", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable SaveOpenShift(ShiftParam param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("TRX_SaveOpenShift", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@Batch_ID", param.Batch_ID ?? "");
+                cmd.Parameters.AddWithValue("@Lineitmseq", param.Lineitmseq);
+                cmd.Parameters.AddWithValue("@Payment_ID", param.Payment_ID ?? "");
+                cmd.Parameters.AddWithValue("@Payment_Type", param.Payment_Type ?? "");
+                cmd.Parameters.AddWithValue("@Amount_Opening", param.Amount_Opening);
+                cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable SaveCloseShift(ShiftParam param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("TRX_SaveCloseShift", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@Batch_ID", param.Batch_ID ?? "");
+                cmd.Parameters.AddWithValue("@Lineitmseq", param.Lineitmseq);
+                cmd.Parameters.AddWithValue("@Payment_ID", param.Payment_ID ?? "");
+                cmd.Parameters.AddWithValue("@Payment_Type", param.Payment_Type ?? "");
+                cmd.Parameters.AddWithValue("@Amount_Opening", param.Amount_Opening);
+                cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable SaveSummaryShift(SummShiftParam param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("TRX_SaveSummaryShift", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@Batch_ID", param.Batch_ID ?? "");
+                cmd.Parameters.AddWithValue("@LastEdit_Date", param.LastEdit_Date);
+                cmd.Parameters.AddWithValue("@LastEdit_time", param.LastEdit_time);
+                cmd.Parameters.AddWithValue("@Store_ID", param.Store_ID ?? "");
+                cmd.Parameters.AddWithValue("@POS_Device_ID", param.POS_Device_ID ?? "");
+                cmd.Parameters.AddWithValue("@Opening_Date", param.Opening_Date);
+                cmd.Parameters.AddWithValue("@Opening_time", param.Opening_time);
+                cmd.Parameters.AddWithValue("@Closing_Date", param.Closing_Date);
+                cmd.Parameters.AddWithValue("@Closing_time", param.Closing_time);
+                cmd.Parameters.AddWithValue("@Sum_Amount_Opening", param.Sum_Amount_Opening);
+                cmd.Parameters.AddWithValue("@Sum_Amount_Closing", param.Sum_Amount_Closing);
+                cmd.Parameters.AddWithValue("@Sum_Invoice_Posted", param.Sum_Invoice_Posted);
+                cmd.Parameters.AddWithValue("@Sum_Tendered", param.Sum_Tendered);
+                cmd.Parameters.AddWithValue("@Sum_Changes", param.Sum_Changes);
+                cmd.Parameters.AddWithValue("@Sum_Amount_Discount", param.Sum_Amount_Discount);
+                cmd.Parameters.AddWithValue("@Sum_Amount_Tax", param.Sum_Amount_Tax);
+                cmd.Parameters.AddWithValue("@Sum_Invoice_Refund_Posted", param.Sum_Invoice_Refund_Posted);
+                cmd.Parameters.AddWithValue("@Sum_Amount_PayOut", param.Sum_Amount_PayOut);
+                cmd.Parameters.AddWithValue("@Sum_Amount_PayIn", param.Sum_Amount_PayIn);
+                cmd.Parameters.AddWithValue("@Count_Customers", param.Count_Customers);
+                cmd.Parameters.AddWithValue("@Status_Batch", param.Status_Batch);
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable SaveSetupPrinter(SetupPrint param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("TRX_SaveSetupPrinter", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@PrinterID", param.PrinterID ?? "");
+                cmd.Parameters.AddWithValue("@PrinterName", param.PrinterName ?? "");
+                cmd.Parameters.AddWithValue("@Printer_Checkbox1", param.Printer_Checkbox1);
+                cmd.Parameters.AddWithValue("@Printer_Checkbox2", param.Printer_Checkbox2);
+                cmd.Parameters.AddWithValue("@Printer_Checkbox3", param.Printer_Checkbox3);
+                cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable SaveTransaction(TrxHeader param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                trans = conn.BeginTransaction();
+                #region Convert Detail
+
+                DataTable dtTbl = new DataTable();
+
+                if (param.TrxDetailTYPE != null)
+                {
+                    var tblFiltered = (from N in param.TrxDetailTYPE.AsEnumerable()
+                                       select new
+                                       {
+                                           N.DOCNUMBER,
+                                           N.DOCTYPE,
+                                           N.DOCDATE,
+                                           N.Lineitmseq,
+                                           N.Item_Number,
+                                           N.Item_Description,
+                                           N.Quantity,
+                                           N.UofM,
+                                           N.Item_Price,
+                                           N.Item_Cost,
+                                           N.Store_ID,
+                                           N.Site_ID,
+                                           N.SalesType_ID,
+                                           N.Discount_ID,
+                                           N.Discount_Amount,
+                                           N.Notes,
+                                           N.POS_Device_ID,
+                                           N.POS_Version
+                                       }).ToList();
+
+                    dtTbl = ListToDataTable(tblFiltered);
+                }
+                else
+                {
+                    dtTbl.Columns.Add("DOCNUMBER", typeof(string));
+                    dtTbl.Columns.Add("DOCTYPE", typeof(int));
+                    dtTbl.Columns.Add("DOCDATE", typeof(DateTime));
+                    dtTbl.Columns.Add("Lineitmseq", typeof(int));
+                    dtTbl.Columns.Add("Item_Number", typeof(string));
+                    dtTbl.Columns.Add("Item_Description", typeof(string));
+                    dtTbl.Columns.Add("Quantity", typeof(decimal));
+                    dtTbl.Columns.Add("UofM", typeof(string));
+                    dtTbl.Columns.Add("Item_Price", typeof(decimal));
+                    dtTbl.Columns.Add("Item_Cost", typeof(decimal));
+                    dtTbl.Columns.Add("Store_ID", typeof(string));
+                    dtTbl.Columns.Add("Site_ID", typeof(string));
+                    dtTbl.Columns.Add("SalesType_ID", typeof(string));
+                    dtTbl.Columns.Add("Discount_ID", typeof(string));
+                    dtTbl.Columns.Add("Discount_Amount", typeof(decimal));
+                    dtTbl.Columns.Add("Notes", typeof(string));
+                    dtTbl.Columns.Add("POS_Device_ID", typeof(string));
+                    dtTbl.Columns.Add("POS_Version", typeof(string));
+                }
+
+                #endregion
+
+                SqlCommand cmd = new SqlCommand("TRX_SaveTrx_TEMP", conn, trans);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
+                cmd.Parameters.AddWithValue("@DOCNUMBER", param.DOCNUMBER ?? "");
+                cmd.Parameters.AddWithValue("@DOCTYPE", param.DOCTYPE);
+                cmd.Parameters.AddWithValue("@DOCDATE", param.DOCDATE);
+                cmd.Parameters.AddWithValue("@Store_ID", param.Store_ID ?? "");
+                cmd.Parameters.AddWithValue("@Site_ID", param.Site_ID ?? "");
+                cmd.Parameters.AddWithValue("@SalesType_ID", param.SalesType_ID ?? "");
+                cmd.Parameters.AddWithValue("@CustName", param.CustName ?? "");
+                cmd.Parameters.AddWithValue("@Total_Line_Item", param.Total_Line_Item);
+                cmd.Parameters.AddWithValue("@ORIGTOTAL", param.ORIGTOTAL);
+                cmd.Parameters.AddWithValue("@SUBTOTAL", param.SUBTOTAL);
+                cmd.Parameters.AddWithValue("@Tax_Amount", param.Tax_Amount);
+                cmd.Parameters.AddWithValue("@Discount_ID", param.Discount_ID ?? "");
+                cmd.Parameters.AddWithValue("@Discount_Amount", param.Discount_Amount);
+                cmd.Parameters.AddWithValue("@Amount_Tendered", param.Amount_Tendered);
+                cmd.Parameters.AddWithValue("@Change_Amount", param.Change_Amount);
+                cmd.Parameters.AddWithValue("@Batch_ID", param.Batch_ID ?? "");
+                cmd.Parameters.AddWithValue("@POS_Device_ID", param.POS_Device_ID ?? "");
+                cmd.Parameters.AddWithValue("@POS_Version", param.POS_Version ?? "");
+                cmd.Parameters.AddWithValue("@SyncStatus", param.SyncStatus);
+                cmd.Parameters.AddWithValue("@Payment_ID", param.Payment_ID ?? "");
+                cmd.Parameters.AddWithValue("@Payment_Type", param.Payment_Type ?? "");
+                cmd.Parameters.AddWithValue("@Lnitmseq", param.Lnitmseq);
+
+                var dtlprm = cmd.CreateParameter();
+                dtlprm.TypeName = "dbo.TrxDetailTYPE";
+                dtlprm.Value = dtTbl;
+                dtlprm.ParameterName = "@TrxDetailTYPE";
+                cmd.Parameters.Add(dtlprm);
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+
+                trans.Commit();
+            }
+            catch (Exception ex)
+            {
+                if (trans != null)
+                {
+                    trans.Rollback();
+                }
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+                if (trans != null)
+                {
+                    trans.Dispose();
+                    trans = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable SaveTrxPost(TrxPost param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                trans = conn.BeginTransaction();
+
+                SqlCommand cmd = new SqlCommand("TRX_SaveTrx_POST", conn, trans);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@DOCNUMBER", param.DOCNUMBER ?? "");
+                cmd.Parameters.AddWithValue("@SyncStatus", param.SyncStatus);
+                cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+
+                trans.Commit();
+            }
+            catch (Exception ex)
+            {
+                if (trans != null)
+                {
+                    trans.Rollback();
+                }
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+                if (trans != null)
+                {
+                    trans.Dispose();
+                    trans = null;
+                }
+            }
+            return dt;
+        }
+
+        #region Stock Adjustment
+
+        public DataTable AdjGetDataList(SAFilterItem param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("TRX_Adjustment_GetDataList", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@Reason", param.Reason ?? "");
+                cmd.Parameters.AddWithValue("@Store_ID", param.Store_ID ?? "");
+                cmd.Parameters.AddWithValue("@Site_ID", param.Site_ID ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable AdjGetDataHeader(SAFilterItem param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("TRX_Adjustment_GetDataHeader", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@DOCNUMBER", param.DOCNUMBER ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable AdjGetDataDetail(SAFilterItem param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("TRX_Adjustment_GetDataDetail", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@DOCNUMBER", param.DOCNUMBER ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable SaveAdj(SAHeader param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                trans = conn.BeginTransaction();
+
+                #region Items
+
+                DataTable dtTbl = new DataTable();
+
+                if (param.SADetails != null)
+                {
+                    var tblFiltered = (from N in param.SADetails.AsEnumerable()
+                                       select new
+                                       {
+                                           N.DOCDATE,
+                                           N.Reason,
+                                           N.Lineitmseq,
+                                           N.Item_Number,
+                                           N.Item_Description,
+                                           N.Qty_Stock,
+                                           N.Qty_Add_Stock,
+                                           N.Qty_Remove_Stock,
+                                           N.Item_Cost,
+                                           N.Qty_After_Stock,
+                                           N.Expected_Stock,
+                                           N.Counted_Stock
+                                       }).ToList();
+
+                    dtTbl = ListToDataTable(tblFiltered);
+                }
+                else
+                {
+                    dtTbl.Columns.Add("Item_Number", typeof(string));
+                    dtTbl.Columns.Add("DOCDATE", typeof(DateTime));
+                    dtTbl.Columns.Add("Reason", typeof(string));
+                    dtTbl.Columns.Add("Lineitmseq", typeof(int));
+                    dtTbl.Columns.Add("Item_Number", typeof(string));
+                    dtTbl.Columns.Add("Item_Description", typeof(string));
+                    dtTbl.Columns.Add("Qty_Stock", typeof(decimal));
+                    dtTbl.Columns.Add("Qty_Add_Stock", typeof(decimal));
+                    dtTbl.Columns.Add("Qty_Remove_Stock", typeof(decimal));
+                    dtTbl.Columns.Add("Item_Cost", typeof(decimal));
+                    dtTbl.Columns.Add("Qty_After_Stock", typeof(decimal));
+                    dtTbl.Columns.Add("Expected_Stock", typeof(decimal));
+                    dtTbl.Columns.Add("Counted_Stock", typeof(decimal));
+                }
+
+                #endregion
+
+                SqlCommand cmd = new SqlCommand("TRX_Adjustment_Save", conn, trans);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@DOCNUMBER", param.DOCNUMBER ?? "");
+                cmd.Parameters.AddWithValue("@DOCDATE", param.DOCDATE);
+                cmd.Parameters.AddWithValue("@Site_ID", param.Site_ID ?? "");
+                cmd.Parameters.AddWithValue("@Site_Name", param.Site_Name ?? "");
+                cmd.Parameters.AddWithValue("@Reason", param.Reason ?? "");
+                cmd.Parameters.AddWithValue("@Total_Line_Item", param.Total_Line_Item);
+                cmd.Parameters.AddWithValue("@Notes", param.Notes ?? "");
+                cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
+
+                var dtlprm = cmd.CreateParameter();
+                dtlprm.TypeName = "dbo.TrxAdjDetailTYPE";
+                dtlprm.Value = dtTbl;
+                dtlprm.ParameterName = "@TrxAdjDetailTYPE";
+                cmd.Parameters.Add(dtlprm);
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+
+                trans.Commit();
+            }
+            catch (Exception ex)
+            {
+                if (trans != null)
+                {
+                    trans.Rollback();
+                }
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+                if (trans != null)
+                {
+                    trans.Dispose();
+                    trans = null;
+                }
+            }
+            return dt;
+        }
+
+        #endregion
+
+        #region Stock Adjustment
+
+        public DataTable TrfItemGetItemBySite(TrfItemFilter param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("TRX_TrfItem_GetItemBySite", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@SourceSite_ID", param.SourceSite_ID ?? "");
+                cmd.Parameters.AddWithValue("@DestSite_ID", param.DestSite_ID ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable TrfItemGetDataHeader(SAFilterItem param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("TRX_Adjustment_GetDataHeader", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@DOCNUMBER", param.DOCNUMBER ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable TrfItemGetDataDetail(SAFilterItem param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("TRX_Adjustment_GetDataDetail", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@DOCNUMBER", param.DOCNUMBER ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable SaveTrfItem(SAHeader param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                trans = conn.BeginTransaction();
+
+                #region Items
+
+                DataTable dtTbl = new DataTable();
+
+                if (param.SADetails != null)
+                {
+                    var tblFiltered = (from N in param.SADetails.AsEnumerable()
+                                       select new
+                                       {
+                                           N.DOCDATE,
+                                           N.Reason,
+                                           N.Lineitmseq,
+                                           N.Item_Number,
+                                           N.Item_Description,
+                                           N.Qty_Stock,
+                                           N.Qty_Add_Stock,
+                                           N.Qty_Remove_Stock,
+                                           N.Item_Cost,
+                                           N.Qty_After_Stock,
+                                           N.Expected_Stock,
+                                           N.Counted_Stock
+                                       }).ToList();
+
+                    dtTbl = ListToDataTable(tblFiltered);
+                }
+                else
+                {
+                    dtTbl.Columns.Add("Item_Number", typeof(string));
+                    dtTbl.Columns.Add("DOCDATE", typeof(DateTime));
+                    dtTbl.Columns.Add("Reason", typeof(string));
+                    dtTbl.Columns.Add("Lineitmseq", typeof(int));
+                    dtTbl.Columns.Add("Item_Number", typeof(string));
+                    dtTbl.Columns.Add("Item_Description", typeof(string));
+                    dtTbl.Columns.Add("Qty_Stock", typeof(decimal));
+                    dtTbl.Columns.Add("Qty_Add_Stock", typeof(decimal));
+                    dtTbl.Columns.Add("Qty_Remove_Stock", typeof(decimal));
+                    dtTbl.Columns.Add("Item_Cost", typeof(decimal));
+                    dtTbl.Columns.Add("Qty_After_Stock", typeof(decimal));
+                    dtTbl.Columns.Add("Expected_Stock", typeof(decimal));
+                    dtTbl.Columns.Add("Counted_Stock", typeof(decimal));
+                }
+
+                #endregion
+
+                SqlCommand cmd = new SqlCommand("TRX_Adjustment_Save", conn, trans);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@DOCNUMBER", param.DOCNUMBER ?? "");
+                cmd.Parameters.AddWithValue("@DOCDATE", param.DOCDATE);
+                cmd.Parameters.AddWithValue("@Site_ID", param.Site_ID ?? "");
+                cmd.Parameters.AddWithValue("@Site_Name", param.Site_Name ?? "");
+                cmd.Parameters.AddWithValue("@Reason", param.Reason ?? "");
+                cmd.Parameters.AddWithValue("@Total_Line_Item", param.Total_Line_Item);
+                cmd.Parameters.AddWithValue("@Notes", param.Notes ?? "");
+                cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
+
+                var dtlprm = cmd.CreateParameter();
+                dtlprm.TypeName = "dbo.TrxAdjDetailTYPE";
+                dtlprm.Value = dtTbl;
+                dtlprm.ParameterName = "@TrxAdjDetailTYPE";
+                cmd.Parameters.Add(dtlprm);
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+
+                trans.Commit();
+            }
+            catch (Exception ex)
+            {
+                if (trans != null)
+                {
+                    trans.Rollback();
+                }
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+                if (trans != null)
+                {
+                    trans.Dispose();
+                    trans = null;
+                }
+            }
+            return dt;
+        }
+
+        #endregion
+
+        #endregion
     }
 }

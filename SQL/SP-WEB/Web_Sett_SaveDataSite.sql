@@ -11,6 +11,10 @@ AS
 BEGIN
 	BEGIN TRY
 		BEGIN
+			IF LEN(ISNULL(@Site_ID,''))=0
+			BEGIN
+				RAISERROR('Site ID not found.',16,1)
+			END
 			IF LEN(ISNULL(@Site_Name,''))=0
 			BEGIN
 				RAISERROR('Please fill site name.',16,1)
@@ -29,10 +33,6 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			declare @p varchar(30)
-			EXEC Web_Generate_NumberMaster @TABLE=N'POS_Set_Site', @FIELD=N'Site_ID', @DOCID=N'SITE', @NEWNUMBER=@p output
-			SET @Site_ID=@p
-
 			INSERT INTO [POS_Set_Site]
 			(Site_ID, DefaultSite, Site_Name, Store_ID, Store_Name, Created_User, Created_Date, Modified_User, Modified_Date)
 			VALUES
@@ -65,3 +65,4 @@ BEGIN
 		RAISERROR (@ErrorMessage,@ErrorSeverity,@ErrorState)
 	END CATCH
 END
+GO

@@ -14,8 +14,8 @@
                     </div>
                 </a>
             </li>
-            <li class="nav-item nav-item2 MENU @Html.IsSelected(controller: "Reports")" id="Reports">
-                <a href="@Url.Action("Index", "Reports", new { area="" })" class="nav-link w-100">
+            <li class="nav-item MENU">
+                <a href="#" class="nav-link w-100 PARENTID" id="Reports">
                     <div class="col-12 row m-0 p-0" style="align-items: center;">
                         <div class="col-2">
                             <img src="~/Content/icons/report.png" width="32" height="32" style="padding: 2px 2px;" />
@@ -28,6 +28,41 @@
                         </div>
                     </div>
                 </a>
+                <ul class="nav nav-treeview ul-padd">
+                    <li class="nav-item WINDOWNAME @Html.IsSelected(controller: "SalesDiscount")" id="SalesDiscount">
+                        <a href="@Url.Action("Index", "SalesDiscount" , new { area="Reports" })" class="nav-link pl-5 pt-2 w-100">
+                            <p>Sales Discount</p>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="nav nav-treeview ul-padd">
+                    <li class="nav-item WINDOWNAME @Html.IsSelected(controller: "SalesByCategory")" id="SalesByCategory">
+                        <a href="@Url.Action("Index", "SalesByCategory" , new { area="Reports" })" class="nav-link pl-5 pt-2 w-100">
+                            <p>Sales By Category</p>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="nav nav-treeview ul-padd">
+                    <li class="nav-item WINDOWNAME @Html.IsSelected(controller: "SalesByItem")" id="SalesByItem">
+                        <a href="@Url.Action("Index", "SalesByItem" , new { area="Reports" })" class="nav-link pl-5 pt-2 w-100">
+                            <p>Sales By Item</p>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="nav nav-treeview ul-padd">
+                    <li class="nav-item WINDOWNAME @Html.IsSelected(controller: "SalesByPaytype")" id="SalesByPaytype">
+                        <a href="@Url.Action("Index", "SalesByPaytype" , new { area="Reports" })" class="nav-link pl-5 pt-2 w-100">
+                            <p>Sales By Payment Type</p>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="nav nav-treeview ul-padd">
+                    <li class="nav-item WINDOWNAME @Html.IsSelected(controller: "SalesSummary")" id="SalesSummary">
+                        <a href="@Url.Action("Index", "SalesSummary" , new { area="Reports" })" class="nav-link pl-5 pt-2 w-100">
+                            <p>Sales Summary</p>
+                        </a>
+                    </li>
+                </ul>
             </li>
             <li class="nav-item MENU">
                 <a href="#" class="nav-link w-100 PARENTID" id="Items">
@@ -80,16 +115,16 @@
                     </div>
                 </a>
                 <ul class="nav nav-treeview ul-padd">
-                    <li class="nav-item WINDOWNAME @Html.IsSelected(controller: "TransferItem")" id="TransferItem">
-                        <a href="@Url.Action("Index", "TransferItem" , new { area="Inventory" })" class="nav-link pl-5 pt-2 w-100">
-                            <p>Transfer Item</p>
+                    <li class="nav-item WINDOWNAME @Html.IsSelected(controller: "StockAdjustment")" id="StockAdjustment">
+                        <a href="@Url.Action("Index", "StockAdjustment" , new { area="Inventory" })" class="nav-link pl-5 pt-2 w-100">
+                            <p>Stock Adjustments</p>
                         </a>
                     </li>
                 </ul>
                 <ul class="nav nav-treeview ul-padd">
-                    <li class="nav-item WINDOWNAME @Html.IsSelected(controller: "StockAdjustment")" id="StockAdjustment">
-                        <a href="@Url.Action("Index", "StockAdjustment" , new { area="Inventory" })" class="nav-link pl-5 pt-2 w-100">
-                            <p>Stock Adjustments</p>
+                    <li class="nav-item WINDOWNAME @Html.IsSelected(controller: "TransferItem")" id="TransferItem">
+                        <a href="@Url.Action("Index", "TransferItem" , new { area="Inventory" })" class="nav-link pl-5 pt-2 w-100">
+                            <p>Transfer Item</p>
                         </a>
                     </li>
                 </ul>

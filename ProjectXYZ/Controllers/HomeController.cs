@@ -197,32 +197,48 @@ namespace ProjectXYZ.Controllers
         [Obsolete]
         public JsonResult ResetPassword(string param)
         {
-            bool success = false;
+            string success = "";
             UserAccount model = new UserAccount();
             try
             {
                 string decryptmodel = func.Decrypt(param);
                 model = JsonConvert.DeserializeObject<UserAccount>(decryptmodel);
-                DataTable ObjList = homeRep.ResetPassword(model);
-                List<DataRow> rows = ObjList.Select().ToList();
+                success = CheckEmailUser(model.EmailAddress);
+                string newpassword = string.Empty;
+                if (success == "success")
+                {
+                    newpassword = homeRep.SendEmail(model);
+                    model.PASSWORD = newpassword;
+                    homeRep.UpdatePasswordUser(model);
+                }
 
-                int i = 1;
-                var list = (from DataRow ro in rows
-                            select new
-                            {
-                                EmailAddress = model.EmailAddress
-                            }).ToList();
-
-                success = true;
-                var jsonResult = Json(new { success = success, data = list }, JsonRequestBehavior.AllowGet);
+                var jsonResult = Json(new { message = success }, JsonRequestBehavior.AllowGet);
                 jsonResult.MaxJsonLength = int.MaxValue;
                 return jsonResult;
             }
             catch (Exception ex)
             {
-                var jsonResult = Json(new { success = success, message = ex.Message }, JsonRequestBehavior.AllowGet);
+                var jsonResult = Json(new { message = ex.Message }, JsonRequestBehavior.AllowGet);
                 jsonResult.MaxJsonLength = int.MaxValue;
                 return jsonResult;
+            }
+        }
+
+        public string CheckEmailUser(string email)
+        {
+            UserAccount model = new UserAccount();
+            try
+            {
+                string success = "";
+                model.EmailAddress = string.IsNullOrEmpty(email) ? "" : email.Trim();
+                DataTable ObjList = homeRep.CheckEmailUser(model);
+                List<DataRow> rows = ObjList.Select().ToList();
+                success = ObjList.Rows[0][0].ToString();
+                return success;
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
             }
         }
 

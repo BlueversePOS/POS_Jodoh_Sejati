@@ -1,0 +1,143 @@
+﻿
+@{
+    ViewBag.Title = "Sales By Item";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Sales By Item</title>
+    <style>
+        .breadcrumb-item + .nav-item::before {
+            content: ">";
+        }
+
+        .box {
+            width: 10%;
+            display: inline;
+            text-align: center;
+            color: white;
+        }
+
+        .small-box.text-center {
+            box-shadow: 0 0 0;
+        }
+
+        .select2 {
+            font-family: 'FontAwesome'
+        }
+
+        .select2-container .select2-selection--single {
+            height: calc(2.25rem + 2px) !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 28px;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <section class="content">
+        <div class="card container-fluid posDash" style="background: none; box-shadow: none !important;">
+            <div class="card-body">
+                <div class="col-lg-10 col-md-10 col-12 p-0 row m-0">
+                    <div class="col-lg-4 col-md-12 col-12 pl-0">
+                        <div id="reportrange" class="w-100 text-center" style="background: #fff; cursor: pointer; padding: 6px 10px; border: 1px solid #ccc;">
+                            <i class="far fa-calendar-alt" style="float: left; padding-top: 4px;"></i>&nbsp;
+                            <span></span> @*<i class="fa fa-caret-down" style="float: right;"></i>*@
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 pl-0 pt-lg-0 pt-md-1 pt-2">
+                        <select class="form-control select2" id="times"></select>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="col-lg-10 col-md-10 col-12 row m-0">
+                    <div class="col-lg-5 col-md-5 col-12 p-0">
+                        <div class="card">
+                            <div class="card-header border-0 ui-sortable-handle">
+                                <h3 class="card-title">
+                                    Top 5 items
+                                </h3>
+                                <span class="float-right">Net sales</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="dt-responsive table-responsive">
+                                    <table id="table_export" class="table table-hover wrap">
+                                        <thead>
+                                            <tr>
+                                                <th class="vertical-middle"></th>
+                                                <th class="vertical-middle"></th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-7 col-md-7 col-12 p-0">
+                        <div class="card">
+                            <div class="card-header border-0 ui-sortable-handle">
+                                <h3 class="card-title">
+                                    Sales by item chart
+                                </h3>
+                                <div class="float-right col-md-6 col-12 px-0 pt-md-0 pt-2 row m-0">
+                                    <div class="col-6">
+                                        <select class="form-control select2" id="typeChart"></select>
+                                    </div>
+                                    <div class="col-6">
+                                        <select class="form-control select2" id="typeTimes"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body col-12" style="display: block;">
+                                <div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+                                <canvas class="chart chartjs-render-monitor" id="divChart" style="min-height: 320px; max-height: 250px; max-width: 100%; display: block;" width="580" height="312"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body col-lg-10 col-md-10 col-12">
+                <div class="card">
+                    <div class="card-header border-0 ui-sortable-handle">
+                        <h3 class="card-title" id="btnExport" style="cursor: pointer;">
+                            EXPORT
+                        </h3>
+                        <img src="~/Content/icons/Icon_columns.png" style="float: right;" width="28" height="28" />
+                    </div>
+                    <div class="card-body">
+                        <div class="dt-responsive table-responsive">
+                            <table id="table_export" class="table table-hover wrap">
+                                <thead>
+                                    <tr>
+                                        <th class="vertical-middle">Item</th>
+                                        <th class="vertical-middle">SKU</th>
+                                        <th class="vertical-middle">Category</th>
+                                        <th class="text-right vertical-middle">Item sold</th>
+                                        <th class="text-right vertical-middle">Gross sales</th>
+                                        <th class="text-right vertical-middle">Net sales</th>
+                                        <th class="text-right vertical-middle">Cost of goods</th>
+                                        <th class="text-right vertical-middle">Gross profit</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
+
+@section Scripts
+{
+    <script src="~/Areas/Reports/Lib/SalesByItem.js"></script>
+}

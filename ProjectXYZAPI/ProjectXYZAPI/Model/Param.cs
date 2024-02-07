@@ -128,7 +128,7 @@ namespace ProjectXYZAPI.Model
         public int Track_Stock { get; set; }
         public int InStock { get; set; }
         public int LowStock { get; set; }
-        public int Tax_10 { get; set; }
+        public string Tax_ID { get; set; }
         public int Representation { get; set; }
         public string Item_Color { get; set; } = string.Empty;
         public string Item_Shape { get; set; } = string.Empty;
@@ -216,6 +216,16 @@ namespace ProjectXYZAPI.Model
         public string Store_Name { get; set; }
     }
 
+    public class Taxes
+    {
+        public string UserID { get; set; }
+        public string Tax_ID { get; set; }
+        public string Tax_Name { get; set; }
+        public decimal Tax_Rate { get; set; }
+        public int Tax_Type { get; set; }
+        public int Tax_Option { get; set; }
+    }
+
     public class Stores
     {
         public string UserID { get; set; }
@@ -248,6 +258,167 @@ namespace ProjectXYZAPI.Model
         public string POS_Device_Name { get; set; }
         public string Store_ID { get; set; }
         public string Store_Name { get; set; }
+    }
+
+    public class GenerateNumberParam
+    {
+        public string TABLE { get; set; }
+        public string FIELD { get; set; }
+        public string DOCID { get; set; }
+        public string NEWNUMBER { get; set; }
+    }
+
+    public class ShiftParam
+    {
+        public string Batch_ID { get; set; }
+        public int Lineitmseq { get; set; }
+        public string Payment_ID { get; set; }
+        public string Payment_Type { get; set; }
+        public decimal Amount_Opening { get; set; }
+        public string UserID { get; set; }
+    }
+
+    public class SummShiftParam
+    {
+        public string Batch_ID { get; set; }
+        public DateTime LastEdit_Date { get; set; }
+        public DateTime LastEdit_time { get; set; }
+        public string Store_ID { get; set; }
+        public string POS_Device_ID { get; set; }
+        public DateTime Opening_Date { get; set; }
+        public DateTime Opening_time { get; set; }
+        public DateTime Closing_Date { get; set; }
+        public DateTime Closing_time { get; set; }
+        public decimal Sum_Amount_Opening { get; set; }
+        public decimal Sum_Amount_Closing { get; set; }
+        public decimal Sum_Invoice_Posted { get; set; }
+        public decimal Sum_Tendered { get; set; }
+        public decimal Sum_Changes { get; set; }
+        public decimal Sum_Amount_Discount { get; set; }
+        public decimal Sum_Amount_Tax { get; set; }
+        public decimal Sum_Invoice_Refund_Posted { get; set; }
+        public decimal Sum_Amount_PayOut { get; set; }
+        public decimal Sum_Amount_PayIn { get; set; }
+        public int Count_Customers { get; set; }
+        public int Status_Batch { get; set; }
+    }
+
+    public class SetupPrint
+    {
+        public string PrinterID { get; set; }
+        public string PrinterName { get; set; }
+        public int Printer_Checkbox1 { get; set; }
+        public int Printer_Checkbox2 { get; set; }
+        public int Printer_Checkbox3 { get; set; }
+        public string UserID { get; set; }
+    }
+
+    public class TrxHeader
+    {
+        public string UserID { get; set; }
+        public string DOCNUMBER { get; set; } = string.Empty;
+        public int DOCTYPE { get; set; }
+        public DateTime DOCDATE { get; set; }
+        public string Store_ID { get; set; } = string.Empty;
+        public string Site_ID { get; set; } = string.Empty;
+        public string SalesType_ID { get; set; }
+        public string CustName { get; set; }
+        public int Total_Line_Item { get; set; }
+        public decimal ORIGTOTAL { get; set; }
+        public decimal SUBTOTAL { get; set; }
+        public decimal Tax_Amount { get; set; }
+        public string Discount_ID { get; set; }
+        public decimal Discount_Amount { get; set; }
+        public decimal Amount_Tendered { get; set; }
+        public decimal Change_Amount { get; set; }
+        public string Batch_ID { get; set; }
+        public string POS_Device_ID { get; set; }
+        public string POS_Version { get; set; } = string.Empty;
+        public int SyncStatus { get; set; }
+        public string Payment_ID { get; set; } = string.Empty;
+        public string Payment_Type { get; set; } = string.Empty;
+        public int Lnitmseq { get; set; }
+        public List<TrxDetail> TrxDetailTYPE { get; set; }
+    }
+
+    public class TrxDetail
+    {
+        public string DOCNUMBER { get; set; }
+        public int DOCTYPE { get; set; }
+        public DateTime DOCDATE { get; set; }
+        public int Lineitmseq { get; set; }
+        public string Item_Number { get; set; }
+        public string Item_Description { get; set; }
+        public decimal Quantity { get; set; }
+        public string UofM { get; set; }
+        public decimal Item_Price { get; set; }
+        public decimal Item_Cost { get; set; }
+        public string Store_ID { get; set; }
+        public string Site_ID { get; set; }
+        public string SalesType_ID { get; set; }
+        public string Discount_ID { get; set; }
+        public decimal Discount_Amount { get; set; }
+        public string Notes { get; set; }
+        public string POS_Device_ID { get; set; }
+        public string POS_Version { get; set; }
+    }
+
+    public class TrxPost
+    {
+        public string UserID { get; set; }
+        public string DOCNUMBER { get; set; } = string.Empty;
+        public int SyncStatus { get; set; }
+    }
+
+    public class SAFilterItem
+    {
+        public string UserID { get; set; } = string.Empty;
+        public string DOCNUMBER { get; set; } = string.Empty;
+        public string Reason { get; set; } = string.Empty;
+        public string Store_ID { get; set; } = string.Empty;
+        public string Site_ID { get; set; } = string.Empty;
+    }
+
+    public class SAHeader
+    {
+        public string UserID { get; set; } = string.Empty;
+        public string DOCNUMBER { get; set; } = string.Empty;
+        public DateTime DOCDATE { get; set; }
+        public string Site_ID { get; set; } = string.Empty;
+        public string Site_Name { get; set; } = string.Empty;
+        public string Reason { get; set; } = string.Empty;
+        public int Total_Line_Item { get; set; }
+        public string Notes { get; set; } = string.Empty;
+        public List<SADetail> SADetails { get; set; } = new List<SADetail>();
+    }
+
+    public class SADetail
+    {
+        public DateTime DOCDATE { get; set; }
+        public string Reason { get; set; } = string.Empty;
+        public int Lineitmseq { get; set; }
+        public string Item_Number { get; set; } = string.Empty;
+        public string Item_Description { get; set; } = string.Empty;
+        public decimal Qty_Stock { get; set; }
+        public decimal Qty_Add_Stock { get; set; }
+        public decimal Qty_Remove_Stock { get; set; }
+        public decimal Item_Cost { get; set; }
+        public decimal Qty_After_Stock { get; set; }
+        public decimal Expected_Stock { get; set; }
+        public decimal Counted_Stock { get; set; }
+    }
+
+    public class TrfItemFilter
+    {
+        public string UserID { get; set; } = string.Empty;
+        public string DOCNUMBER { get; set; } = string.Empty;
+        public string SourceSite_ID { get; set; } = string.Empty;
+        public string DestSite_ID { get; set; } = string.Empty;
+    }
+
+    public class GenerateNumber
+    {
+        public string DOCID { get; set; }
     }
 
     public class UploadFile

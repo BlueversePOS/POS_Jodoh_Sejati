@@ -129,7 +129,7 @@ $(document).ready(function () {
                         'param': hasil
                     },
                     success: function (data) {
-                        if (data.success) {
+                        if (data.message == "success") {
                             var EmailAddress = "";
                             $.each(data.list, function (value, index) {
                                 EmailAddress = emptyStr(value.EmailAddress) ? "" : value.EmailAddress.trim();
@@ -139,8 +139,13 @@ $(document).ready(function () {
                                 title: "The password has been successfully regenerated",
                                 text: "Please check your email " + EmailAddress + " for a new temporary password and change it immediately.",
                                 allowEscapeKey: false,
-                                allowOutsideClick: false
-                            });
+                                allowOutsideClick: false,
+                            },
+                                function (isConfirm) {
+                                    if (isConfirm) {
+                                        window.location = "Home/Index";
+                                    }
+                                });
                         }
                         else {
                             //$("#errormessage").text(data.message);

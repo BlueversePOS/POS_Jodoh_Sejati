@@ -21,6 +21,7 @@
     var arrVariant = [];
 
     var validCodes = [8, 9, 13, 46, 37, 39, 46, 18, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105];
+    var fileType = ['JPEG', 'JPG', 'PNG'];
 
     $(".main-header").find(".title").html("Item List");
 
@@ -156,6 +157,7 @@
                 columns: [
                     {
                         data: 'Item_Number',
+                        className: 'text-center',
                         orderable: false,
                         render: function (data, type, row) {
                             var ID = emptyStr(data) ? "" : data;
@@ -196,11 +198,10 @@
                         className: 'text-right',
                         render: function (data, type, row) {
                             var values = "";
-                            var dtVal = emptyStr(data) ? 0 : data;
-                            if (!emptyStr(dtVal)) {
-                                values = formatCurrency(dtVal);
-                            }
-                            return values;
+                            var Item_Cost = emptyStr(row.Item_Cost) ? 0 : row.Item_Cost;
+                            var Item_Price = emptyStr(row.Item_Price) ? 0 : row.Item_Price;
+                            values = Item_Price - Item_Cost;
+                            return formatCurrency(values);
                         }
                     },
                     {
@@ -238,6 +239,21 @@
         $('#table_listvariant tbody').empty();
         $('.addVariant').show();
         $('.editVariant').hide();
+        $("#uploadFoto").val("");
+        $(".pickfoto").show();
+        $(".changefoto").hide();
+        $("#pathFoto").val("");
+        $(".DTLIMG img").remove();
+        $(".pict").addClass("text-center");
+        $.each($('.form-input'), function () {
+            $(this).removeClass('filled').parent('.form-group').removeClass('focused');
+            if (!emptyStr($(this).val())) {
+                $(this).parent('.form-group').addClass('focused');
+            }
+        });
+        $('#CATEGORY').parent('.form-group').addClass('focused');
+        $('#Tax_ID').parent('.form-group').addClass('focused');
+        $('#Item_Number').trigger('focus').trigger('blur');
     }
 
     function AddRowListVariants() {
@@ -265,6 +281,8 @@
                 OPTION_VARIANT: variants
             });
         }
+        var PRICE = emptyStr($('#PRICE').val()) ? formatCurrency(0) : $('#PRICE').val();
+        var COST = emptyStr($('#COST').val()) ? formatCurrency(0) : $('#COST').val();
         var SKU = emptyStr($('#SKU').val()) ? 0 : $('#SKU').val();
         var jumZero = 0;
         var zero = true;
@@ -283,8 +301,8 @@
             var newRow = '<tr name="' + dtLength + '" class="' + index + '">' +
                 '<td class="text-center"><input type="checkbox" class="CBavail" value="' + (parseInt(index) + 1) + '" /></td>' +
                 '<td class="TDvariant">' + OPTION_VARIANT + '</td>' +
-                '<td><input type="text" class="form-input TDprice" name="currency" value="' + formatCurrency(0) + '" /></td>' +
-                '<td><input type="text" class="form-input TDcost" name="currency" value="' + formatCurrency(0) + '" /></td>' +
+                '<td><input type="text" class="form-input TDprice" name="currency" value="' + PRICE + '" /></td>' +
+                '<td><input type="text" class="form-input TDcost" name="currency" value="' + COST + '" /></td>' +
                 '<td><input type="text" class="form-input TDinstock" name="number" /></td>' +
                 '<td><input type="text" class="form-input TDlowstock" name="number" /></td>' +
                 '<td><input type="text" class="form-input TDoptstock" name="number" /></td>' +
@@ -683,8 +701,9 @@
                 TRACK_STOCK = $('#TRACK_STOCK').is(':checked') ? 1 : 0,
                 IN_STOCK = emptyStr($('#IN_STOCK').val()) ? 0 : $('#IN_STOCK').val(),
                 LOW_STOCK = emptyStr($('#LOW_STOCK').val()) ? 0 : $('#LOW_STOCK').val(),
-                PPN_10 = $('#PPN_10').is(':checked') ? 1 : 0,
+                Tax_ID = emptyStr($('#Tax_ID').val()) ? "" : $('#Tax_ID').val(),
                 Representation = emptyStr($('.rbRepresen:checked').val()) ? 0 : $('.rbRepresen:checked').val(),
+                Item_Image = $("#pathFoto").val(),
                 colorItem = $('#colorItem').find('i.fa-check').parent('div').attr('id'),
                 shapeItem = $('#shapeItem').find('i.fa-check').parent('div').attr('id');
             colorItem = emptyStr(colorItem) ? "bg-default" : colorItem;
@@ -765,11 +784,11 @@
                 'Track_Stock': TRACK_STOCK,
                 'InStock': IN_STOCK,
                 'LowStock': LOW_STOCK,
-                'Tax_10': PPN_10,
+                'Tax_ID': Tax_ID,
                 'Representation': Representation,
                 'Item_Color': colorItem,
                 'Item_Shape': shapeItem,
-                'Item_Image': "",
+                'Item_Image': Item_Image,
                 'CompositeItem': compItem,
                 'ItemVariant': varItem
             };
@@ -868,11 +887,13 @@
                                 Track_Stock = emptyStr(value.Track_Stock) ? 0 : value.Track_Stock,
                                 InStock = emptyStr(value.InStock) ? 0 : value.InStock,
                                 LowStock = emptyStr(value.LowStock) ? 0 : value.LowStock,
-                                Tax_10 = emptyStr(value.Tax_10) ? 0 : value.Tax_10,
+                                Tax_ID = emptyStr(value.Tax_ID) ? "" : value.Tax_ID.trim(),
+                                Tax_Name = emptyStr(value.Tax_Name) ? "" : value.Tax_Name.trim(),
                                 Representation = emptyStr(value.Representation) ? 0 : value.Representation,
                                 Item_Color = emptyStr(value.Item_Color) ? "" : value.Item_Color.trim(),
                                 Item_Shape = emptyStr(value.Item_Shape) ? "" : value.Item_Shape.trim(),
-                                Item_Image = emptyStr(value.Item_Image) ? "" : value.Item_Image.trim();
+                                Item_Image = emptyStr(value.Item_Image) ? "" : value.Item_Image.trim(),
+                                FileContent = emptyStr(value.FileContent) ? "" : value.FileContent.trim();
 
                             $('#Item_Number').val(Item_Number);
                             $('#NAME').val(Item_Name);
@@ -890,13 +911,23 @@
                             $('#TRACK_STOCK').prop('checked', Track_Stock);
                             $('#IN_STOCK').val(InStock);
                             $('#LOW_STOCK').val(LowStock);
-                            $('#PPN_10').prop('checked', Tax_10);
+                            var newOption = $("<option selected='selected'></option>").val(Tax_ID).text(Tax_Name);
+                            $('#Tax_ID').append(newOption).trigger('change');
                             $('.rbRepresen[value=' + Representation + ']').prop('checked', true);
-                            if (!emptyStr(Item_Shape)) {
+                            if (!emptyStr(Item_Color)) {
                                 $('#' + Item_Color).trigger('click');
                             }
                             if (!emptyStr(Item_Shape)) {
                                 $('#' + Item_Shape).trigger('click');
+                            }
+                            if (Representation == 2) {
+                                if (!emptyStr(Item_Image)) {
+                                    $("#pathFoto").val(Item_Image);
+                                    $(".DTLIMG").append('<img id="IMG" style="width:170px;height: 210px;" src="' + FileContent + '"></div>');
+                                    $(".pickfoto").hide();
+                                    $(".changefoto").show();
+                                    $(".pict").removeClass("text-center");
+                                }
                             }
                             $.each($('.form-input'), function () {
                                 $(this).removeClass('filled').parent('.form-group').removeClass('focused');
@@ -904,6 +935,8 @@
                                     $(this).parent('.form-group').addClass('focused');
                                 }
                             });
+                            $('#CATEGORY').parent('.form-group').addClass('focused');
+                            $('#Tax_ID').parent('.form-group').addClass('focused');
                             $('#Item_Number').trigger('focus').trigger('blur');
                         });
                     } else {
@@ -1079,9 +1112,11 @@
                             delete arrVariant[i]["Idx"];
                         }
                         //console.log(arrVariant);
-                        AddRowListVariants();
-                        $('.addVariant').hide();
-                        $('.editVariant').show();
+                        if (result.data.length > 0) {
+                            AddRowListVariants();
+                            $('.addVariant').hide();
+                            $('.editVariant').show();
+                        }
                         $.each(result.data, function (index, value) {
                             var Item_Number = emptyStr(value.Item_Number) ? "" : value.Item_Number.trim(),
                                 LineItem_Option = emptyStr(value.LineItem_Option) ? 0 : value.LineItem_Option,
@@ -1162,6 +1197,76 @@
             }
         }
     }
+
+    //#region FILE
+
+    function UploadDoc(form) {
+        try {
+            var path = "";
+            $.ajax({
+                dataType: 'json',
+                type: 'POST',
+                url: rootUrl + 'Items/ItemList/UploadDoc',
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: form,
+                async: false,
+                success: function (data) {
+                    if (data.success) {
+                        path = data.path;
+                        if (!emptyStr(path)) {
+                            $("#pathFoto").val("");
+                            $(".DTLIMG img").remove();
+                        }
+                        $("#pathFoto").val(path);
+                        $(".DTLIMG").append('<img id="IMG" style="width:170px;height: 210px;" src="data:image/png;base64,' + data.file + '"></div>');
+                        $(".pickfoto").hide();
+                        $(".changefoto").show();
+                        $(".pict").removeClass("text-center");
+                    } else {
+                        swal({ type: "error", title: "Gagal upload data", text: data.message });
+                    }
+                },
+                error: function (xhr) {
+                    var doc = $.parseHTML(xhr.responseText);
+                    var titleNode = doc.filter(function (node) {
+                        return node.localName === "title";
+                    });
+                    var msg = titleNode[0].textContent;
+                    swal("Error", "Error :" + msg, "error");
+                }
+            });
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    };
+
+    $("#uploadFoto").on("change", function () {
+        try {
+            var isValid = false;
+            var Item_Number = emptyStr($('#Item_Number').val()) ? "" : $('#Item_Number').val();
+            var files = $("#uploadFoto").prop("files")[0];
+            var dateNow = moment(Date()).format("YYMMDD_HHmmss");
+            var form = new FormData();
+            var filename = $('#uploadFoto')[0].files[0].name;
+            var extension = filename.replace(/^.*\./, '');
+            form.append('DOCID', "IMG");
+            form.append('DOCFILE', files);
+            form.append('DOCFILENAME', "IMG" + dateNow);
+            if (extension.toLowerCase() == "jpg" || extension.toLowerCase() == "jpeg" || extension.toLowerCase() == "png") isValid = true;
+
+            if (!isValid) {
+                swal({ type: "info", title: "Wrong extension file", text: "Please upload with extension JPG, JPEG or PNG" });
+            } else {
+                UploadDoc(form);
+            }
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    });
+
+    //#endregion
 
     $("#FILTER_CATEGORY").select2({
         dropdownParent: $("#FILTER_CATEGORY").parent(),
@@ -1337,6 +1442,51 @@
         }
     });
 
+    $("#Tax_ID").select2({
+        dropdownParent: $("#Tax_ID").parent(),
+        placeholder: "Select Tax",
+        multiple: false,
+        allowClear: true,
+        width: "100%",
+        ajax: {
+            url: rootUrl + 'Items/ItemList/GetTaxes',
+            type: 'POST',
+            dataType: 'json',
+            data: function (params) {
+                return {
+                    Prefix: params.term
+                }
+            },
+            processResults: function (data) {
+                return {
+                    results: $.map(data.data,
+                        function (obj) {
+                            var nilai = obj.Tax_ID.trim();
+                            var textnilai = obj.Tax_Name.trim();
+                            return { id: nilai, text: textnilai };
+                        })
+                };
+            },
+            error: function (xhr) {
+                if (xhr.status != "200") {
+                    var doc = $.parseHTML(xhr.responseText);
+                    if (!emptyStr(doc)) {
+                        var titleNode = doc.filter(function (node) {
+                            return node.localName === "title";
+                        });
+                        var msg = titleNode[0].textContent;
+                        swal("Error", "Error : " + msg, "error");
+                    }
+                    else {
+                        if (xhr.statusText.toUpperCase().trim() != "OK") {
+                            swal({ type: "error", title: "Error", text: xhr.statusText });
+                        }
+                    }
+                }
+            }
+        }
+    });
+
     $('.rbSoldBy').on('click', function () {
         try {
             var checked = $('.rbSoldBy').is(':checked');
@@ -1468,28 +1618,31 @@
                     var OPTION_NAME = emptyStr(value.OPTION_NAME) ? "" : value.OPTION_NAME.trim(),
                         OPTION_NAME_TXT = emptyStr(value.OPTION_NAME_TXT) ? "" : value.OPTION_NAME_TXT.trim(),
                         OPTION_VARIANT = emptyStr(value.OPTION_VARIANT) ? "" : value.OPTION_VARIANT;
-                    if (index == (parseInt(arrVariant.length) - 1)) {
-                        AddRow();
-                        var newOption = $("<option selected='selected'></option>").val(OPTION_NAME).text(OPTION_NAME_TXT);
-                        $('#tableVariant tbody tr:last').find('td:eq(0) select').append(newOption);
-                        //$('#tableVariant tbody tr:last').find('td:eq(1) select').val(OPTION_VARIANT).trigger('change');
-                        var splitVal;
-                        if (!emptyStr(OPTION_VARIANT)) {
-                            splitVal = OPTION_VARIANT.trim().split(' / ');
-                            //alert(splitVal.length);
-                        }
-                        for (let i = 0; i < splitVal.length; i++) {
-                            OPTION_VARIANT = splitVal[i].trim();
-                            var newOption = $("<option selected='selected'></option>").val(OPTION_VARIANT).text(OPTION_VARIANT);
-                            $('#tableVariant tbody tr:last').find('td:eq(1) select').append(newOption);
-                            //arrVar.push( OPTION_VARIANT );
-                        }
-                        $('#tableVariant tbody tr:last').find('td:eq(1) select').trigger('change');
-                    } else {
-                        OPTION_VARIANT = OPTION_VARIANT.replaceAll(" / ", ", ");
-                        AddRowValue(OPTION_NAME, OPTION_NAME_TXT, OPTION_VARIANT);
-                    }
+                    OPTION_VARIANT = OPTION_VARIANT.replaceAll(" / ", ", ");
+                    AddRowValue(OPTION_NAME, OPTION_NAME_TXT, OPTION_VARIANT);
+                        //if (index == (parseInt(arrVariant.length) - 1)) {
+                    //    AddRow();
+                    //    var newOption = $("<option selected='selected'></option>").val(OPTION_NAME).text(OPTION_NAME_TXT);
+                    //    $('#tableVariant tbody tr:last').find('td:eq(0) select').append(newOption);
+                    //    //$('#tableVariant tbody tr:last').find('td:eq(1) select').val(OPTION_VARIANT).trigger('change');
+                    //    var splitVal;
+                    //    if (!emptyStr(OPTION_VARIANT)) {
+                    //        splitVal = OPTION_VARIANT.trim().split(' / ');
+                    //        //alert(splitVal.length);
+                    //    }
+                    //    for (let i = 0; i < splitVal.length; i++) {
+                    //        OPTION_VARIANT = splitVal[i].trim();
+                    //        var newOption = $("<option selected='selected'></option>").val(OPTION_VARIANT).text(OPTION_VARIANT);
+                    //        $('#tableVariant tbody tr:last').find('td:eq(1) select').append(newOption);
+                    //        //arrVar.push( OPTION_VARIANT );
+                    //    }
+                    //    $('#tableVariant tbody tr:last').find('td:eq(1) select').trigger('change');
+                    //} else {
+                    //    OPTION_VARIANT = OPTION_VARIANT.replaceAll(" / ", ", ");
+                    //    AddRowValue(OPTION_NAME, OPTION_NAME_TXT, OPTION_VARIANT);
+                    //}
                 });
+                AddRow();
                 if (optOption2.length > 0) {
                     $.map(optOption2,
                         function (x) {
@@ -1526,11 +1679,13 @@
                 if (!emptyStr(OPTION_VARIANT_TXT)) {
                     OPTION_VARIANT_TXT = OPTION_VARIANT_TXT.replaceAll(", ", " / ");
                 }
-                arrVariant.push({
-                    OPTION_NAME: OPTION_NAME,
-                    OPTION_NAME_TXT: OPTION_NAME_TXT,
-                    OPTION_VARIANT: emptyStr(OPTION_VARIANT) ? OPTION_VARIANT_TXT : OPTION_VARIANT,
-                });
+                if (!emptyStr(OPTION_NAME) && (!emptyStr(OPTION_VARIANT) || !emptyStr(OPTION_VARIANT_TXT))) {
+                    arrVariant.push({
+                        OPTION_NAME: OPTION_NAME,
+                        OPTION_NAME_TXT: OPTION_NAME_TXT,
+                        OPTION_VARIANT: emptyStr(OPTION_VARIANT) ? OPTION_VARIANT_TXT : OPTION_VARIANT,
+                    });
+                }
             });
             //console.log(arrays);
             //console.log(result);
@@ -1573,17 +1728,17 @@
                 CATEGORY = emptyStr($('#CATEGORY').val()) ? "" : $('#CATEGORY').val(),
                 DESCRIPTION = emptyStr($('#DESCRIPTION').val()) ? "" : $('#DESCRIPTION').val();
 
-            if (emptyStr(ITEMNAME)) {
+            if (emptyStr(DESCRIPTION)) {
                 IsValid = false;
-                swal({ type: "info", title: "Information", text: "Please fill item name" });
+                swal({ type: "info", title: "Information", text: "Please fill description" });
             }
             if (emptyStr(CATEGORY)) {
                 IsValid = false;
                 swal({ type: "info", title: "Information", text: "Please choose category" });
             }
-            if (emptyStr(DESCRIPTION)) {
+            if (emptyStr(ITEMNAME)) {
                 IsValid = false;
-                swal({ type: "info", title: "Information", text: "Please fill category" });
+                swal({ type: "info", title: "Information", text: "Please fill item name" });
             }
 
             if (IsValid) {

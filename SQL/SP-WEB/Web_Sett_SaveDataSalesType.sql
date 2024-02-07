@@ -10,6 +10,10 @@ AS
 BEGIN
 	BEGIN TRY
 		BEGIN
+			IF LEN(ISNULL(@SalesType_ID,''))=0
+			BEGIN
+				RAISERROR('Sales type ID not found.',16,1)
+			END
 			IF LEN(ISNULL(@SalesType_Name,''))=0
 			BEGIN
 				RAISERROR('Please fill sales type name.',16,1)
@@ -28,10 +32,6 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			declare @p varchar(30)
-			EXEC Web_Generate_NumberMaster @TABLE=N'POS_Set_SalesType', @FIELD=N'SalesType_ID', @DOCID=N'STYP', @NEWNUMBER=@p output
-			SET @SalesType_ID=@p
-
 			INSERT INTO [POS_Set_SalesType]
 			(SalesType_ID, SalesType_Name, Store_ID, Store_Name, Created_User, Created_Date, Modified_User, Modified_Date)
 			VALUES
@@ -57,3 +57,4 @@ BEGIN
 		RAISERROR (@ErrorMessage,@ErrorSeverity,@ErrorState)
 	END CATCH
 END
+GO

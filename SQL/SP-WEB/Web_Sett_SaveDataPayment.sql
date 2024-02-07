@@ -19,8 +19,12 @@ BEGIN
 			BEGIN
 				RAISERROR('Please choose payment type.',16,1)
 			END
+			IF EXISTS(SELECT 1 FROM @PAYTYPE WHERE Store_ID='') or NOT EXISTS(SELECT * FROM @PAYTYPE)
+			BEGIN
+				RAISERROR('Please choose store.',16,1)
+			END
 		END
-
+		SELECT 1 FROM @PAYTYPE WHERE Store_ID=''
 		IF EXISTS(SELECT * FROM POS_Set_PayTypes WITH(NOLOCK) WHERE RTRIM(Payment_ID)=RTRIM(@Payment_ID))
 		BEGIN
 			UPDATE POS_Set_PayTypes
