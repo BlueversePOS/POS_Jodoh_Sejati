@@ -232,6 +232,7 @@
         $('input[type="text"], input#Item_Number').val("");
         $('input[type="number"]').val(0);
         $('#SKU').val("");
+        $('.trackstock').hide();
         $('input[type="radio"], input[type="checkbox"]').prop("checked", false);
         $("select").val('').trigger('change');
         $('.shapes').empty();
@@ -331,6 +332,10 @@
     }
 
     function FuncListVariant(dtLength) {
+        $("#table_listvariant tbody tr[name='" + dtLength + "']").on("focusin", "input[name='currency'], input[name='number']", function (e) {
+            $(this).prop("autocomplete", "off");
+        });
+
         $("#table_listvariant tbody tr[name='" + dtLength + "']").on("keydown", "input[name='currency'], input[name='number']", function (e) {
             var charCode = (typeof e.which == "undefined") ? e.keyCode : e.which;
             var charStr = String.fromCharCode(charCode);
@@ -920,6 +925,10 @@
                             if (!emptyStr(Item_Shape)) {
                                 $('#' + Item_Shape).trigger('click');
                             }
+                            $('.trackstock').hide();
+                            if (Track_Stock) {
+                                $('.trackstock').show();
+                            }
                             if (Representation == 2) {
                                 if (!emptyStr(Item_Image)) {
                                     $("#pathFoto").val(Item_Image);
@@ -1117,6 +1126,7 @@
                             $('.addVariant').hide();
                             $('.editVariant').show();
                         }
+                        $('#table_listvariant thead tr').find('th:eq(0) input').prop("checked", true);
                         $.each(result.data, function (index, value) {
                             var Item_Number = emptyStr(value.Item_Number) ? "" : value.Item_Number.trim(),
                                 LineItem_Option = emptyStr(value.LineItem_Option) ? 0 : value.LineItem_Option,
@@ -1144,6 +1154,9 @@
                                     currow.find('.TDoptstock').val(OptimalStock);
                                     currow.find('.TDsku').val(Item_SKU);
                                     currow.find('.TDbarcode').val(Item_Barcode);
+                                }
+                                if (!currow.find('td:eq(0) input').is(":checked")) {
+                                    $('#table_listvariant thead tr').find('th:eq(0) input').prop("checked", true);
                                 }
                             });
                         });
@@ -1701,6 +1714,25 @@
         try {
             var checked = $(this).is(':checked');
             $('#table_listvariant tbody').find('.CBavail').prop('checked', checked);
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    });
+
+    $('#table_listvariant tbody').on('click', 'tr input.CBavail', function () {
+        try {
+            var allItem = $('#table_listvariant tbody tr').length;
+            var perItem = 0;
+            $.each($('#table_listvariant tbody tr'), function () {
+                var checked = $(this).find('td:eq(0) input').is(':checked');
+                if (checked) {
+                    perItem = perItem + 1;
+                }
+            });
+            $('#table_listvariant thead tr').find('#CBavailALL').prop('checked', false);
+            if (allItem == perItem) {
+                $('#table_listvariant thead tr').find('#CBavailALL').prop('checked', true);
+            }
         } catch (err) {
             swal({ type: "error", title: "Error", text: err.message });
         }

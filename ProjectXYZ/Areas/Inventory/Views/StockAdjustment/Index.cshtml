@@ -36,26 +36,25 @@
                                 <button type="button" class="btn btn-primary" id="btnAddStockAdj"> + ADD STOCK ADJUSTMENT</button>
                             </div>
                             <div class="col-lg-9 col-md-12 col-12">
-                                <div class="row m-0 col-12" style="justify-content: right;">
-                                    <div class="form-group col-lg-3 col-md-6 col-12 m-0 pl-0">
-                                        <span class="col-12 pl-0 spanselect">Reason</span>
+                                <div class="row mx-0 col-12 justify-content-end">
+                                    <div class="form-group col-lg-3 col-md-6 col-12 mx-0 pl-0 focused">
+                                        <label class="form-label" for="reason">Reason</label>
                                         <select class="form-control select2" id="reason">
-                                            <option id="">All</option>
                                         </select>
                                     </div>
-                                    <div class="form-group col-lg-3 col-md-6 col-12 m-0 pl-0">
-                                        <span class="col-12 pl-0 spanselect">Store</span>
+                                    <div class="form-group col-lg-3 col-md-6 col-12 mx-0 pl-0 focused">
+                                        <label class="form-label" for="store">Store</label>
                                         <select class="form-control select2" id="store">
-                                            <option id="">All</option>
                                         </select>
                                     </div>
-                                    <div class="form-group col-lg-3 col-md-6 col-12 m-0 pl-0">
-                                        <span class="col-12 pl-0 spanselect">Site</span>
+                                    <div class="form-group col-lg-3 col-md-8 col-9 mx-0 pl-0 focused">
+                                        <label class="form-label" for="site">Site</label>
                                         <select class="form-control select2" id="site">
-                                            <option id="">All</option>
                                         </select>
                                     </div>
-                                    <a class="text-gray pl-2 pb-1" id="btnSearch" style="align-self: end; cursor:pointer;"><i class="fa fa-search"></i></a>
+                                    <div class="col-lg-1 col-md-4 col-3 text-lg-end text-center align-self-center">
+                                        <a class="btn btn-default text-gray text-center" id="btnSearch" href="#"><i class="fa fa-search"></i></a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -126,6 +125,10 @@
                                     <tbody></tbody>
                                 </table>
                             </div>
+                            <div class="col-lg-4 col-md-6 col-12">
+                                <select class="form-control select2" id="SearchItem">
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -153,7 +156,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-body border-0">
+                    <div class="card-body border-0" id="pdfBody">
                         <div class="col-12 m-0 row">
                             <h3 class="col-12 p-0 mb-0" id="DOCNUMBER">TO1002</h3>
                             <div class="form-group col-lg-7 col-md-7 col-12">
@@ -211,5 +214,7 @@
 
 @section Scripts
 {
-    <script src="~/Areas/Inventory/Lib/StockAdjustment.js"></script>
+    <script src="~/Content/adminlte/dist/js/html2canvas.min.js"></script>
+    <script src="~/Content/adminlte/plugins/jspdf/jspdf.umd.min.js"></script>
+    <script src="~/Areas/Inventory/Lib/StockAdjustment.js?v=2"></script>
 }

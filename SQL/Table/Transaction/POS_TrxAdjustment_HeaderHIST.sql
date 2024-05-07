@@ -20,7 +20,8 @@ CREATE TABLE POS_TrxAdjustment_HeaderHIST
 	Notes nvarchar(500) NOT NULL, 
 	Created_User nvarchar(30) NOT NULL,
 	Created_Date DATETIME NOT NULL,
-	Created_time DATETIME NOT NULL
+	Created_time DATETIME NOT NULL,
+	CONSTRAINT PK_POS_TrxAdjustment_HeaderHIST PRIMARY KEY NONCLUSTERED (DOCNUMBER ASC, Created_Date ASC, Created_Time ASC)
 )
 
 /*

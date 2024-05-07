@@ -5,7 +5,7 @@ CREATE OR ALTER proc [dbo].[Web_Sett_PayTypeGetData]
 AS
 BEGIN
 	BEGIN TRY
-		SELECT *
+		SELECT *, 0 amount
 		FROM POS_Set_PayTypes
 		WHERE Payment_ID=@Payment_ID or @Payment_ID = ''
 	END TRY

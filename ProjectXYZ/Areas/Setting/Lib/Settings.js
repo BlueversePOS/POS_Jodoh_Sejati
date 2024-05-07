@@ -1902,6 +1902,16 @@
         }
     });
 
+    $('select').on('change', function () {
+        try {
+            if (!emptyStr($(this).val())) {
+                $(this).parent('.form-group').addClass('focused');
+            }
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    });
+
     //#region Payment Types
     // Show/hide child nodes when a checkbox is clicked
     $("#AllStores").on('change', function () {

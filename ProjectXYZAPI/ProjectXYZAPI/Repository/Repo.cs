@@ -2699,7 +2699,7 @@ namespace ProjectXYZAPI.Repository
             return dt;
         }
 
-        public DataTable GenerateNumberTRX(GenerateNumber param)
+        public DataTable GenerateNumberTRX(GenerateNumberParam param)
         {
             DataTable dt = new DataTable();
 
@@ -2710,6 +2710,8 @@ namespace ProjectXYZAPI.Repository
                 SqlCommand cmd = new SqlCommand("TRX_GenerateNumber_Master", conn);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@TABLE", param.TABLE ?? "");
+                cmd.Parameters.AddWithValue("@FIELD", param.FIELD ?? "");
                 cmd.Parameters.AddWithValue("@DOCID", param.DOCID ?? "");
 
                 SqlDataAdapter adp = new SqlDataAdapter();
@@ -2798,6 +2800,8 @@ namespace ProjectXYZAPI.Repository
         #endregion
 
         #region Transaction
+
+        #region Mobile
 
         public DataTable GetReason()
         {
@@ -2952,6 +2956,59 @@ namespace ProjectXYZAPI.Repository
             return dt;
         }
 
+        public DataTable SaveCashManagement(CashManagement param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("TRX_SaveCashManagement", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@Batch_ID", param.Batch_ID ?? "");
+                cmd.Parameters.AddWithValue("@Type_CashManagement", param.Type_CashManagement ?? "");
+                cmd.Parameters.AddWithValue("@Amount", param.Amount);
+                cmd.Parameters.AddWithValue("@Notes", param.Notes ?? "");
+                cmd.Parameters.AddWithValue("@POS_ID", param.POS_ID ?? "");
+                cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
         public DataTable SaveSummaryShift(SummShiftParam param)
         {
             DataTable dt = new DataTable();
@@ -2984,6 +3041,54 @@ namespace ProjectXYZAPI.Repository
                 cmd.Parameters.AddWithValue("@Sum_Amount_PayIn", param.Sum_Amount_PayIn);
                 cmd.Parameters.AddWithValue("@Count_Customers", param.Count_Customers);
                 cmd.Parameters.AddWithValue("@Status_Batch", param.Status_Batch);
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable GetSummaryShift(GetSummShiftParam param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("TRX_GetSummaryShift", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@Batch_ID", param.Batch_ID ?? "");
 
                 SqlDataAdapter adp = new SqlDataAdapter();
                 adp.SelectCommand = cmd;
@@ -3279,7 +3384,59 @@ namespace ProjectXYZAPI.Repository
             return dt;
         }
 
+        #endregion
+
         #region Stock Adjustment
+
+        public DataTable AdjGetDataItems(SAFilterItem param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("TRX_Adjustment_GetItemBySite", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@Item_Number", param.Item_Number ?? "");
+                cmd.Parameters.AddWithValue("@LineItem_Option", param.LineItem_Option);
+                cmd.Parameters.AddWithValue("@Site_ID", param.Site_ID ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
 
         public DataTable AdjGetDataList(SAFilterItem param)
         {
@@ -3450,6 +3607,7 @@ namespace ProjectXYZAPI.Repository
                                            N.Reason,
                                            N.Lineitmseq,
                                            N.Item_Number,
+                                           N.LineItem_Option,
                                            N.Item_Description,
                                            N.Qty_Stock,
                                            N.Qty_Add_Stock,
@@ -3469,6 +3627,7 @@ namespace ProjectXYZAPI.Repository
                     dtTbl.Columns.Add("Reason", typeof(string));
                     dtTbl.Columns.Add("Lineitmseq", typeof(int));
                     dtTbl.Columns.Add("Item_Number", typeof(string));
+                    dtTbl.Columns.Add("LineItem_Option", typeof(int));
                     dtTbl.Columns.Add("Item_Description", typeof(string));
                     dtTbl.Columns.Add("Qty_Stock", typeof(decimal));
                     dtTbl.Columns.Add("Qty_Add_Stock", typeof(decimal));
@@ -3547,7 +3706,7 @@ namespace ProjectXYZAPI.Repository
 
         #endregion
 
-        #region Stock Adjustment
+        #region Transfer Item
 
         public DataTable TrfItemGetItemBySite(TrfItemFilter param)
         {
@@ -3560,6 +3719,8 @@ namespace ProjectXYZAPI.Repository
                 SqlCommand cmd = new SqlCommand("TRX_TrfItem_GetItemBySite", conn);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@Item_Number", param.Item_Number ?? "");
+                cmd.Parameters.AddWithValue("@LineItem_Option", param.LineItem_Option);
                 cmd.Parameters.AddWithValue("@SourceSite_ID", param.SourceSite_ID ?? "");
                 cmd.Parameters.AddWithValue("@DestSite_ID", param.DestSite_ID ?? "");
 
@@ -3598,7 +3759,7 @@ namespace ProjectXYZAPI.Repository
             return dt;
         }
 
-        public DataTable TrfItemGetDataHeader(SAFilterItem param)
+        public DataTable TrfItemGetDataTransfer(TrfItemFilter param)
         {
             DataTable dt = new DataTable();
 
@@ -3606,7 +3767,57 @@ namespace ProjectXYZAPI.Repository
             {
                 ConnSql("");
 
-                SqlCommand cmd = new SqlCommand("TRX_Adjustment_GetDataHeader", conn);
+                SqlCommand cmd = new SqlCommand("TRX_TrfItem_GetDataTransfer", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@Status", param.Status);
+                cmd.Parameters.AddWithValue("@SourceSite_ID", param.SourceSite_ID ?? "");
+                cmd.Parameters.AddWithValue("@DestSite_ID", param.DestSite_ID ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable TrfItemGetDataHeader(TrfItemFilter param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("TRX_TrfItem_GetDataTransferHDR", conn);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.CommandTimeout = 0;
                 cmd.Parameters.AddWithValue("@DOCNUMBER", param.DOCNUMBER ?? "");
@@ -3646,7 +3857,7 @@ namespace ProjectXYZAPI.Repository
             return dt;
         }
 
-        public DataTable TrfItemGetDataDetail(SAFilterItem param)
+        public DataTable TrfItemGetDataDetail(TrfItemFilter param)
         {
             DataTable dt = new DataTable();
 
@@ -3654,7 +3865,7 @@ namespace ProjectXYZAPI.Repository
             {
                 ConnSql("");
 
-                SqlCommand cmd = new SqlCommand("TRX_Adjustment_GetDataDetail", conn);
+                SqlCommand cmd = new SqlCommand("TRX_TrfItem_GetDataTransferDTL", conn);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.CommandTimeout = 0;
                 cmd.Parameters.AddWithValue("@DOCNUMBER", param.DOCNUMBER ?? "");
@@ -3694,7 +3905,7 @@ namespace ProjectXYZAPI.Repository
             return dt;
         }
 
-        public DataTable SaveTrfItem(SAHeader param)
+        public DataTable TrfItemSaveTransfer(TransferItemHeader param)
         {
             DataTable dt = new DataTable();
 
@@ -3708,62 +3919,57 @@ namespace ProjectXYZAPI.Repository
 
                 DataTable dtTbl = new DataTable();
 
-                if (param.SADetails != null)
+                if (param.TrfDetails != null)
                 {
-                    var tblFiltered = (from N in param.SADetails.AsEnumerable()
+                    var tblFiltered = (from N in param.TrfDetails.AsEnumerable()
                                        select new
                                        {
                                            N.DOCDATE,
-                                           N.Reason,
                                            N.Lineitmseq,
                                            N.Item_Number,
+                                           N.LineItem_Option,
                                            N.Item_Description,
-                                           N.Qty_Stock,
-                                           N.Qty_Add_Stock,
-                                           N.Qty_Remove_Stock,
-                                           N.Item_Cost,
-                                           N.Qty_After_Stock,
-                                           N.Expected_Stock,
-                                           N.Counted_Stock
+                                           N.Item_SKU,
+                                           N.Source_Stock,
+                                           N.Dest_Stock,
+                                           N.Qty_Transfer
                                        }).ToList();
 
                     dtTbl = ListToDataTable(tblFiltered);
                 }
                 else
                 {
-                    dtTbl.Columns.Add("Item_Number", typeof(string));
                     dtTbl.Columns.Add("DOCDATE", typeof(DateTime));
-                    dtTbl.Columns.Add("Reason", typeof(string));
                     dtTbl.Columns.Add("Lineitmseq", typeof(int));
                     dtTbl.Columns.Add("Item_Number", typeof(string));
+                    dtTbl.Columns.Add("LineItem_Option", typeof(int));
                     dtTbl.Columns.Add("Item_Description", typeof(string));
-                    dtTbl.Columns.Add("Qty_Stock", typeof(decimal));
-                    dtTbl.Columns.Add("Qty_Add_Stock", typeof(decimal));
-                    dtTbl.Columns.Add("Qty_Remove_Stock", typeof(decimal));
-                    dtTbl.Columns.Add("Item_Cost", typeof(decimal));
-                    dtTbl.Columns.Add("Qty_After_Stock", typeof(decimal));
-                    dtTbl.Columns.Add("Expected_Stock", typeof(decimal));
-                    dtTbl.Columns.Add("Counted_Stock", typeof(decimal));
+                    dtTbl.Columns.Add("Item_SKU", typeof(string));
+                    dtTbl.Columns.Add("Source_Stock", typeof(decimal));
+                    dtTbl.Columns.Add("Dest_Stock", typeof(decimal));
+                    dtTbl.Columns.Add("Qty_Transfer", typeof(decimal));
                 }
 
                 #endregion
 
-                SqlCommand cmd = new SqlCommand("TRX_Adjustment_Save", conn, trans);
+                SqlCommand cmd = new SqlCommand("TRX_TrfItem_SaveTemp", conn, trans);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.CommandTimeout = 0;
                 cmd.Parameters.AddWithValue("@DOCNUMBER", param.DOCNUMBER ?? "");
                 cmd.Parameters.AddWithValue("@DOCDATE", param.DOCDATE);
-                cmd.Parameters.AddWithValue("@Site_ID", param.Site_ID ?? "");
-                cmd.Parameters.AddWithValue("@Site_Name", param.Site_Name ?? "");
-                cmd.Parameters.AddWithValue("@Reason", param.Reason ?? "");
+                cmd.Parameters.AddWithValue("@SourceSite_ID", param.SourceSite_ID ?? "");
+                cmd.Parameters.AddWithValue("@SourceSite_Name", param.SourceSite_Name ?? "");
+                cmd.Parameters.AddWithValue("@DestSite_ID", param.DestSite_ID ?? "");
+                cmd.Parameters.AddWithValue("@DestSite_Name", param.DestSite_Name ?? "");
                 cmd.Parameters.AddWithValue("@Total_Line_Item", param.Total_Line_Item);
                 cmd.Parameters.AddWithValue("@Notes", param.Notes ?? "");
+                cmd.Parameters.AddWithValue("@Status", param.Status);
                 cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
 
                 var dtlprm = cmd.CreateParameter();
-                dtlprm.TypeName = "dbo.TrxAdjDetailTYPE";
+                dtlprm.TypeName = "dbo.TrxItemTrfDetailTYPE";
                 dtlprm.Value = dtTbl;
-                dtlprm.ParameterName = "@TrxAdjDetailTYPE";
+                dtlprm.ParameterName = "@TrxItemTrfDetailTYPE";
                 cmd.Parameters.Add(dtlprm);
 
                 SqlDataAdapter adp = new SqlDataAdapter();
@@ -3807,6 +4013,546 @@ namespace ProjectXYZAPI.Repository
                 {
                     trans.Dispose();
                     trans = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable TrfItemReceiveItem(TrfItemFilter param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                trans = conn.BeginTransaction();
+
+                SqlCommand cmd = new SqlCommand("TRX_TrfItem_ReceiveDeleteItem", conn, trans);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@DOCNUMBER", param.DOCNUMBER ?? "");
+                cmd.Parameters.AddWithValue("@Status", param.Status);
+                cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+
+                trans.Commit();
+            }
+            catch (Exception ex)
+            {
+                if (trans != null)
+                {
+                    trans.Rollback();
+                }
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+                if (trans != null)
+                {
+                    trans.Dispose();
+                    trans = null;
+                }
+            }
+            return dt;
+        }
+
+        #endregion
+
+        #region Inventory Counts
+
+        public DataTable ICGetCategory()
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("TRX_InvCounts_GetCategory", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable ICGetDataItems(ICFilterItem param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("TRX_InvCounts_GetItemBySite", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@Item_Number", param.Item_Number ?? "");
+                cmd.Parameters.AddWithValue("@LineItem_Option", param.LineItem_Option);
+                cmd.Parameters.AddWithValue("@Site_ID", param.Site_ID ?? "");
+                cmd.Parameters.AddWithValue("@Category_ID", param.Category_ID ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable ICGetDataList(ICFilterItem param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("TRX_InvCount_GetDataList", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@DOCNUMBER", param.DOCNUMBER ?? "");
+                cmd.Parameters.AddWithValue("@Status", param.Status);
+                cmd.Parameters.AddWithValue("@Site_ID", param.Site_ID ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable ICGetDataDetail(ICFilterItem param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("TRX_InvCount_GetDataDetail", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@DOCNUMBER", param.DOCNUMBER ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable ICSaveCount(ICHeader param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                trans = conn.BeginTransaction();
+
+                #region Items
+
+                DataTable dtTbl = new DataTable();
+
+                if (param.ICDetails != null)
+                {
+                    var tblFiltered = (from N in param.ICDetails.AsEnumerable()
+                                       select new
+                                       {
+                                           N.Lineitmseq,
+                                           N.Item_Number,
+                                           N.Item_Description,
+                                           N.Item_SKU,
+                                           N.Expected_Stock,
+                                           N.Counted_Stock,
+                                           N.Different_Stock,
+                                           N.Item_Cost,
+                                           N.Item_Cost_Different
+                                       }).ToList();
+
+                    dtTbl = ListToDataTable(tblFiltered);
+                }
+                else
+                {
+                    dtTbl.Columns.Add("Lineitmseq", typeof(int));
+                    dtTbl.Columns.Add("Item_Number", typeof(string));
+                    dtTbl.Columns.Add("Item_Description", typeof(string));
+                    dtTbl.Columns.Add("Item_SKU", typeof(string));
+                    dtTbl.Columns.Add("Expected_Stock", typeof(decimal));
+                    dtTbl.Columns.Add("Counted_Stock", typeof(decimal));
+                    dtTbl.Columns.Add("Different_Stock", typeof(decimal));
+                    dtTbl.Columns.Add("Item_Cost", typeof(decimal));
+                    dtTbl.Columns.Add("Item_Cost_Different", typeof(decimal));
+                }
+
+                #endregion
+
+                SqlCommand cmd = new SqlCommand("TRX_InvCount_Save", conn, trans);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@DOCNUMBER", param.DOCNUMBER ?? "");
+                cmd.Parameters.AddWithValue("@Site_ID", param.Site_ID ?? "");
+                cmd.Parameters.AddWithValue("@Site_Name", param.Site_Name ?? "");
+                cmd.Parameters.AddWithValue("@Type_Inventory_Count", param.Type_Inventory_Count);
+                cmd.Parameters.AddWithValue("@Notes", param.Notes ?? "");
+                cmd.Parameters.AddWithValue("@Status", param.Status);
+                cmd.Parameters.AddWithValue("@InvCount", param.InvCount);
+                cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
+
+                var dtlprm = cmd.CreateParameter();
+                dtlprm.TypeName = "dbo.TrxInvCountTYPE";
+                dtlprm.Value = dtTbl;
+                dtlprm.ParameterName = "@TrxInvCountTYPE";
+                cmd.Parameters.Add(dtlprm);
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+
+                trans.Commit();
+            }
+            catch (Exception ex)
+            {
+                if (trans != null)
+                {
+                    trans.Rollback();
+                }
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+                if (trans != null)
+                {
+                    trans.Dispose();
+                    trans = null;
+                }
+            }
+            return dt;
+        }
+
+        #endregion
+
+        #region Inventory History
+
+        public DataTable InvHistGetDataList(InvHistory param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("TRX_InvHistory_GetDataList", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@DateFrom", param.DateFrom);
+                cmd.Parameters.AddWithValue("@DateTo", param.DateTo);
+                cmd.Parameters.AddWithValue("@Reason", param.Reason ?? "");
+                cmd.Parameters.AddWithValue("@Employee", param.Employee ?? "");
+                cmd.Parameters.AddWithValue("@Store_ID", param.Store_ID ?? "");
+                cmd.Parameters.AddWithValue("@Site_ID", param.Site_ID ?? "");
+                cmd.Parameters.AddWithValue("@SEARCH", param.SEARCH ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        #endregion
+
+        #region Reports
+
+        public DataTable ReportsDiscountGetDataList(SalesDiscount param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("TRX_ReportsDiscount_GetDataList", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@DateFrom", param.DateFrom);
+                cmd.Parameters.AddWithValue("@DateTo", param.DateTo);
+                cmd.Parameters.AddWithValue("@FilterTime", param.FilterTime);
+                cmd.Parameters.AddWithValue("@TimeFrom", param.TimeFrom);
+                cmd.Parameters.AddWithValue("@TimeTo", param.TimeTo);
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
+        public DataTable ReportsCategoryGetDataList(SalesDiscount param)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("TRX_ReportsCategory_GetDataList", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@DateFrom", param.DateFrom);
+                cmd.Parameters.AddWithValue("@DateTo", param.DateTo);
+                cmd.Parameters.AddWithValue("@FilterTime", param.FilterTime);
+                cmd.Parameters.AddWithValue("@TimeFrom", param.TimeFrom);
+                cmd.Parameters.AddWithValue("@TimeTo", param.TimeTo);
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
                 }
             }
             return dt;

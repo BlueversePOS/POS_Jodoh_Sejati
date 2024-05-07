@@ -2,8 +2,14 @@ CREATE OR ALTER proc [dbo].[Web_Categories_GetData]
 AS
 BEGIN
 	BEGIN TRY
-		SELECT *, 0 ITEM_COUNT
-		FROM POS_CategoryItem
+		SELECT CAT.Category_ID, CAT.Category_Name, CAT.Category_Color, COUNT(ITM.Category_ID) ITEM_COUNT
+		FROM POS_CategoryItem CAT
+		OUTER APPLY (
+			SELECT DISTINCT X.Item_Number, X.Category_ID
+			FROM POS_Item X
+			WHERE X.Category_ID=CAT.Category_ID
+		) ITM
+		GROUP BY CAT.Category_ID, CAT.Category_Name, CAT.Category_Color
 		ORDER BY Category_Name asc
 	END TRY
 	BEGIN	CATCH
@@ -21,4 +27,5 @@ END
 GO
 /*
 EXEC Web_Categories_GetData
+select * from POS_Item
 */

@@ -17,6 +17,15 @@
     <None Remove="Properties\PublishProfiles\BlueverseAPI - Web Deploy.pubxml" />
     <None Remove="Properties\PublishProfiles\blueversepos-001-subsite2 - FTP.pubxml" />
     <None Remove="Properties\PublishProfiles\blueversepos-001-subsite2 - Web Deploy.pubxml" />
+    <None Remove="Properties\PublishProfiles\BluverseAPI - FTP.pubxml" />
+    <None Remove="Properties\PublishProfiles\BluverseAPI - Web Deploy.pubxml" />
+    <None Remove="Properties\PublishProfiles\BluverseAPI - Zip Deploy.pubxml" />
+    <None Remove="Properties\PublishProfiles\bluverseapi23 - FTP.pubxml" />
+    <None Remove="Properties\PublishProfiles\bluverseapi23 - Web Deploy.pubxml" />
+    <None Remove="Properties\PublishProfiles\bluverseapi23 - Zip Deploy.pubxml" />
+    <None Remove="Properties\PublishProfiles\bluverseposapi-001-site1 - FTP.pubxml" />
+    <None Remove="Properties\PublishProfiles\bluverseposapi-001-site1 - Web Deploy.pubxml" />
+    <None Remove="Properties\PublishProfiles\site1275-WebDeploy.pubxml" />
   </ItemGroup>
 
   <ItemGroup>

@@ -9,6 +9,8 @@ namespace ProjectXYZ.Areas.Inventory.Models
     {
         public string UserID { get; set; } = string.Empty;
         public string DOCNUMBER { get; set; } = string.Empty;
+        public string Item_Number { get; set; } = string.Empty;
+        public int LineItem_Option { get; set; }
         public string Reason { get; set; } = string.Empty;
         public string Store_ID { get; set; } = string.Empty;
         public string Site_ID { get; set; } = string.Empty;
@@ -33,6 +35,7 @@ namespace ProjectXYZ.Areas.Inventory.Models
         public string Reason { get; set; } = string.Empty;
         public int Lineitmseq { get; set; }
         public string Item_Number { get; set; } = string.Empty;
+        public int LineItem_Option { get; set; }
         public string Item_Description { get; set; } = string.Empty;
         public decimal Qty_Stock { get; set; }
         public decimal Qty_Add_Stock { get; set; }

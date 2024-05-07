@@ -8,6 +8,7 @@ CREATE TYPE [dbo].[TrxAdjDetailTYPE] AS TABLE(
 	Reason nvarchar(30) NULL,
 	Lineitmseq int NULL,
 	Item_Number nvarchar(20) NULL,
+	LineItem_Option numeric(19,5) NULL,
 	Item_Description nvarchar(250) NULL,
 	Qty_Stock numeric(19,5) NULL,
 	Qty_Add_Stock numeric(19,5) NULL,
@@ -18,3 +19,6 @@ CREATE TYPE [dbo].[TrxAdjDetailTYPE] AS TABLE(
 	Counted_Stock numeric(19,5) NULL
 )
 GO
+/*
+DROP PROC TRX_Adjustment_Save
+*/

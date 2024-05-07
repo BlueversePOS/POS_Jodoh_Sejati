@@ -23,6 +23,10 @@
         .small-box.text-center {
             box-shadow: 0 0 0;
         }
+
+        .allow-focus > li:hover {
+            background-color: lightgray;
+        }
     </style>
 </head>
 <body>
@@ -52,7 +56,7 @@
                                         <select class="form-control select2" id="dest_site">
                                         </select>
                                     </div>
-                                    <a class="text-gray pl-2 pb-1" style="align-self: end;"><i class="fa fa-search"></i></a>
+                                    <a class="text-gray pl-2 pb-1" id="btnSearch" style="align-self: end; cursor:pointer;"><i class="fa fa-search"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -72,6 +76,7 @@
                                             <th class="text-right" style="vertical-align:middle;">Quantity</th>
                                         </tr>
                                     </thead>
+                                    <tbody></tbody>
                                 </table>
                             </div>
                         </div>
@@ -82,6 +87,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="col-12 row m-0">
+                            <input type="hidden" id="DOCNUMBER" />
                             <div class="form-group col-lg-6 col-md-6 col-12 m-0 pl-0 focused">
                                 <label class="form-label" for="TF_SOURCE_SITE">Source site</label>
                                 <select class="form-control select2" id="TF_SOURCE_SITE">
@@ -126,56 +132,69 @@
                                             <th class="text-right" style="vertical-align:middle;">Source stock</th>
                                             <th class="text-right" style="vertical-align:middle;">Destination stock</th>
                                             <th class="text-right" style="vertical-align:middle;">Quantity</th>
+                                            <th style="vertical-align:middle;"></th>
                                         </tr>
                                     </thead>
+                                    <tbody></tbody>
                                 </table>
+                            </div>
+                            <div class="col-lg-4 col-md-6 col-12 px-0">
+                                <select class="form-control select2" id="SearchItem">
+                                </select>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-12 p-0" style="border-top: 1px solid lightgray;">
-                    <div class="col-12 p-0 row ml-0 mr-0 mt-3" style="justify-content: right;">
-                        <button type="button" class="btn btn-default mr-1 ml-1" id="btnCancel" style="width: 120px;">CANCEL</button>
-                        <button type="button" class="btn btn-primary mr-1 ml-1" style="width: 240px;">CREATE AND RECEIVE</button>
-                        <button type="button" class="btn btn-primary mr-1 ml-1" style="width: 120px;">CREATE</button>
+                    <div class="col-12 p-0 row mx-0 mt-3" style="justify-content: right;">
+                        <div class="col-lg-3 col-sm-6 col-12">
+                            <button type="button" class="btn btn-block btn-default" id="btnCancel">CANCEL</button>
+                        </div>
+                        <div class="col-lg-4 col-sm-6 col-12">
+                            <button type="button" class="btn btn-block btn-primary" id="btnCreateReceive">CREATE AND RECEIVE</button>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-12">
+                            <button type="button" class="btn btn-block btn-primary" id="btnCreate">CREATE</button>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="card-body col-lg-9 col-md-12 col-12 pt-0 editTfItem">
+            <div class="card-body col-lg-9 col-md-12 col-12 pt-0 editTfItem" id="editTfItem">
                 <div class="card">
                     <div class="card-header border-0 ui-sortable-handle">
                         <div class="col-12 p-0 row m-0">
                             <div class="col-6 p-0">
-                                <button type="button" class="btn" id="btnBack"><i class="fa fa-chevron-left pr-2"></i> Transfer Orders</button>
+                                <button type="button" class="btn font-weight-bold" id="btnBack"><i class="fa fa-chevron-left pr-2"></i> Transfer Orders</button>
                             </div>
                             <div class="col-6 p-0 row m-0" style="justify-content: right;">
-                                <button type="button" class="btn" id="saveasPDF">SAVE AS PDF</button>
-                                <button type="button" class="btn" id="saveasCSV">SAVE AS CSV</button>
-                                <button type="button" class="btn" id="btnReceive">RECEIVE</button>
-                                <button type="button" class="btn" id="btnEdit">EDIT</button>
+                                <button type="button" class="btn font-weight-bold" id="saveasPDF">SAVE AS PDF</button>
+                                <button type="button" class="btn font-weight-bold" id="saveasCSV">SAVE AS CSV</button>
+                                <button type="button" class="btn font-weight-bold" id="btnReceive">RECEIVE</button>
+                                <button type="button" class="btn font-weight-bold" id="btnEdit">EDIT</button>
                                 <div class="dropdown">
-                                    <button class="btn dropdown-toggle dropdown-toggle-split" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <button class="btn dropdown-toggle dropdown-toggle-split font-weight-bold" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         MORE
                                     </button>
                                     <ul class="dropdown-menu allow-focus" aria-labelledby="dropdownMenuButton">
                                         <li>
-                                            <span type="button" class="pl-2" id="saveasPDF2">Save as PDF</span>
+                                            <span type="button" class="p-2" id="saveasPDF2">Save as PDF</span>
                                         </li>
                                         <li>
-                                            <span type="button" class="pl-2" id="saveasCSV2">Save as CSV</span>
+                                            <span type="button" class="p-2" id="saveasCSV2">Save as CSV</span>
                                         </li>
                                         <li>
-                                            <span type="button" class="pl-2" id="deleteTfItem">Delete transfer item</span>
+                                            <span type="button" class="p-2" id="deleteTfItem">Delete transfer item</span>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="card-body border-0">
+                    <div class="card-body border-0" id="pdfBody">
                         <div class="col-12 m-0">
-                            <h3 class="mb-0" id="TFITEMNMBR">TO1002</h3>
-                            <span class="spanselect" id="TFSTATUS_ITEM">In transit</span>
+                            <input type="hidden" id="StatusTF" />
+                            <h3 class="mb-0" id="DOCNUMBER">TO1002</h3>
+                            <span class="spanselect" id="TFSTATUS_ITEM" style="font-size: 14px;">In transit</span>
                             <div class="form-group">
                                 <div class="row m-0">
                                     <label class="col-form-label col-lg-2 col-md-3 col-4 p-0">Date <span style="float: right; padding: 0 8px 0 0">:</span></label>
@@ -229,5 +248,7 @@
 
 @section Scripts
 {
-    <script src="~/Areas/Inventory/Lib/TransferItem.js"></script>
+    <script src="~/Content/adminlte/dist/js/html2canvas.min.js"></script>
+    <script src="~/Content/adminlte/plugins/jspdf/jspdf.umd.min.js"></script>
+    <script src="~/Areas/Inventory/Lib/TransferItem.js?v=2"></script>
 }

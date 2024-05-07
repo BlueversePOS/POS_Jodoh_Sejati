@@ -12,6 +12,7 @@ GO
 CREATE TABLE POS_Item_History
 (
 	Item_Number nvarchar(20) NOT NULL, 
+	Site_ID nvarchar(20) NOT NULL, 
 	Item_Name nvarchar(50) NOT NULL, 
 	Item_Description nvarchar(250) NOT NULL,
 	Line_Item int NOT NULL,
@@ -27,7 +28,6 @@ CREATE TABLE POS_Item_History
 	Track_Stock int NOT NULL,
 	InStock int NOT NULL,
 	LowStock int NOT NULL,
-	Site_ID nvarchar(20) NOT NULL, 
 	Tax_ID nvarchar(20) NOT NULL,
 	Representation int NOT NULL,
 	Item_Color nvarchar(50) NOT NULL,
@@ -35,5 +35,5 @@ CREATE TABLE POS_Item_History
 	Item_Image nvarchar(MAX) NOT NULL,
 	Created_User nvarchar(30),
 	Created_Date DATETIME,
-	CONSTRAINT PK_POS_Item_History PRIMARY KEY NONCLUSTERED (Item_Number ASC, Line_Item ASC),
+	CONSTRAINT PK_POS_Item_History PRIMARY KEY NONCLUSTERED (Item_Number ASC, Site_ID ASC, Line_Item ASC),
 )

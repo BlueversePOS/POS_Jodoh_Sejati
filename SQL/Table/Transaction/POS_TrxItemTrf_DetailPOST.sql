@@ -1,7 +1,3 @@
-
-ALTER TABLE [dbo].[POS_TrxItemTrf_DetailPOST] DROP CONSTRAINT [FK_POS_TrxItemTrf_DetailPOST]
-GO
-
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[POS_TrxItemTrf_DetailPOST]') AND type in (N'U'))
 DROP TABLE [dbo].[POS_TrxItemTrf_DetailPOST]
 GO
@@ -12,7 +8,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
+select * from POS_TrxItemTrf_DetailPOST
 CREATE TABLE POS_TrxItemTrf_DetailPOST
 (
 	DOCNUMBER nvarchar(20) NOT NULL, 
@@ -20,6 +16,7 @@ CREATE TABLE POS_TrxItemTrf_DetailPOST
 	Lineitmseq int NOT NULL,
 	Item_Number nvarchar(20) NOT NULL,
 	Item_Description nvarchar(250) NOT NULL,
+	Item_SKU nvarchar(20) NOT NULL,
 	Source_Stock numeric(19,5) NOT NULL,
 	Dest_Stock numeric(19,5) NOT NULL,
 	Qty_Transfer numeric(19,5) NOT NULL,
@@ -29,11 +26,7 @@ CREATE TABLE POS_TrxItemTrf_DetailPOST
 	Modified_User nvarchar(30) NOT NULL,
 	Modified_Date DATETIME NOT NULL,
 	Modified_time DATETIME NOT NULL,
-	CONSTRAINT PK_POS_TrxItemTrf_DetailPOST PRIMARY KEY NONCLUSTERED (DOCNUMBER ASC, Item_Number ASC),
-	CONSTRAINT FK_POS_TrxItemTrf_DetailPOST FOREIGN KEY (Item_Number)
-	REFERENCES POS_Item (Item_Number)
-	ON DELETE CASCADE
-	ON UPDATE CASCADE
+	CONSTRAINT PK_POS_TrxItemTrf_DetailPOST PRIMARY KEY NONCLUSTERED (DOCNUMBER ASC, Lineitmseq ASC, Item_Number ASC, Item_SKU ASC)
 )
 
 /*

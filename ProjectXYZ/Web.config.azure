@@ -14,7 +14,7 @@
     <add key="DBConfigDB" value="bluverse" />
     <add key="DBConfigUser" value="bluverse" />
     <add key="DBConfigPwd" value="Pos@240923" />
-    <add key="PORTALAPI" value="https://bluverseapi23.azurewebsites.net/" />
+    <add key="PORTALAPI" value="http://bluverseposapi-001-site1.ktempurl.com/" />
     <add key="PORTALTOKEN" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhcnRoYSIsImp0aSI6IjdhNjQzNTZjLTMyNmQtNDNjOC1iNjIwLTYwNTBmYTVmN2JkYSIsImlhdCI6MTY2NzgxNjQyMSwibmJmIjoxNjY3ODE2NDIwLCJleHAiOjE3NTQyMTY0MjAsImlzcyI6IkJhY2tlbmQiLCJhdWQiOiJDb25zdW1lclVzZXIifQ.UBFjrNPO7Vv7uolwl_w5HnKitaaZ5UtYBx_6y1GnpZU" />
   </appSettings>
   <system.web>

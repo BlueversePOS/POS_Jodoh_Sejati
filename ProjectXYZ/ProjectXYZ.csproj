@@ -14,7 +14,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ProjectXYZ</RootNamespace>
     <AssemblyName>ProjectXYZ</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <Use64BitIISExpress />
@@ -25,6 +25,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -48,6 +49,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IdentityModel" />
     <Reference Include="System.Runtime.Serialization" />
@@ -55,12 +57,9 @@
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Abstractions" />
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml" />
@@ -105,6 +104,7 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WebGrease">
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
@@ -167,6 +167,10 @@
     <Compile Include="Areas\Reports\Controllers\SalesByPaytypeController.cs" />
     <Compile Include="Areas\Reports\Controllers\SalesDiscountController.cs" />
     <Compile Include="Areas\Reports\Controllers\SalesSummaryController.cs" />
+    <Compile Include="Areas\Reports\Models\SalesCategory.cs" />
+    <Compile Include="Areas\Reports\Models\SalesCategoryRepo.cs" />
+    <Compile Include="Areas\Reports\Models\SalesDiscount.cs" />
+    <Compile Include="Areas\Reports\Models\SalesDiscountRepo.cs" />
     <Compile Include="Areas\Reports\ReportsAreaRegistration.cs" />
     <Compile Include="Areas\Setting\Controllers\SettingsController.cs" />
     <Compile Include="Areas\Setting\Models\Settings.cs" />
@@ -699,6 +703,7 @@
     <Content Include="Content\adminlte\dist\js\adminlte.min.js" />
     <Content Include="Content\adminlte\dist\js\adminltenew.min.js" />
     <Content Include="Content\adminlte\dist\js\demo.js" />
+    <Content Include="Content\adminlte\dist\js\html2canvas.min.js" />
     <Content Include="Content\adminlte\dist\js\pages\dashboard.js" />
     <Content Include="Content\adminlte\dist\js\pages\dashboard2.js" />
     <Content Include="Content\adminlte\dist\js\pages\dashboard3.js" />
@@ -3404,6 +3409,14 @@
     <Content Include="Content\adminlte\plugins\jsgrid\jsgrid.js" />
     <Content Include="Content\adminlte\plugins\jsgrid\jsgrid.min.css" />
     <Content Include="Content\adminlte\plugins\jsgrid\jsgrid.min.js" />
+    <Content Include="Content\adminlte\plugins\jspdf\jspdf.es.js" />
+    <Content Include="Content\adminlte\plugins\jspdf\jspdf.es.min.js" />
+    <Content Include="Content\adminlte\plugins\jspdf\jspdf.node.js" />
+    <Content Include="Content\adminlte\plugins\jspdf\jspdf.node.min.js" />
+    <Content Include="Content\adminlte\plugins\jspdf\jspdf.umd.js" />
+    <Content Include="Content\adminlte\plugins\jspdf\jspdf.umd.min.js" />
+    <Content Include="Content\adminlte\plugins\jspdf\polyfills.es.js" />
+    <Content Include="Content\adminlte\plugins\jspdf\polyfills.umd.js" />
     <Content Include="Content\adminlte\plugins\jszip\jszip.js" />
     <Content Include="Content\adminlte\plugins\jszip\jszip.min.js" />
     <Content Include="Content\adminlte\plugins\moment\locales.js" />
@@ -4869,10 +4882,13 @@
     <Content Include="Areas\Reports\Views\SalesByCategory\Index.cshtml" />
     <Content Include="Areas\Reports\Views\SalesByPaytype\Index.cshtml" />
     <Content Include="Areas\Reports\Views\SalesByItem\Index.cshtml" />
-    <None Include="Properties\PublishProfiles\Bluverse - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\Bluverse - Web Deploy.pubxml" />
-    <None Include="Properties\PublishProfiles\bluverse23 - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\bluverse23 - Web Deploy.pubxml" />
+    <Content Include="libman.json" />
+    <Content Include="Content\adminlte\plugins\jspdf\jspdf.es.js.map" />
+    <Content Include="Content\adminlte\plugins\jspdf\jspdf.es.min.js.map" />
+    <Content Include="Content\adminlte\plugins\jspdf\jspdf.node.js.map" />
+    <Content Include="Content\adminlte\plugins\jspdf\jspdf.node.min.js.map" />
+    <Content Include="Content\adminlte\plugins\jspdf\jspdf.umd.js.map" />
+    <Content Include="Content\adminlte\plugins\jspdf\jspdf.umd.min.js.map" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
@@ -4915,7 +4931,6 @@
     <Folder Include="Areas\Employees\Views\Shared\" />
     <Folder Include="Areas\Inventory\Views\Shared\" />
     <Folder Include="Areas\Items\Views\Shared\" />
-    <Folder Include="Areas\Reports\Models\" />
     <Folder Include="Areas\Reports\Views\Shared\" />
     <Folder Include="Areas\Setting\Views\Shared\" />
     <Folder Include="Content\adminlte\files\assets\pages\chart\echarts\js\" />

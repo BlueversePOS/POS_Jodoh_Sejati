@@ -18,7 +18,6 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
         private string FORMATDATE = System.Configuration.ConfigurationManager.AppSettings["FORMATDATE"];
         public StockAdjustmentRepo dtaccess = new StockAdjustmentRepo();
         public SettingsRepo settingsRepo = new SettingsRepo();
-        public ItemListRepo itemsRepo = new ItemListRepo();
         FuncHelper func = new FuncHelper();
 
         // GET: Inventory/StockAdjustment
@@ -158,23 +157,62 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
         [AuthorizeActionFilterAttribute]
         [HttpPost]
         [Obsolete]
-        public JsonResult GetDataItems(FilterItem model)
+        public JsonResult AdjGetDataItems(SAFilterItem model)
         {
             bool success = false;
             try
             {
-                DataTable ObjList = itemsRepo.GetDataItems(model);
+                DataTable ObjList = dtaccess.AdjGetDataItems(model);
                 List<DataRow> rows = ObjList.Select().ToList();
 
                 var list = (from DataRow ro in rows
                             select new
                             {
                                 Item_Number = ro["Item_Number"],
-                                Item_Name = ro["Item_Name"],
+                                LineItem_Option = ro["LineItem_Option"],
                                 Item_Description = ro["Item_Description"],
-                                Category_ID = ro["Category_ID"],
-                                Category_Name = ro["Category_Name"],
-                                Item_Price = ro["Item_Price"],
+                                Item_Cost = ro["Item_Cost"],
+                                Item_SKU = ro["Item_SKU"],
+                                InStock = ro["InStock"]
+                            }).ToList();
+
+                success = true;
+                var jsonResult = Json(new { success = success, data = list }, JsonRequestBehavior.AllowGet);
+                jsonResult.MaxJsonLength = int.MaxValue;
+                return jsonResult;
+            }
+            catch (Exception ex)
+            {
+
+                var jsonResult = Json(new { success = success, message = ex.Message }, JsonRequestBehavior.AllowGet);
+                jsonResult.MaxJsonLength = int.MaxValue;
+                return jsonResult;
+            }
+        }
+
+        [AuthorizeActionFilterAttribute]
+        [HttpPost]
+        [Obsolete]
+        public JsonResult AdjSearchDataItems(SAFilterItem model, string Prefix)
+        {
+            bool success = false;
+            try
+            {
+                Prefix = string.IsNullOrEmpty(Prefix) ? string.Empty : Prefix.Trim();
+
+                DataTable ObjList = dtaccess.AdjGetDataItems(model);
+                List<DataRow> rows = ObjList.Select().ToList();
+                if (rows.Count() > 0 && !string.IsNullOrEmpty(Prefix))
+                {
+                    rows = ObjList.Select(string.Format("Item_Description like '%{0}%'", Prefix)).ToList();
+                }
+
+                var list = (from DataRow ro in rows
+                            select new
+                            {
+                                Item_Number = ro["Item_Number"],
+                                LineItem_Option = ro["LineItem_Option"],
+                                Item_Description = ro["Item_Description"],
                                 Item_Cost = ro["Item_Cost"],
                                 Item_SKU = ro["Item_SKU"],
                                 InStock = ro["InStock"]
@@ -209,15 +247,10 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
                 DataTable ObjList = dtaccess.SaveAdj(model);
                 List<DataRow> rows = ObjList.Select().ToList();
 
-                var list = (from DataRow ro in rows
-                            select new
-                            {
-                                CODE = ro["CODE"],
-                                DOCNUMBER = ro["DOCNUMBER"]
-                            }).ToList();
+                string DOCNUMBER = string.IsNullOrEmpty(rows[0]["DOCNUMBER"].ToString()) ? "" : rows[0]["DOCNUMBER"].ToString().Trim();
 
                 success = true;
-                var jsonResult = Json(new { success = success, message = "" }, JsonRequestBehavior.AllowGet);
+                var jsonResult = Json(new { success = success, message = DOCNUMBER }, JsonRequestBehavior.AllowGet);
                 jsonResult.MaxJsonLength = int.MaxValue;
                 return jsonResult;
             }

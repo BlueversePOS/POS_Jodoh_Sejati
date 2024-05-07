@@ -12,6 +12,7 @@ GO
 CREATE TABLE POS_ItemVariant_History
 (
 	Item_Number nvarchar(20) NOT NULL,
+	Site_ID nvarchar(20) NOT NULL, 
 	LineItem_Option numeric(19,5) NOT NULL,
 	Line_Item int NOT NULL,
 	CB_Available int NOT NULL,
@@ -28,5 +29,5 @@ CREATE TABLE POS_ItemVariant_History
 	Item_Barcode nvarchar(MAX) NOT NULL,
 	Created_User nvarchar(30),
 	Created_Date DATETIME,
-	CONSTRAINT PK_POS_ItemVariant_History PRIMARY KEY NONCLUSTERED (Item_Number ASC, Line_Item ASC),
+	CONSTRAINT PK_POS_ItemVariant_History PRIMARY KEY NONCLUSTERED (Item_Number ASC, Site_ID ASC, LineItem_Option ASC, Line_Item ASC),
 )

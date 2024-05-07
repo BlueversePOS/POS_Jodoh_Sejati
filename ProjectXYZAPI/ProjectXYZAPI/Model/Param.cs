@@ -303,6 +303,21 @@ namespace ProjectXYZAPI.Model
         public int Status_Batch { get; set; }
     }
 
+    public class GetSummShiftParam
+    {
+        public string Batch_ID { get; set; }
+    }
+
+    public class CashManagement
+    {
+        public string Batch_ID { get; set; }
+        public string Type_CashManagement { get; set; }
+        public decimal Amount { get; set; }
+        public string Notes { get; set; }
+        public string POS_ID { get; set; }
+        public string UserID { get; set; }
+    }
+
     public class SetupPrint
     {
         public string PrinterID { get; set; }
@@ -374,6 +389,8 @@ namespace ProjectXYZAPI.Model
     {
         public string UserID { get; set; } = string.Empty;
         public string DOCNUMBER { get; set; } = string.Empty;
+        public string Item_Number { get; set; } = string.Empty;
+        public int LineItem_Option { get; set; }
         public string Reason { get; set; } = string.Empty;
         public string Store_ID { get; set; } = string.Empty;
         public string Site_ID { get; set; } = string.Empty;
@@ -398,6 +415,7 @@ namespace ProjectXYZAPI.Model
         public string Reason { get; set; } = string.Empty;
         public int Lineitmseq { get; set; }
         public string Item_Number { get; set; } = string.Empty;
+        public int LineItem_Option { get; set; }
         public string Item_Description { get; set; } = string.Empty;
         public decimal Qty_Stock { get; set; }
         public decimal Qty_Add_Stock { get; set; }
@@ -412,8 +430,97 @@ namespace ProjectXYZAPI.Model
     {
         public string UserID { get; set; } = string.Empty;
         public string DOCNUMBER { get; set; } = string.Empty;
+        public string Item_Number { get; set; } = string.Empty;
+        public int LineItem_Option { get; set; }
         public string SourceSite_ID { get; set; } = string.Empty;
         public string DestSite_ID { get; set; } = string.Empty;
+        public int Status { get; set; }
+    }
+
+    public class TransferItemHeader
+    {
+        public string UserID { get; set; } = string.Empty;
+        public string DOCNUMBER { get; set; } = string.Empty;
+        public DateTime DOCDATE { get; set; }
+        public string SourceSite_ID { get; set; } = string.Empty;
+        public string SourceSite_Name { get; set; } = string.Empty;
+        public string DestSite_ID { get; set; } = string.Empty;
+        public string DestSite_Name { get; set; } = string.Empty;
+        public int Total_Line_Item { get; set; }
+        public string Notes { get; set; } = string.Empty;
+        public int Status { get; set; } = 0;
+        public List<TransferItemDetail> TrfDetails { get; set; } = new List<TransferItemDetail>();
+    }
+
+    public class TransferItemDetail
+    {
+        public DateTime DOCDATE { get; set; }
+        public int Lineitmseq { get; set; }
+        public string Item_Number { get; set; } = string.Empty;
+        public int LineItem_Option { get; set; }
+        public string Item_Description { get; set; } = string.Empty;
+        public string Item_SKU { get; set; } = string.Empty;
+        public decimal Source_Stock { get; set; }
+        public decimal Dest_Stock { get; set; }
+        public decimal Qty_Transfer { get; set; }
+    }
+
+    public class ICFilterItem
+    {
+        public string UserID { get; set; } = string.Empty;
+        public string DOCNUMBER { get; set; } = string.Empty;
+        public string Item_Number { get; set; } = string.Empty;
+        public int LineItem_Option { get; set; }
+        public string Site_ID { get; set; } = string.Empty;
+        public int Status { get; set; }
+        public string Category_ID { get; set; } = string.Empty;
+    }
+
+    public class InvHistory
+    {
+        public string DOCNUMBER { get; set; } = string.Empty;
+        public DateTime DateFrom { get; set; }
+        public DateTime DateTo { get; set; }
+        public string Reason { get; set; } = string.Empty;
+        public string Employee { get; set; } = string.Empty;
+        public string Store_ID { get; set; } = string.Empty;
+        public string Site_ID { get; set; } = string.Empty;
+        public string SEARCH { get; set; } = string.Empty;
+    }
+
+    public class ICHeader
+    {
+        public string UserID { get; set; } = string.Empty;
+        public string DOCNUMBER { get; set; } = string.Empty;
+        public string Site_ID { get; set; } = string.Empty;
+        public string Site_Name { get; set; } = string.Empty;
+        public int Type_Inventory_Count { get; set; }
+        public string Notes { get; set; } = string.Empty;
+        public int Status { get; set; }
+        public int InvCount { get; set; }
+        public List<ICDetails> ICDetails { get; set; } = new List<ICDetails>();
+    }
+
+    public class ICDetails
+    {
+        public int Lineitmseq { get; set; }
+        public string Item_Number { get; set; } = string.Empty;
+        public string Item_Description { get; set; } = string.Empty;
+        public string Item_SKU { get; set; } = string.Empty;
+        public decimal Expected_Stock { get; set; }
+        public decimal Counted_Stock { get; set; }
+        public decimal Different_Stock { get; set; }
+        public decimal Item_Cost { get; set; }
+        public decimal Item_Cost_Different { get; set; }
+    }
+
+    public class SalesDiscount
+    {
+        public DateTime DateFrom { get; set; }
+        public DateTime DateTo { get; set; }
+        public int FilterTime { get; set; }
+        public DateTime TimeFrom { get; set; }
+        public DateTime TimeTo { get; set; }
     }
 
     public class GenerateNumber

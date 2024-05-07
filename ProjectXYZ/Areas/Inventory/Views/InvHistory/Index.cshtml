@@ -28,60 +28,348 @@
 <body>
     <section class="content">
         <div class="card container-fluid" style="background: none; box-shadow: none !important;">
-            <div class="card-body">
-                <div class="col-lg-11 col-md-12 col-12 p-0 row m-0">
-                    <div class="col-lg-4 col-md-6 col-12 pl-0">
-                        <div id="reportrange" class="form-control w-100 text-center" style="background: #fff; cursor: pointer; padding: 6px 10px; border: 1px solid #ccc;">
-                            <i class="far fa-calendar-alt" style="float: left; padding-top: 4px;"></i>&nbsp;
-                            <span></span>
+            <div id="bodyList">
+                <div class="card-body">
+                    <div class="col-xl-11 col-lg-12 col-md-12 col-12 px-0 row m-0">
+                        <div class="form-group col-lg-4 col-12">
+                            <div id="reportrange" class="form-control w-100 text-center" style="background: #fff; cursor: pointer; padding: 6px 10px; border: 1px solid #ccc;">
+                                <i class="far fa-calendar-alt" style="float: left; padding-top: 4px;"></i>&nbsp;
+                                <span></span>
+                            </div>
+                        </div>
+                        <div class="form-group col-lg-2 col-md-6 col-12">
+                            <div class="row pull-right">
+                                <div class="dropdown col-12">
+                                    <button class="btn btn-default btn-block text-gray dropdown-toggle dropdown-toggle-split" type="button" id="dropdownStore" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-store-alt pr-2"></i> All Stores
+                                    </button>
+                                    <ul class="dropdown-menu checkbox-menu allow-focus allStore" aria-labelledby="dropdownStore">
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-lg-2 col-md-6 col-12">
+                            <div class="row pull-right">
+                                <div class="dropdown col-12">
+                                    <button class="btn btn-default btn-block text-gray dropdown-toggle dropdown-toggle-split" type="button" id="dropdownSite" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-warehouse pr-2"></i> All Sites
+                                    </button>
+                                    <ul class="dropdown-menu checkbox-menu allow-focus allSite" aria-labelledby="dropdownSite">
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-lg-2 col-md-6 col-12">
+                            <div class="row pull-right">
+                                <div class="dropdown col-12">
+                                    <button class="btn btn-default btn-block text-gray dropdown-toggle dropdown-toggle-split" type="button" id="dropdownEmployee" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-user pr-2"></i> All Employees
+                                    </button>
+                                    <ul class="dropdown-menu checkbox-menu allow-focus allEmployee" aria-labelledby="dropdownEmployee">
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-lg-2 col-md-6 col-12">
+                            <div class="row pull-right">
+                                <div class="dropdown col-12">
+                                    <button class="btn btn-default btn-block text-gray dropdown-toggle dropdown-toggle-split" type="button" id="dropdownReason" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-bars pr-2"></i> All reasons
+                                    </button>
+                                    <ul class="dropdown-menu checkbox-menu allow-focus allReasons" aria-labelledby="dropdownReason">
+                                        <li>
+                                            <label>
+                                                <input type="checkbox" id="checkall" name="allReasons" checked> All Reasons
+                                            </label>
+                                            <hr style="height:0.1px;border-width:0;color:gray;background-color:gray; margin: 0px 0px 8px 0px" />
+                                        </li>
+                                        <li>
+                                            <label>
+                                                <input value="Sale" type="checkbox" class="itmcheck" name="allReasons" checked> Sale
+                                            </label>
+                                        </li>
+                                        <li>
+                                            <label>
+                                                <input value="Refund" type="checkbox" class="itmcheck" name="allReasons" checked> Refund
+                                            </label>
+                                        </li>
+                                        <li>
+                                            <label>
+                                                <input value="Counted" type="checkbox" class="itmcheck" name="allReasons" checked> Counted
+                                            </label>
+                                        </li>
+                                        <li>
+                                            <label>
+                                                <input value="Receive items" type="checkbox" class="itmcheck" name="allReasons" checked> Receive items
+                                            </label>
+                                        </li>
+                                        <li>
+                                            <label>
+                                                <input value="Transfer" type="checkbox" class="itmcheck" name="allReasons" checked> Transfer
+                                            </label>
+                                        </li>
+                                        <li>
+                                            <label>
+                                                <input value="Inventory count" type="checkbox" class="itmcheck" name="allReasons" checked> Inventory count
+                                            </label>
+                                        </li>
+                                        <li>
+                                            <label>
+                                                <input value="Damage" type="checkbox" class="itmcheck" name="allReasons" checked> Damage
+                                            </label>
+                                        </li>
+                                        <li>
+                                            <label>
+                                                <input value="Loss" type="checkbox" class="itmcheck" name="allReasons" checked> Loss
+                                            </label>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-lg-2 col-md-6 col-12 pl-0 pt-lg-0 pt-md-1 pt-2">
-                        <select class="form-control select2" id="stores">
-                            <option value="">All stores</option>
-                        </select>
-                    </div>
-                    <div class="col-lg-2 col-md-6 col-12 pl-0 pt-lg-0 pt-md-1 pt-2">
-                        <select class="form-control select2" id="sites">
-                            <option value="">All sites</option>
-                        </select>
-                    </div>
-                    <div class="col-lg-2 col-md-6 col-12 pl-0 pt-lg-0 pt-md-1 pt-2">
-                        <select class="form-control select2" id="employees">
-                            <option value="">All employees</option>
-                        </select>
-                    </div>
-                    <div class="col-lg-2 col-md-6 col-12 pl-0 pt-lg-0 pt-md-1 pt-2">
-                        <select class="form-control select2" id="reason">
-                            <option value="">All reasons</option>
-                        </select>
+                </div>
+                <div class="card-body">
+                    <div class="col-lg-11 col-md-12 col-12">
+                        <div class="card">
+                            <div class="card-header border-0 ui-sortable-handle">
+                                <h3 class="card-title form-group col-lg-8 col-sm-6 col-12 pl-2">
+                                    <button class="btn btn-default">EXPORT</button>
+                                </h3>
+                                <div class="row mx-0 col-lg-4 col-sm-6 col-12 justify-content-sm-end justify-content-between">
+                                    <span style="width: 1px;"></span>
+                                    <div class="float-right pr-1 col-md-9 col-12">
+                                        <div class="form-group float-right w-100">
+                                            <label class="form-label" for="SEARCH">Item Descriptions</label>
+                                            <input type="text" class="form-input" id="SEARCH" />
+                                        </div>
+                                    </div>
+                                    <i class="fa fa-search text-gray align-content-center float-right" style="cursor: pointer;" id="btnSearch"></i>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="col-12">
+                                    <div class="dt-responsive table-responsive">
+                                        <table id="table_invhistory" class="table table-hover wrap">
+                                            <thead>
+                                                <tr>
+                                                    <th style="vertical-align:middle;">Date</th>
+                                                    <th style="vertical-align:middle;">Item</th>
+                                                    <th style="vertical-align:middle;">Store</th>
+                                                    <th style="vertical-align:middle;">Site</th>
+                                                    <th style="vertical-align:middle;">Employee</th>
+                                                    <th style="vertical-align:middle;">Reason</th>
+                                                    <th style="vertical-align:middle;">Adjusment</th>
+                                                    <th class="text-nowrap" style="vertical-align:middle;">Stock after</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="card-body col-lg-11 col-md-12 col-12">
-                <div class="card">
-                    <div class="card-header border-0 ui-sortable-handle">
-                        <h3 class="card-title">
-                            EXPORT
-                        </h3>
-                        <i class="fa fa-search text-gray" style="float: right;"></i>
+            <div class="card-body" id="bodyDetail">
+                <input type="hidden" id="DOCNUMBER" value="" />
+                <div class="col-lg-9 col-md-12 col-12 pt-0 editTfItem" id="editTfItem">
+                    <div class="card">
+                        <div class="card-header border-0 ui-sortable-handle">
+                            <div class="col-12 p-0 row m-0">
+                                <div class="col-6 p-0">
+                                    <button type="button" class="btn font-weight-bold btnBack" id="btnBack"><i class="fa fa-chevron-left pr-2"></i> Transfer Orders</button>
+                                </div>
+                                <div class="col-6 p-0 row m-0" style="justify-content: right;">
+                                    <button type="button" class="btn font-weight-bold" id="saveasPDF">SAVE AS PDF</button>
+                                    <button type="button" class="btn font-weight-bold" id="saveasCSV">SAVE AS CSV</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body border-0" id="pdfBodyTF">
+                            <div class="col-12 m-0">
+                                <input type="hidden" id="StatusTF" />
+                                <h3 class="mb-0" id="DOCNUMBER">TO1002</h3>
+                                <span class="spanselect" id="TFSTATUS_ITEM" style="font-size: 14px;">In transit</span>
+                                <div class="form-group">
+                                    <div class="row m-0">
+                                        <label class="col-form-label col-lg-2 col-md-3 col-4 p-0">Date <span style="float: right; padding: 0 8px 0 0">:</span></label>
+                                        <label class="col-form-label font-weight-normal col-lg-10 col-md-9 col-8 p-0" id="TFDATEITEM">Sep 20, 2023</label>
+                                    </div>
+                                    <div class="row m-0">
+                                        <label class="col-form-label col-lg-2 col-md-3 col-4 p-0">Ordered by <span style="float: right; padding: 0 8px 0 0">:</span></label>
+                                        <label class="col-form-label font-weight-normal col-lg-10 col-md-9 col-8 p-0" id="TFORDERBY">Owner</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <table id="table_sourcedest" class="table-hover wrap w-100">
+                                        <thead>
+                                            <tr>
+                                                <th class="w-50" style="vertical-align:middle;">Source</th>
+                                                <th class="w-50" style="vertical-align:middle;">Destination</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>GD001</td>
+                                                <td>GD002</td>
+                                            </tr>
+                                            <tr>
+                                                <td>GUDANG UTAMA</td>
+                                                <td>GUDANG STOCK</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <hr />
+                                <h4>Items</h4>
+                                <div class="form-group">
+                                    <table id="table_TfItemsDetail" class="table table-hover wrap">
+                                        <thead>
+                                            <tr>
+                                                <th style="vertical-align:middle; width: 85%;">Item</th>
+                                                <th class="text-right" style="vertical-align:middle;">Quantity</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <div class="dt-responsive table-responsive">
-                            <table id="table_invhistory" class="table table-hover wrap">
-                                <thead>
-                                    <tr>
-                                        <th style="vertical-align:middle;">Date</th>
-                                        <th style="vertical-align:middle;">Item</th>
-                                        <th style="vertical-align:middle;">Store</th>
-                                        <th style="vertical-align:middle;">Site</th>
-                                        <th style="vertical-align:middle;">Employee</th>
-                                        <th style="vertical-align:middle;">Reason</th>
-                                        <th style="vertical-align:middle;">Adjusment</th>
-                                        <th style="vertical-align:middle;">Stock after</th>
-                                    </tr>
-                                </thead>
-                            </table>
+                </div>
+                <div class="col-lg-9 col-md-12 col-12 pt-0 editInvCount" id="editInvCount">
+                    <div class="card">
+                        <div class="card-header border-0 ui-sortable-handle">
+                            <div class="col-12 p-0 row m-0">
+                                <div class="col-6 p-0">
+                                    <button type="button" class="btn font-weight-bold btnBack" id="btnBack"><i class="fa fa-chevron-left pr-2"></i> All Inventory Counts</button>
+                                </div>
+                                <div class="col-6 p-0 row m-0" style="justify-content: right;">
+                                    <button type="button" class="btn font-weight-bold" id="saveasPDF">SAVE AS PDF</button>
+                                    <button type="button" class="btn font-weight-bold" id="saveasCSV">SAVE AS CSV</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body border-0" id="pdfBodyIC">
+                            <div class="col-12 m-0 row">
+                                <h3 class="col-12 mb-0" id="DOCNUMBER">IC1002</h3>
+                                <input type="hidden" id="StatusDoc" value="" />
+                                <span class="col-12" id="IC_STATUS_ITEM">Pending</span>
+                                <div class="form-group col-lg-7 col-md-7 col-12">
+                                    <div class="row m-0">
+                                        <label class="col-form-label col-lg-3 col-md-4 col-12 p-0">Date created <span style="float: right; padding: 0 8px 0 0">:</span></label>
+                                        <label class="col-form-label font-weight-normal col-lg-9 col-md-8 col-12 p-0" id="IC_DATEITEM">Sep 20, 2023</label>
+                                    </div>
+                                    <div class="row m-0">
+                                        <label class="col-form-label col-lg-3 col-md-4 col-12 p-0">Created by <span style="float: right; padding: 0 8px 0 0">:</span></label>
+                                        <label class="col-form-label font-weight-normal col-lg-9 col-md-8 col-12 p-0" id="IC_CREATEDBY">Owner</label>
+                                    </div>
+                                </div>
+                                <div class="form-group col-lg-5 col-md-5 col-12">
+                                    <table id="table_site" class="table-hover wrap w-100">
+                                        <thead>
+                                            <tr>
+                                                <th style="vertical-align:middle;">Site:</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>GD001</td>
+                                            </tr>
+                                            <tr>
+                                                <td>GUDANG UTAMA</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <hr class="col-12" />
+                                <h4 class="col-12">Items</h4>
+                                <div class="form-group col-12 p-0">
+                                    <table id="table_ICItemsDetail" class="table table-hover wrap w-100">
+                                        <thead>
+                                            <tr>
+                                                <th style="vertical-align:middle; width: 35%;">Item</th>
+                                                <th class="text-right" style="vertical-align:middle;">Expected stock</th>
+                                                <th class="text-right" style="vertical-align:middle;">Counted</th>
+                                                <th class="text-right" style="vertical-align:middle;">Difference</th>
+                                                <th class="text-right" style="vertical-align:middle;">Cost difference</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="3" class="text-right font-weight-bold">Total</td>
+                                                <td class="text-right difference">-</td>
+                                                <td class="text-right costdifference">-</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-9 col-md-12 col-12 pt-0 editStockAdj" id="editStockAdj">
+                    <div class="card">
+                        <div class="card-header border-0 ui-sortable-handle">
+                            <div class="col-12 p-0 row m-0">
+                                <div class="col-6 p-0">
+                                    <button type="button" class="btn font-weight-bold btnBack" id="btnBack"><i class="fa fa-chevron-left pr-2"></i> All Stock Adjustment</button>
+                                </div>
+                                <div class="col-6 p-0 row m-0" style="justify-content: right;">
+                                    <button type="button" class="btn" id="saveasPDF">Save as PDF</button>
+                                    <button type="button" class="btn" id="saveasCSV">Save as CSV</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body border-0" id="pdfBodyAdj">
+                            <div class="col-12 m-0 row">
+                                <h3 class="col-12 p-0 mb-0" id="DOCNUMBER">TO1002</h3>
+                                <div class="form-group col-lg-7 col-md-7 col-12">
+                                    <div class="row m-0">
+                                        <label class="col-form-label col-lg-3 col-md-4 col-12 p-0">Date <span style="float: right; padding: 0 8px 0 0">:</span></label>
+                                        <label class="col-form-label font-weight-normal col-lg-9 col-md-8 col-12 p-0" id="SA_DATEITEM">Sep 20, 2023</label>
+                                    </div>
+                                    <div class="row m-0">
+                                        <label class="col-form-label col-lg-3 col-md-4 col-12 p-0">Reason <span style="float: right; padding: 0 8px 0 0">:</span></label>
+                                        <label class="col-form-label font-weight-normal col-lg-9 col-md-8 col-12 p-0" id="SA_REASON_TXT">Inventory count</label>
+                                    </div>
+                                    <div class="row m-0">
+                                        <label class="col-form-label col-lg-3 col-md-4 col-12 p-0">Adjusted by <span style="float: right; padding: 0 8px 0 0">:</span></label>
+                                        <label class="col-form-label font-weight-normal col-lg-9 col-md-8 col-12 p-0" id="SA_ADJUSTBY">Owner</label>
+                                    </div>
+                                </div>
+                                <div class="form-group col-lg-5 col-md-5 col-12">
+                                    <table id="table_site" class="table-hover wrap w-100">
+                                        <thead>
+                                            <tr>
+                                                <th style="vertical-align:middle;">Site:</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>GD001</td>
+                                            </tr>
+                                            <tr>
+                                                <td>GUDANG UTAMA</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <hr class="col-12" />
+                                <h4 class="col-12">Items</h4>
+                                <div class="form-group col-12 p-0">
+                                    <table id="table_SAItemsDetail" class="table table-hover wrap w-100">
+                                        <thead>
+                                            <tr>
+                                                <th style="vertical-align:middle;">Item</th>
+                                                <th class="text-right" style="vertical-align:middle;">Add Stock</th>
+                                                <th class="text-right" style="vertical-align:middle;">Cost</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -93,5 +381,7 @@
 
 @section Scripts
 {
+    <script src="~/Content/adminlte/dist/js/html2canvas.min.js"></script>
+    <script src="~/Content/adminlte/plugins/jspdf/jspdf.umd.min.js"></script>
     <script src="~/Areas/Inventory/Lib/InvHistory.js"></script>
 }

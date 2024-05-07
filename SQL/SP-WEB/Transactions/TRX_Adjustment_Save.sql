@@ -46,9 +46,11 @@ BEGIN
 		BEGIN
 			IF LEN(RTRIM(@DOCNUMBER)) = 0
 			BEGIN
-				declare @p varchar(30)
-				EXEC Web_Generate_NumberMaster @TABLE=N'POS_TrxAdjustment_Header', @FIELD=N'DOCNUMBER', @DOCID=N'SA', @NEWNUMBER=@p output
-				SET @DOCNUMBER=@p
+				declare @TEMPTABLE table(CurrentNumber varchar(20))
+				INSERT INTO @TEMPTABLE(CurrentNumber)
+				EXEC TRX_GenerateNumberPerDay_Master @DOCID=N'SA'
+
+				SELECT TOP 1 @DOCNUMBER=CurrentNumber FROM @TEMPTABLE
 			END
 			INSERT INTO [POS_TrxAdjustment_Header]
 			(DOCNUMBER, DOCDATE, Site_ID, Site_Name, Reason, Total_Line_Item, Notes, Created_User, Created_Date, Created_time, Modified_User, Modified_Date, Modified_time)
@@ -58,10 +60,10 @@ BEGIN
 
 		DELETE FROM POS_TrxAdjustment_Detail WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 			
-		INSERT INTO POS_TrxAdjustment_Detail(DOCNUMBER, DOCDATE, Reason, Lineitmseq, Item_Number, Item_Description, Qty_Stock, Qty_Add_Stock, Qty_Remove_Stock, 
+		INSERT INTO POS_TrxAdjustment_Detail(DOCNUMBER, DOCDATE, Reason, Lineitmseq, Item_Number, LineItem_Option, Item_Description, Qty_Stock, Qty_Add_Stock, Qty_Remove_Stock, 
 		Item_Cost, Qty_After_Stock, Expected_Stock, Counted_Stock, Created_User, Created_Date, Created_time, Modified_User, Modified_Date, Modified_time)
-		SELECT @DOCNUMBER, DOCDATE, Reason, Lineitmseq, Item_Number, Item_Description, Qty_Stock, Qty_Add_Stock, Qty_Remove_Stock, 
-		Item_Cost, Qty_After_Stock, Expected_Stock, Counted_Stock, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time), '', '', ''
+		SELECT @DOCNUMBER, DOCDATE, Reason, Lineitmseq, Item_Number, LineItem_Option, Item_Description, Qty_Stock, Qty_Add_Stock, Qty_Remove_Stock, 
+		Item_Cost, Qty_After_Stock, Expected_Stock, Counted_Stock, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time), @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time)
 		FROM @TrxAdjDetailTYPE
 
 		UPDATE A
@@ -70,16 +72,24 @@ BEGIN
 			ELSE ISNULL(B.Qty_After_Stock, 0) END
 		FROM POS_Item A
 		INNER JOIN POS_TrxAdjustment_Detail B ON A.Item_Number=B.Item_Number
-		WHERE RTRIM(B.DOCNUMBER)=RTRIM(@DOCNUMBER)
+		WHERE RTRIM(B.DOCNUMBER)=RTRIM(@DOCNUMBER) and RTRIM(A.Site_ID)=RTRIM(@Site_ID)
+
+		UPDATE A
+		SET A.InStock=CASE
+			WHEN LOWER(RTRIM(@Reason)) = 'inventory count' THEN ISNULL(B.Counted_Stock, 0)
+			ELSE ISNULL(B.Qty_After_Stock, 0) END
+		FROM POS_ItemVariant A
+		INNER JOIN POS_TrxAdjustment_Detail B ON A.Item_Number=B.Item_Number and A.LineItem_Option=B.LineItem_Option
+		WHERE RTRIM(B.DOCNUMBER)=RTRIM(@DOCNUMBER) and RTRIM(A.Site_ID)=RTRIM(@Site_ID)
 
 		INSERT INTO POS_TrxAdjustment_HeaderHIST(DOCNUMBER, DOCDATE, Site_ID, Site_Name, Reason, Total_Line_Item, Notes, Created_User, Created_Date, Created_time)
 		SELECT DOCNUMBER, DOCDATE, Site_ID, Site_Name, Reason, Total_Line_Item, Notes, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time)
 		FROM POS_TrxAdjustment_Header
 		WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 
-		INSERT INTO POS_TrxAdjustment_DetailHIST(DOCNUMBER, DOCDATE, Reason, Lineitmseq, Item_Number, Item_Description, Qty_Stock, 
+		INSERT INTO POS_TrxAdjustment_DetailHIST(DOCNUMBER, DOCDATE, Reason, Lineitmseq, Item_Number, LineItem_Option, Item_Description, Qty_Stock, 
 		Qty_Add_Stock, Qty_Remove_Stock, Item_Cost, Qty_After_Stock, Expected_Stock, Counted_Stock, Created_User, Created_Date, Created_time)
-		SELECT DOCNUMBER, DOCDATE, Reason, Lineitmseq, Item_Number, Item_Description, Qty_Stock, Qty_Add_Stock, Qty_Remove_Stock, Item_Cost, 
+		SELECT DOCNUMBER, DOCDATE, Reason, Lineitmseq, Item_Number, LineItem_Option, Item_Description, Qty_Stock, Qty_Add_Stock, Qty_Remove_Stock, Item_Cost, 
 		Qty_After_Stock, Expected_Stock, Counted_Stock, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time)
 		FROM POS_TrxAdjustment_Detail
 		WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)

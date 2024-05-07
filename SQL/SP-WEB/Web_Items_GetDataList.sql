@@ -11,12 +11,7 @@ BEGIN
 		FROM POS_Item A
 		LEFT JOIN POS_CategoryItem B ON A.Category_ID=B.Category_ID
 		LEFT JOIN POS_Set_Taxes C ON A.Tax_ID=C.Tax_ID
-		LEFT JOIN 
-		(
-			select top 1 Site_ID 
-			from POS_Set_Site
-			where DefaultSite=1
-		) D ON A.Site_ID=D.Site_ID
+		INNER JOIN POS_Set_Site D ON A.Site_ID=D.Site_ID and D.DefaultSite=1
 		WHERE 1=1
 		and (CASE WHEN LEN(RTRIM(@Item_Number)) > 0 THEN A.Item_Number ELSE '' END = 
 		CASE WHEN LEN(RTRIM(@Item_Number)) > 0 THEN @Item_Number ELSE '' END

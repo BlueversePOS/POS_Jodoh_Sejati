@@ -43,7 +43,8 @@ namespace ProjectXYZ.Areas.Items.Controllers
                             {
                                 Category_ID = ro["Category_ID"],
                                 Category_Name = ro["Category_Name"],
-                                Category_Color = ro["Category_Color"]
+                                Category_Color = ro["Category_Color"],
+                                ITEM_COUNT = ro["ITEM_COUNT"]
                             }).ToList();
 
                 success = true;

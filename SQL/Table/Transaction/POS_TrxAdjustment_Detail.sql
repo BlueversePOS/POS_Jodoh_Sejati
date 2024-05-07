@@ -1,7 +1,4 @@
 
-ALTER TABLE [dbo].[POS_TrxAdjustment_Detail] DROP CONSTRAINT [FK_POS_TrxAdjustmentItem]
-GO
-
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[POS_TrxAdjustment_Detail]') AND type in (N'U'))
 DROP TABLE [dbo].[POS_TrxAdjustment_Detail]
 GO
@@ -20,6 +17,7 @@ CREATE TABLE POS_TrxAdjustment_Detail
 	Reason nvarchar(30) NOT NULL,
 	Lineitmseq int NOT NULL,
 	Item_Number nvarchar(20) NOT NULL,
+	LineItem_Option numeric(19,5) NOT NULL,
 	Item_Description nvarchar(250) NOT NULL,
 	Qty_Stock numeric(19,5) NOT NULL,
 	Qty_Add_Stock numeric(19,5) NOT NULL,
@@ -34,11 +32,7 @@ CREATE TABLE POS_TrxAdjustment_Detail
 	Modified_User nvarchar(30) NOT NULL,
 	Modified_Date DATETIME NOT NULL,
 	Modified_time DATETIME NOT NULL,
-	CONSTRAINT PK_POS_TrxAdjustment_Detail PRIMARY KEY NONCLUSTERED (DOCNUMBER ASC, Item_Number ASC),
-	CONSTRAINT FK_POS_TrxAdjustmentItem FOREIGN KEY (Item_Number)
-	REFERENCES POS_Item (Item_Number)
-	ON DELETE CASCADE
-	ON UPDATE CASCADE
+	CONSTRAINT PK_POS_TrxAdjustment_Detail PRIMARY KEY NONCLUSTERED (DOCNUMBER ASC, Item_Number ASC, Lineitmseq ASC)
 )
 
 /*

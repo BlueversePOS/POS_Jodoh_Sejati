@@ -31,31 +31,30 @@
             <div class="card-body col-lg-11 col-md-12 col-12">
                 <div class="card listInvCount">
                     <div class="card-header border-0 ui-sortable-handle">
-                        <div class="row m-0">
-                            <div class="col-lg-3 col-md-12 col-12" style="align-self: center;">
-                                <button type="button" class="btn btn-primary" id="btnAddInvCount"> + ADD INVENTORY COUNT</button>
+                        <div class="row mx-0 my-2">
+                            <div class="form-group col-lg-3 col-md-12 col-12" style="align-self: center;">
+                                <button type="button" class="btn btn-primary btn-block" id="btnAddInvCount"> + ADD INVENTORY COUNT</button>
                             </div>
                             <div class="col-lg-9 col-md-12 col-12">
-                                <div class="row m-0 col-12" style="justify-content: right;">
-                                    <div class="form-group col-lg-3 col-md-6 col-12 m-0 pl-0">
-                                        <span class="col-12 pl-0 spanselect">Status</span>
+                                <div class="row mx-0 col-12 px-0" style="justify-content: right;">
+                                    <div class="form-group col-lg-3 col-md-6 col-12 mx-0 pl-0 focused">
+                                        <label class="form-label" for="status">Status</label>
                                         <select class="form-control select2" id="status">
-                                            <option id="">All</option>
                                         </select>
                                     </div>
-                                    <div class="form-group col-lg-3 col-md-6 col-12 m-0 pl-0">
-                                        <span class="col-12 pl-0 spanselect">Store</span>
-                                        <select class="form-control select2" id="store">
-                                            <option id="">All</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-lg-3 col-md-6 col-12 m-0 pl-0">
-                                        <span class="col-12 pl-0 spanselect">Site</span>
+                                    @*<div class="form-group col-lg-3 col-md-6 col-12 mx-0 pl-0 focused">
+                                            <label class="form-label" for="store">Store</label>
+                                            <select class="form-control select2" id="store">
+                                            </select>
+                                        </div>*@
+                                    <div class="form-group col-lg-3 col-md-8 col-9 mx-0 pl-0 focused">
+                                        <label class="form-label" for="site">Site</label>
                                         <select class="form-control select2" id="site">
-                                            <option id="">All</option>
                                         </select>
                                     </div>
-                                    <a class="text-gray pl-2 pb-1" style="align-self: end;"><i class="fa fa-search"></i></a>
+                                    <div class="col-lg-1 col-md-4 col-3 px-0 text-lg-right text-center align-self-center">
+                                        <a class="btn btn-default text-gray text-center align-self-end" id="btnSearch" style="cursor:pointer;"><i class="fa fa-search"></i></a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -69,12 +68,13 @@
                                             <th style="vertical-align:middle;">Inventory Count #</th>
                                             <th style="vertical-align:middle;">Date created</th>
                                             <th style="vertical-align:middle;">Date completed</th>
-                                            <th style="vertical-align:middle;">Store</th>
+                                            @*<th style="vertical-align:middle;">Store</th>*@
                                             <th style="vertical-align:middle;">Site</th>
                                             <th style="vertical-align:middle;">Status</th>
                                             <th style="vertical-align:middle;">Notes</th>
                                         </tr>
                                     </thead>
+                                    <tbody></tbody>
                                 </table>
                             </div>
                         </div>
@@ -84,24 +84,30 @@
             <div class="card-body col-lg-9 col-md-12 col-12 pt-0 addInvCount">
                 <div class="card">
                     <div class="card-body">
-                        <div class="col-12 row m-0">
-                            <div class="form-group col-lg-6 col-md-6 col-12 m-0 pl-0">
-                                <span class="col-12 pl-0 spanselect">Site</span>
+                        <div class="col-12 row">
+                            <input type="hidden" id="DOCNUMBER" />
+                            <div class="form-group col-lg-6 col-md-6 col-12 mx-0 focused">
+                                <label class="form-label pl-2" for="IC_SITE">Site</label>
                                 <select class="form-control select2" id="IC_SITE">
-                                    <option id="">All</option>
                                 </select>
                             </div>
-                            <div class="form-group col-12 ml-0 mr-0 pl-0">
-                                <label class="form-label" for="IC_NOTES">Notes</label>
+                            <div class="form-group col-12 mx-0">
+                                <label class="form-label pl-2" for="IC_NOTES">Notes</label>
                                 <input id="IC_NOTES" class="form-input" type="text" maxlength="500" />
                                 <span class="spanselect" style="float: right;" id="sumNotes"></span>
                             </div>
-                            <div class="form-group row col-12 ml-0 mr-0 pl-0" style="align-items: center;">
-                                <label class="col-form-label pr-5">Type</label>
-                                <input type="radio" class="ictype" id="IC_TYPE_PARTIAL" />
-                                <span class="pl-2 pr-4">Partial</span>
-                                <input type="radio" class="ictype" id="IC_TYPE_FULL" />
-                                <span class="pl-2 pr-4">Full</span>
+                            <div class="form-group row col-12 align-items-center">
+                                <div class="col-lg-2 col-md-3 col-12">
+                                    <label class="col-form-label pr-5">Type</label>
+                                </div>
+                                <div class="col-lg-3 col-md-4 col-6">
+                                    <input type="radio" class="ictype" value="1" id="IC_TYPE_PARTIAL" />
+                                    <span class="pl-2 pr-4">Partial</span>
+                                </div>
+                                <div class="col-lg-3 col-md-4 col-6">
+                                    <input type="radio" class="ictype" value="2" id="IC_TYPE_FULL" />
+                                    <span class="pl-2 pr-4">Full</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -112,35 +118,52 @@
                             <div class="col-6">
                                 <h4>Items</h4>
                             </div>
-                            <div class="col-6 text-right">
+                            <div class="col-6 text-right invItems IC_TYPE_PARTIAL">
                                 <button type="button" class="btn text-success" id="btnAddByCat">ADD BY CATEGORY</button>
                             </div>
                         </div>
                     </div>
                     <div class="card-body border-0">
                         <div class="col-12 row m-0">
-                            <div class="dt-responsive table-responsive">
-                                <table id="table_additem" class="table table-hover wrap">
-                                    <thead>
-                                        <tr>
-                                            <th style="vertical-align:middle;">Item</th>
-                                            <th class="text-right" style="vertical-align:middle;">Expected stock</th>
-                                        </tr>
-                                    </thead>
-                                </table>
+                            <div class="col-12 px-0 invItems IC_TYPE_PARTIAL">
+                                <div class="dt-responsive table-responsive">
+                                    <table id="table_additem" class="table table-hover wrap">
+                                        <thead>
+                                            <tr>
+                                                <th style="vertical-align:middle;">Item</th>
+                                                <th class="text-right" style="vertical-align:middle;">Expected stock</th>
+                                                <th style="vertical-align:middle;"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-12 px-0">
+                                    <select class="form-control select2" id="SearchItem">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12 px-0 invItems IC_TYPE_FULL" style="display: none;">
+                                <span>All items will be counted.</span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-12 p-0" style="border-top: 1px solid lightgray;">
-                    <div class="col-12 p-0 row ml-0 mr-0 mt-3" style="justify-content: right;">
-                        <button type="button" class="btn btn-default mr-1 ml-1" id="btnCancel" style="width: 120px;">CANCEL</button>
-                        <button type="button" class="btn btn-primary mr-1 ml-1" id="btnAdjust" style="width: 120px;">SAVE</button>
-                        <button type="button" class="btn btn-primary mr-1 ml-1" id="btnAdjust" style="width: 180px;">SAVE &amp; COUNT</button>
+                <div class="col-12 py-2" style="border-top: 1px solid lightgray;">
+                    <div class="row justify-content-end">
+                        <div class="col-lg-3 col-md-4 col-6 py-1">
+                            <button type="button" class="btn btn-default btn-block" id="btnCancel">CANCEL</button>
+                        </div>
+                        <div class="col-lg-3 col-md-4 col-6 py-1">
+                            <button type="button" class="btn btn-primary btn-block" id="btnSave">SAVE</button>
+                        </div>
+                        <div class="col-lg-5 col-md-4 col-12 py-1">
+                            <button type="button" class="btn btn-primary btn-block" id="btnSaveCount">SAVE &amp; COUNT</button>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="card-body col-lg-9 col-md-12 col-12 pt-0 editInvCount">
+            <div class="card-body col-lg-9 col-md-12 col-12 pt-0 editInvCount" id="editInvCount">
                 <div class="card">
                     <div class="card-header border-0 ui-sortable-handle">
                         <div class="col-12 p-0 row m-0">
@@ -150,6 +173,8 @@
                             <div class="col-6 p-0 row m-0" style="justify-content: right;">
                                 <button type="button" class="btn" id="btnCountStock">COUNT STOCK</button>
                                 <button type="button" class="btn" id="btnEdit">EDIT</button>
+                                <button type="button" class="btn font-weight-bold" id="saveasPDF">SAVE AS PDF</button>
+                                <button type="button" class="btn font-weight-bold" id="saveasCSV">SAVE AS CSV</button>
                                 <div class="dropdown">
                                     <button class="btn dropdown-toggle dropdown-toggle-split" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         MORE
@@ -169,10 +194,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-body border-0">
+                    <div class="card-body border-0" id="pdfBody">
                         <div class="col-12 m-0 row">
-                            <h3 class="mb-0" id="IC_ITEMNMBR">IC1002</h3>
-                            <span class="spanselect" id="IC_STATUS_ITEM">Pending</span>
+                            <h3 class="col-12 mb-0" id="DOCNUMBER">IC1002</h3>
+                            <input type="hidden" id="StatusDoc" value="" />
+                            <span class="col-12" id="IC_STATUS_ITEM">Pending</span>
                             <div class="form-group col-lg-7 col-md-7 col-12">
                                 <div class="row m-0">
                                     <label class="col-form-label col-lg-3 col-md-4 col-12 p-0">Date created <span style="float: right; padding: 0 8px 0 0">:</span></label>
@@ -213,19 +239,105 @@
                                             <th class="text-right" style="vertical-align:middle;">Cost difference</th>
                                         </tr>
                                     </thead>
+                                    <tbody></tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="3" class="text-right font-weight-bold">Total</td>
+                                            <td class="text-right difference">-</td>
+                                            <td class="text-right costdifference">-</td>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="card-body col-lg-9 col-md-12 col-12 pt-0 countInvCount">
+                <div class="card">
+                    <div class="card-header border-0 ui-sortable-handle">
+                        <div class="col-12 p-0 row m-0">
+                            <div class="col-6 p-0">
+                                <button type="button" class="btn" id="btnBackCount"><i class="fa fa-chevron-left pr-2"></i> Detail Inventory Count</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body border-0">
+                        <input type="hidden" id="DOCNUMBER" value="" />
+                        <div class="form-group col-12 mx-0 row">
+                            <div class="table-responsive">
+                                <table id="table_countICItems" class="table table-hover wrap w-100">
+                                    <thead>
+                                        <tr>
+                                            <th style="vertical-align:middle; width: 40%;">Item</th>
+                                            <th class="text-right" style="vertical-align:middle;">Expected stock</th>
+                                            <th class="text-right" style="vertical-align:middle;">Counted</th>
+                                            <th class="text-right" style="vertical-align:middle;">Difference</th>
+                                            <th class="text-right" style="vertical-align:middle;">Cost difference</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="3" class="text-right font-weight-bold">Total</td>
+                                            <td class="text-right difference">-</td>
+                                            <td class="text-right costdifference">-</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="form-group col-12 mx-0 row justify-content-end">
+                            <button class="btn text-success font-weight-bold" id="SaveCount"> Save </button>
+                            <button class="btn text-success font-weight-bold" id="CompleteCount"> Complete </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
+
+    <div class="modal fade" id="Modal_Lookup" data-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-transparent" style="color: black !important;">
+                    <h5 id="title">Add items by category</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body pt-1 pb-1">
+                        <div class="form-row">
+                            <div class="col-lg-12 col-12 px-0">
+                                <div class="dt-responsive table-responsive">
+                                    <table id="table_lookup" class="table table-hover table-bordered wrap">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center vertical-middle" style="width: 1%;"><input type="checkbox" id="chkAll" /></th>
+                                                <th class="vertical-middle">Category</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="row col-12 justify-content-end">
+                        <button class="btn text-gray-dark" id="btnBackModal" data-dismiss="modal">Cancel</button>
+                        <button class="btn text-success" id="btnAddItemByCat">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 
 @section Scripts
 {
-    <script src="~/Areas/Inventory/Lib/InvCounts.js"></script>
+    <script src="~/Content/adminlte/dist/js/html2canvas.min.js"></script>
+    <script src="~/Content/adminlte/plugins/jspdf/jspdf.umd.min.js"></script>
+    <script src="~/Areas/Inventory/Lib/InvCounts.js?v=2"></script>
 }
 

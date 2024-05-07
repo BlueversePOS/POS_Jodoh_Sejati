@@ -1,3 +1,51 @@
+
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'FK_POS_Set_PayTypes')
+BEGIN
+	ALTER TABLE POS_Set_PayTypes
+	ADD CONSTRAINT FK_POS_Set_PayTypes
+	FOREIGN KEY (Store_ID)
+	REFERENCES POS_Set_Stores(Store_ID)
+END;
+
+ALTER TABLE [dbo].[POS_Set_PayTypes] DROP CONSTRAINT [FK_POS_Set_PayTypes]
+GO
+
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'FK_POS_Set_Site')
+BEGIN
+	ALTER TABLE POS_Set_Site
+	ADD CONSTRAINT FK_POS_Set_Site
+	FOREIGN KEY (Store_ID)
+	REFERENCES POS_Set_Stores(Store_ID)
+END;
+
+ALTER TABLE [dbo].[POS_Set_Site] DROP CONSTRAINT [FK_POS_Set_Site]
+GO
+
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'FK_POS_Device')
+BEGIN
+	ALTER TABLE POS_Device
+	ADD CONSTRAINT FK_POS_Device
+	FOREIGN KEY (Store_ID)
+	REFERENCES POS_Set_Stores(Store_ID)
+END;
+
+ALTER TABLE [dbo].[POS_Device] DROP CONSTRAINT [FK_POS_Device]
+GO
+
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'FK_POS_Set_SalesType')
+BEGIN
+	ALTER TABLE POS_Set_SalesType
+	ADD CONSTRAINT FK_POS_Set_SalesType
+	FOREIGN KEY (Store_ID)
+	REFERENCES POS_Set_Stores(Store_ID)
+END;
+
+ALTER TABLE [dbo].[POS_Set_SalesType] DROP CONSTRAINT [FK_POS_Set_SalesType]
+GO
+
+ALTER TABLE [dbo].[POS_Set_Stores] DROP CONSTRAINT [PK_POS_Set_Stores]
+GO
+
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[POS_Set_Stores]') AND type in (N'U'))
 DROP TABLE [dbo].[POS_Set_Stores]
 GO

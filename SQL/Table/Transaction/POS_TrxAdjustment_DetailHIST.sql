@@ -16,6 +16,7 @@ CREATE TABLE POS_TrxAdjustment_DetailHIST
 	Reason nvarchar(30) NOT NULL,
 	Lineitmseq int NOT NULL,
 	Item_Number nvarchar(20) NOT NULL,
+	LineItem_Option numeric(19,5) NOT NULL,
 	Item_Description nvarchar(250) NOT NULL,
 	Qty_Stock numeric(19,5) NOT NULL,
 	Qty_Add_Stock numeric(19,5) NOT NULL,
@@ -27,6 +28,7 @@ CREATE TABLE POS_TrxAdjustment_DetailHIST
 	Created_User nvarchar(30) NOT NULL,
 	Created_Date DATETIME NOT NULL,
 	Created_time DATETIME NOT NULL,
+	CONSTRAINT PK_POS_TrxAdjustment_DetailHIST PRIMARY KEY NONCLUSTERED (DOCNUMBER ASC, Item_Number ASC, Lineitmseq ASC, Created_Date ASC, Created_Time ASC)
 )
 
 /*
