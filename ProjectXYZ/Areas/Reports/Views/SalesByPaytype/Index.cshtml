@@ -46,14 +46,47 @@
         <div class="card container-fluid posDash" style="background: none; box-shadow: none !important;">
             <div class="card-body">
                 <div class="col-lg-10 col-md-10 col-12 p-0 row m-0">
-                    <div class="col-lg-4 col-md-12 col-12 pl-0">
+                    <div class="col-xl-4 col-lg-6 col-md-12 col-12 pl-0">
                         <div id="reportrange" class="w-100 text-center" style="background: #fff; cursor: pointer; padding: 6px 10px; border: 1px solid #ccc;">
                             <i class="far fa-calendar-alt" style="float: left; padding-top: 4px;"></i>&nbsp;
                             <span></span> @*<i class="fa fa-caret-down" style="float: right;"></i>*@
                         </div>
                     </div>
-                    <div class="col-lg-4 col-md-6 pl-0 pt-lg-0 pt-md-1 pt-2">
-                        <select class="form-control select2" id="times"></select>
+                    <div class="row mx-0 col-xl-4 col-lg-6 col-md-12 col-12 pl-0">
+                        <div class="form-group my-0 col-lg-6 col-md-12 col-12 px-0">
+                            <div class="row pull-right">
+                                <div class="dropdown col-12">
+                                    <button class="btn btn-default btn-block bg-transparent dropdown-toggle dropdown-toggle-split text-center" type="button" id="dropdownDay" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="far fa-clock pr-2"></i> All Day
+                                    </button>
+                                    <ul class="dropdown-menu checkbox-menu allow-focus allDay" aria-labelledby="dropdownDay">
+                                        <li>
+                                            <div class="col-12">
+                                                <input type="radio" name="rbDay" id="AllDay" /> All Day
+                                            </div>
+                                            <hr style="height:0.1px;border-width:0;color:gray;background-color:gray; margin: 8px 0px 8px 0px" />
+                                        </li>
+                                        <li>
+                                            <div class="col-12">
+                                                <input type="radio" name="rbDay" id="CustomDay" /> Custom Period
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="row mx-0 col-12 CustomDay">
+                                                <div class="col-6">
+                                                    <span class="w-100"> Start </span>
+                                                    <input type="text" class="form-input datetimepicker-input" id="starttime" data-toggle="datetimepicker" data-target="#starttime" />
+                                                </div>
+                                                <div class="col-6">
+                                                    <span class="w-100"> End </span>
+                                                    <input type="text" class="form-input datetimepicker-input" id="endtime" data-toggle="datetimepicker" data-target="#endtime" />
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

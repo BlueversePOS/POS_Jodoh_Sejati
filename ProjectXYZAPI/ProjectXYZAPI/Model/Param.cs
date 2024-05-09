@@ -514,7 +514,7 @@ namespace ProjectXYZAPI.Model
         public decimal Item_Cost_Different { get; set; }
     }
 
-    public class SalesDiscount
+    public class ParamReport
     {
         public DateTime DateFrom { get; set; }
         public DateTime DateTo { get; set; }

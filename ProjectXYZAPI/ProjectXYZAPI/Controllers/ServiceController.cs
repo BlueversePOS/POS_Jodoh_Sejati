@@ -1579,7 +1579,7 @@ namespace ProjectXYZAPI.Controllers
 
         [Route("ReportsDiscountGetDataList")]
         [HttpPost]
-        public dynamic ReportsDiscountGetDataList([FromBody] SalesDiscount param)
+        public dynamic ReportsDiscountGetDataList([FromBody] ParamReport param)
         {
             try
             {
@@ -1600,12 +1600,33 @@ namespace ProjectXYZAPI.Controllers
 
         [Route("ReportsCategoryGetDataList")]
         [HttpPost]
-        public dynamic ReportsCategoryGetDataList([FromBody] SalesDiscount param)
+        public dynamic ReportsCategoryGetDataList([FromBody] ParamReport param)
         {
             try
             {
                 DataTable dt = null;
                 dt = repo.ReportsCategoryGetDataList(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("ReportsPayTypesGetDataList")]
+        [HttpPost]
+        public dynamic ReportsPayTypesGetDataList([FromBody] ParamReport param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.ReportsPayTypesGetDataList(param);
                 return dt;
             }
             catch (Exception ex)
