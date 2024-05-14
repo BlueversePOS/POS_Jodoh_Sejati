@@ -68,8 +68,11 @@ BEGIN
 
 		UPDATE A
 		SET A.InStock=CASE
-			WHEN LOWER(RTRIM(@Reason)) = 'inventory count' THEN ISNULL(B.Counted_Stock, 0)
-			ELSE ISNULL(B.Qty_After_Stock, 0) END
+			WHEN LOWER(RTRIM(@Reason)) = 'inventory count' and B.LineItem_Option > 0 THEN A.InStock + ISNULL(B.Counted_Stock, 0) - ISNULL(B.Qty_Stock, 0)
+			WHEN LOWER(RTRIM(@Reason)) = 'inventory count' and B.LineItem_Option = 0 THEN ISNULL(B.Counted_Stock, 0)
+			WHEN B.LineItem_Option > 0 THEN A.InStock + ISNULL(B.Qty_After_Stock, 0) - ISNULL(B.Qty_Stock, 0)
+			WHEN B.LineItem_Option = 0 THEN ISNULL(B.Qty_After_Stock, 0)
+			ELSE A.InStock END
 		FROM POS_Item A
 		INNER JOIN POS_TrxAdjustment_Detail B ON A.Item_Number=B.Item_Number
 		WHERE RTRIM(B.DOCNUMBER)=RTRIM(@DOCNUMBER) and RTRIM(A.Site_ID)=RTRIM(@Site_ID)
@@ -93,6 +96,19 @@ BEGIN
 		Qty_After_Stock, Expected_Stock, Counted_Stock, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time)
 		FROM POS_TrxAdjustment_Detail
 		WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
+
+		INSERT INTO POS_ItemVariant_History(Item_Number, Site_ID, LineItem_Option, Line_Item, CB_Available, Option_ID, Option_Name, 
+		LineItem_Variant, Variant_Name, Item_Price, Item_Cost, InStock, LowStock, OptimalStock, Item_SKU, Item_Barcode, Created_User, Created_Date)
+		SELECT A.Item_Number, A.Site_ID, A.LineItem_Option, ISNULL(HIST.Line_Item, 0) + 1, A.CB_Available, A.Option_ID, A.Option_Name, 
+		A.LineItem_Variant, A.Variant_Name, A.Item_Price, A.Item_Cost, A.InStock, A.LowStock, A.OptimalStock, A.Item_SKU, A.Item_Barcode, @UserID, CAST(GETDATE() as date) 
+		FROM POS_ItemVariant A
+		INNER JOIN POS_TrxAdjustment_Detail B ON A.Item_Number=B.Item_Number and A.LineItem_Option=B.LineItem_Option
+		LEFT JOIN (
+			SELECT Item_Number, Site_ID, LineItem_Option, ISNULL(MAX(Line_Item), 0) Line_Item
+			FROM POS_ItemVariant_History X
+			GROUP BY Item_Number, Site_ID, LineItem_Option
+		) HIST ON A.Item_Number=HIST.Item_Number and A.Site_ID=HIST.Site_ID and A.LineItem_Option=HIST.LineItem_Option
+		WHERE RTRIM(B.DOCNUMBER)=RTRIM(@DOCNUMBER) and RTRIM(A.Site_ID)=RTRIM(@Site_ID)
 
 		SELECT CODE='200', DOCNUMBER=@DOCNUMBER
 

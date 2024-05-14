@@ -24,6 +24,13 @@ create or alter proc TRX_InvCount_Save
 AS          
 BEGIN
 	BEGIN TRY
+		IF @InvCount=1
+		BEGIN
+			SELECT @Site_ID=Site_ID, @Site_Name=Site_Name, @Type_Inventory_Count=Type_Inventory_Count, @Notes=Notes 
+			FROM POS_TrxInvCount_HeaderTEMP with (nolock)
+			WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
+		END
+
 		IF LEN(RTRIM(@Site_ID)) = 0 and @Status = 3
 		BEGIN
 			RAISERROR('Please choose site', 16, 1)
@@ -42,13 +49,6 @@ BEGIN
 		from @TrxInvCountTYPE Z
 		left join POS_Item A ON Z.Item_Number=A.Item_Number
 		left join POS_ItemVariant B ON Z.Item_Number=B.Item_Number and Z.Item_SKU=B.Item_SKU
-
-		IF @InvCount=1
-		BEGIN
-			SELECT @Site_ID=Site_ID, @Site_Name=Site_Name, @Type_Inventory_Count=Type_Inventory_Count, @Notes=Notes 
-			FROM POS_TrxInvCount_HeaderTEMP with (nolock)
-			WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
-		END
 
 		IF @Type_Inventory_Count=2
 		BEGIN
