@@ -89,6 +89,7 @@ namespace ProjectXYZAPI.Model
         public string UserID { get; set; }
         public string DISCOUNT_ID { get; set; } = string.Empty;
         public string DISCOUNT_NAME { get; set; } = string.Empty;
+        public int TYPE { get; set; }
         public int DISCOUNT_TYPE { get; set; }
         public decimal DISCOUNT_VALUE { get; set; }
         public int RESTRICTED_ACCESS { get; set; }

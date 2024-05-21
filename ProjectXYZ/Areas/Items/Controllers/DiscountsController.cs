@@ -43,6 +43,7 @@ namespace ProjectXYZ.Areas.Items.Controllers
                             select new
                             {
                                 Discount_ID = ro["Discount_ID"],
+                                TYPE = ro["TYPE"],
                                 Discount_Name = ro["Discount_Name"],
                                 Discount_Type = ro["Discount_Type"],
                                 Discount_Value = ro["Discount_Value"],
@@ -86,6 +87,7 @@ namespace ProjectXYZ.Areas.Items.Controllers
                             select new
                             {
                                 Discount_ID = ro["Discount_ID"],
+                                TYPE = ro["TYPE"],
                                 Discount_Name = ro["Discount_Name"],
                                 Discount_Type = ro["Discount_Type"],
                                 Discount_Value = ro["Discount_Value"],

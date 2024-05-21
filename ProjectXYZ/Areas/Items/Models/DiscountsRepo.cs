@@ -178,6 +178,7 @@ namespace ProjectXYZ.Areas.Items.Models
                     UserID = USERID,
                     DISCOUNT_ID = model.Discount_ID,
                     DISCOUNT_NAME = model.DISCOUNT_NAME,
+                    TYPE = model.TYPE,
                     DISCOUNT_TYPE = model.DISCOUNT_TYPE,
                     DISCOUNT_VALUE = model.DISCOUNT_VALUE,
                     RESTRICTED_ACCESS = model.RESTRICTED_ACCESS

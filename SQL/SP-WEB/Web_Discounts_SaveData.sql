@@ -3,6 +3,7 @@ create or alter proc Web_Discounts_SaveData
 	@UserID nvarchar(20),
 	@Discount_ID nvarchar(30),
 	@Discount_Name nvarchar(100),
+	@TYPE int,
 	@Discount_Type int,
 	@Discount_Value numeric(19,5),
 	@Restricted_Access int
@@ -28,7 +29,7 @@ BEGIN
 		IF EXISTS(SELECT * FROM POS_Discount WITH(NOLOCK) WHERE RTRIM(Discount_ID)=RTRIM(@Discount_ID))
 		BEGIN
 			UPDATE POS_Discount
-			SET Discount_Name=@Discount_Name, Discount_Type=@Discount_Type, Discount_Value=@Discount_Value, 
+			SET Discount_Name=@Discount_Name, [TYPE]=@TYPE, Discount_Type=@Discount_Type, Discount_Value=@Discount_Value, 
 			Restricted_Access=@Restricted_Access, Modified_User=@UserID, Modified_Date=DATEADD(HOUR,1,GETDATE())
 			WHERE RTRIM(Discount_ID)=RTRIM(@Discount_ID)
 		END
@@ -39,9 +40,9 @@ BEGIN
 			SET @Discount_ID=@p
 
 			INSERT INTO [POS_Discount]
-			(Discount_ID, Discount_Name, Discount_Type, Discount_Value, Restricted_Access, Created_User, Created_Date, Modified_User, Modified_Date)
+			(Discount_ID, Discount_Name, [TYPE], Discount_Type, Discount_Value, Restricted_Access, Created_User, Created_Date, Modified_User, Modified_Date)
 			VALUES
-			(@Discount_ID, @Discount_Name, @Discount_Type, @Discount_Value, @Restricted_Access, @UserID, DATEADD(HOUR,1,GETDATE()), '', '')
+			(@Discount_ID, @Discount_Name, @TYPE, @Discount_Type, @Discount_Value, @Restricted_Access, @UserID, DATEADD(HOUR,1,GETDATE()), '', '')
 		END
 
 		DECLARE @LINEITEM int = 0
@@ -50,9 +51,9 @@ BEGIN
 		WHERE Discount_ID=@Discount_ID
 
 		INSERT INTO [POS_Discount_History]
-		(Discount_ID, Discount_Name, Line_Item, Discount_Type, Discount_Value, Restricted_Access, Created_User, Created_Date)
+		(Discount_ID, Discount_Name, Line_Item, [TYPE], Discount_Type, Discount_Value, Restricted_Access, Created_User, Created_Date)
 		VALUES
-		(@Discount_ID, @Discount_Name, COALESCE(@LINEITEM, 0), @Discount_Type, @Discount_Value, @Restricted_Access, @UserID, DATEADD(HOUR,1,GETDATE()))
+		(@Discount_ID, @Discount_Name, COALESCE(@LINEITEM, 0), @TYPE, @Discount_Type, @Discount_Value, @Restricted_Access, @UserID, DATEADD(HOUR,1,GETDATE()))
 			
 		SELECT CODE='200', Discount_Name=@Discount_Name
 

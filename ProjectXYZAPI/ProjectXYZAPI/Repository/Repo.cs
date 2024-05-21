@@ -1137,6 +1137,7 @@ namespace ProjectXYZAPI.Repository
                 cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
                 cmd.Parameters.AddWithValue("@Discount_ID", param.DISCOUNT_ID ?? "");
                 cmd.Parameters.AddWithValue("@Discount_Name", param.DISCOUNT_NAME ?? "");
+                cmd.Parameters.AddWithValue("@TYPE", param.TYPE);
                 cmd.Parameters.AddWithValue("@Discount_Type", param.DISCOUNT_TYPE);
                 cmd.Parameters.AddWithValue("@Discount_Value", param.DISCOUNT_VALUE);
                 cmd.Parameters.AddWithValue("@Restricted_Access", param.RESTRICTED_ACCESS);

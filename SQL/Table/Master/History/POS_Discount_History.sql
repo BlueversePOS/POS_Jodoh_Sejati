@@ -14,6 +14,7 @@ CREATE TABLE POS_Discount_History
 	Discount_ID nvarchar(20) NOT NULL, 
 	Discount_Name nvarchar(250) NOT NULL,
 	Line_Item int NOT NULL,
+	[TYPE] int NOT NULL,
 	Discount_Type int NOT NULL,
 	Discount_Value numeric(19,5) NOT NULL,
 	Restricted_Access int NOT NULL,

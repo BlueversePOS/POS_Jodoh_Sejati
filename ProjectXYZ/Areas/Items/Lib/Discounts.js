@@ -193,6 +193,20 @@
                         }
                     },
                     {
+                        data: 'TYPE',
+                        className: 'no-wrap',
+                        render: function (data, type, row) {
+                            var values = "";
+                            var dtVal = emptyStr(data) ? 0 : data;
+                            if (dtVal == 1) {
+                                values = "Bills";
+                            } else if (dtVal == 2) {
+                                values = "Items";
+                            }
+                            return values;
+                        }
+                    },
+                    {
                         data: 'Discount_Value',
                         className: 'no-wrap',
                         render: function (data, type, row) {
@@ -244,6 +258,7 @@
         $('#Discount_ID').val("");
         $('#DISCOUNT_NAME').val("");
         $('.rbDiscType').prop("checked", false);
+        $('.rbType').prop("checked", false);
         $('#DISCOUNT_VALUE').val("");
         $('#RESTRICTED_ACCESS').prop("checked", false);
     }
@@ -272,12 +287,14 @@
                         $.each(result.data, function (index, value) {
                             var Discount_ID = emptyStr(value.Discount_ID) ? "" : value.Discount_ID,
                                 Discount_Name = emptyStr(value.Discount_Name) ? "" : value.Discount_Name.trim(),
+                                TYPE = emptyStr(value.TYPE) ? 0 : value.TYPE,
                                 Discount_Type = emptyStr(value.Discount_Type) ? 0 : value.Discount_Type,
                                 Discount_Value = emptyStr(value.Discount_Value) ? 0 : value.Discount_Value,
                                 Restricted_Access = emptyStr(value.Restricted_Access) ? 0 : value.Restricted_Access;
 
                             $('#DISCOUNT_NAME').val(Discount_Name).parent('.form-group').addClass('focused');
                             $('.rbDiscType[value="' + Discount_Type + '"]').prop("checked", true);
+                            $('.rbType[value="' + TYPE + '"]').prop("checked", true);
                             $('#RESTRICTED_ACCESS').prop("checked", Restricted_Access);
                             if (Discount_Type == 1) {
                                 $('#DISCOUNT_VALUE').val(formatPer(Discount_Value)).parent('.form-group').addClass('focused');
@@ -318,6 +335,7 @@
             var Discount_ID = emptyStr($('#Discount_ID').val()) ? "" : $('#Discount_ID').val(),
                 DISCOUNT_NAME = emptyStr($('#DISCOUNT_NAME').val()) ? "" : $('#DISCOUNT_NAME').val(),
                 rbDiscType = emptyStr($('.rbDiscType:checked').val()) ? 0 : $('.rbDiscType:checked').val(),
+                rbType = emptyStr($('.rbType:checked').val()) ? 0 : $('.rbType:checked').val(),
                 DISCOUNT_VALUE = emptyStr($('#DISCOUNT_VALUE').val()) ? "" : $('#DISCOUNT_VALUE').val(),
                 RESTRICTED_ACCESS = $('#RESTRICTED_ACCESS').is(":checked") ? 1 : 0;
             if (rbDiscType == 1) {
@@ -329,6 +347,7 @@
             var model = {
                 'Discount_ID': Discount_ID,
                 'DISCOUNT_NAME': DISCOUNT_NAME,
+                'TYPE': rbType,
                 'DISCOUNT_TYPE': rbDiscType,
                 'DISCOUNT_VALUE': DISCOUNT_VALUE,
                 'RESTRICTED_ACCESS': RESTRICTED_ACCESS
@@ -423,6 +442,17 @@
         }
     });
 
+    $('.rbType').on('click', function () {
+        try {
+            var checked = $('.rbType').is(':checked');
+            if (checked) {
+                $(this).siblings("input[type=radio]").prop("checked", false);
+            }
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    });
+
     $('.rbDiscType').on('click', function () {
         try {
             var checked = $('.rbDiscType').is(':checked');
@@ -512,6 +542,7 @@
             //e.preventDefault();
             var IsValid = true;
             var DISCOUNT_NAME = emptyStr($('#DISCOUNT_NAME').val()) ? "" : $('#DISCOUNT_NAME').val(),
+                rbType = emptyStr($('.rbType:checked').val()) ? 0 : $('.rbType:checked').val(),
                 rbDiscType = emptyStr($('.rbDiscType:checked').val()) ? 0 : $('.rbDiscType:checked').val(),
                 DISCOUNT_VALUE = emptyStr($('#DISCOUNT_VALUE').val()) ? "" : $('#DISCOUNT_VALUE').val(),
                 RESTRICTED_ACCESS = emptyStr($('#RESTRICTED_ACCESS:checked').val()) ? 0 : $('#RESTRICTED_ACCESS:checked').val();
@@ -519,6 +550,10 @@
             if (emptyStr(DISCOUNT_NAME)) {
                 IsValid = false;
                 swal({ type: "info", title: "Information", text: "Please fill discount name" });
+            }
+            if (emptyStr(rbType)) {
+                IsValid = false;
+                swal({ type: "info", title: "Information", text: "Please choose discount" });
             }
             if (emptyStr(rbDiscType)) {
                 IsValid = false;
