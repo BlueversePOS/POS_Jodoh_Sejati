@@ -1,0 +1,9 @@
+-- delete item
+delete from POS_Item
+delete from POS_Item_History
+delete from POS_CompositeItem
+delete from POS_CompositeItem_History
+delete from POS_ItemInventory
+delete from POS_ItemInventory_History
+delete from POS_ItemVariant
+delete from POS_ItemVariant_History

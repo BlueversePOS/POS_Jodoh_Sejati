@@ -7,8 +7,10 @@ CREATE OR ALTER proc [dbo].[Web_Items_GetDataList]
 AS
 BEGIN
 	BEGIN TRY
-		SELECT A.*, COALESCE(B.Category_Name, '') Category_Name, COALESCE(C.Tax_Name, '') Tax_Name
+		SELECT distinct A.*, COALESCE(B.Category_Name, '') Category_Name, COALESCE(C.Tax_Name, '') Tax_Name,
+		CASE WHEN COALESCE(IV.Item_Number, '') <> '' THEN 1 ELSE 0 END IsVariant
 		FROM POS_Item A
+		LEFT JOIN POS_ItemVariant IV ON A.Item_Number=IV.Item_Number
 		LEFT JOIN POS_CategoryItem B ON A.Category_ID=B.Category_ID
 		LEFT JOIN POS_Set_Taxes C ON A.Tax_ID=C.Tax_ID
 		INNER JOIN POS_Set_Site D ON A.Site_ID=D.Site_ID and D.DefaultSite=1

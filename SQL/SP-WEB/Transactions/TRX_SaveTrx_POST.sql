@@ -7,16 +7,27 @@ create or alter proc TRX_SaveTrx_POST
 AS
 BEGIN
 	BEGIN TRY
+		DECLARE @SiteID varchar(20)
+		select top 1 @SiteID=Site_ID from POS_TrxDetail_TEMP WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
+		IF(COALESCE(@SiteID, '') = '')
+		BEGIN
+			--SELECT TOP 1 @SiteID=A.Site_ID FROM POS_Item A
+			--INNER JOIN POS_TrxDetail_TEMP B ON A.Item_Number=B.Item_Number
+			--WHERE RTRIM(B.DOCNUMBER)=RTRIM(@DOCNUMBER)
+			SELECT TOP 1 @SiteID=Site_ID FROM POS_Set_Site where DefaultSite=1
+		END
+
 		IF NOT EXISTS(SELECT * FROM POS_TrxHeader_TEMP WITH(NOLOCK) WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER))
 		BEGIN
 			RAISERROR('Something error when save data', 16, 1)
 		END
-		IF (SELECT ISNULL(A.InStock - B.Quantity, 0) FROM POS_Item A
+		ELSE IF (SELECT ISNULL(A.InStock - B.Quantity, 0) FROM POS_Item A
 			INNER JOIN POS_TrxDetail_TEMP B ON A.Item_Number=B.Item_Number
-			WHERE RTRIM(B.DOCNUMBER)=RTRIM(@DOCNUMBER)) < 0
+			WHERE RTRIM(B.DOCNUMBER)=RTRIM(@DOCNUMBER) and RTRIM(A.Site_ID)=RTRIM(@SiteID)) < 0
 		BEGIN
 			RAISERROR('Not enough quantity', 16, 1)
 		END
+
 		-- Header
 		INSERT INTO [POS_TrxHeader_POST]
 		(DOCNUMBER, DOCTYPE, DOCDATE, Store_ID, Site_ID, SalesType_ID, CustName, Total_Line_Item, ORIGTOTAL, SUBTOTAL, Tax_Amount, Discount_ID, Discount_Amount, Amount_Tendered, 
@@ -33,6 +44,7 @@ BEGIN
 		Change_Amount, Batch_ID, POS_Device_ID, POS_Version, @SyncStatus, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time), '', '', ''
 		FROM POS_TrxHeader_TEMP A
 		WHERE RTRIM(A.DOCNUMBER)=RTRIM(@DOCNUMBER)
+
 		-- Detail
 		INSERT INTO POS_TrxDetail_POST(DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, Item_Number, Item_Description, Quantity, UofM, Item_Price, Item_Cost, Store_ID, Site_ID, 
 		SalesType_ID, Discount_ID, Discount_Amount, Notes, POS_Device_ID, POS_Version, Created_User, Created_Date, Created_time, Modified_User, Modified_Date, Modified_time)
@@ -47,6 +59,7 @@ BEGIN
 		SalesType_ID, Discount_ID, Discount_Amount, Notes, POS_Device_ID, POS_Version, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time), '', '', ''
 		FROM POS_TrxDetail_TEMP
 		WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
+
 		-- payment type
 		INSERT INTO POS_TrxPayTypes_POST(DOCNUMBER, DOCTYPE, DOCDATE, Lnitmseq, Payment_ID, Payment_Type, ORIGTOTAL, SUBTOTAL, Amount_Tendered, 
 		Change_Amount, Store_ID, POS_Device_ID, POS_Version, Created_User, Created_Date, Created_time, Modified_User, Modified_Date, Modified_time)
@@ -68,12 +81,11 @@ BEGIN
 		INNER JOIN POS_TrxDetail_TEMP B ON A.Item_Number=B.Item_Number
 		WHERE RTRIM(B.DOCNUMBER)=RTRIM(@DOCNUMBER)
 
-
 		DELETE FROM POS_TrxHeader_TEMP WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 		DELETE FROM POS_TrxDetail_TEMP WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 		DELETE FROM POS_TrxPayTypes_TEMP WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 			
-		SELECT CODE='200', DOCNUMBER=@DOCNUMBER
+		--SELECT CODE='200', DOCNUMBER=@DOCNUMBER
 
 	END TRY
 	BEGIN CATCH
