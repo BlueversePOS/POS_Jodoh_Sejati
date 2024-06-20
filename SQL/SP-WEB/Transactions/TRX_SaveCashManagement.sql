@@ -13,7 +13,7 @@ BEGIN
 		IF EXISTS(SELECT * FROM POS_CashManagement WITH(NOLOCK) WHERE RTRIM(Batch_ID)=RTRIM(@Batch_ID))
 		BEGIN
 			UPDATE POS_CashManagement
-			SET Type_CashManagement=@Type_CashManagement, Amount=@Amount, Notes=@Notes, POS_ID=@POS_ID, 
+			SET Type_CashManagement=@Type_CashManagement, Amount=@Amount + ISNULL(Amount, 0), Notes=@Notes, POS_ID=@POS_ID, 
 			Created_User=@UserID, Created_Date=CAST(GETDATE() as date), Created_time=CAST(GETDATE() as time)
 			WHERE RTRIM(Batch_ID)=RTRIM(@Batch_ID)
 		END

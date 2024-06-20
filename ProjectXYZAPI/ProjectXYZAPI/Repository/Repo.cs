@@ -3022,8 +3022,6 @@ namespace ProjectXYZAPI.Repository
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.CommandTimeout = 0;
                 cmd.Parameters.AddWithValue("@Batch_ID", param.Batch_ID ?? "");
-                cmd.Parameters.AddWithValue("@LastEdit_Date", param.LastEdit_Date);
-                cmd.Parameters.AddWithValue("@LastEdit_time", param.LastEdit_time);
                 cmd.Parameters.AddWithValue("@Store_ID", param.Store_ID ?? "");
                 cmd.Parameters.AddWithValue("@POS_Device_ID", param.POS_Device_ID ?? "");
                 cmd.Parameters.AddWithValue("@Opening_Date", param.Opening_Date);
@@ -3042,6 +3040,7 @@ namespace ProjectXYZAPI.Repository
                 cmd.Parameters.AddWithValue("@Sum_Amount_PayIn", param.Sum_Amount_PayIn);
                 cmd.Parameters.AddWithValue("@Count_Customers", param.Count_Customers);
                 cmd.Parameters.AddWithValue("@Status_Batch", param.Status_Batch);
+                cmd.Parameters.AddWithValue("@UserID", param.UserID ?? "");
 
                 SqlDataAdapter adp = new SqlDataAdapter();
                 adp.SelectCommand = cmd;

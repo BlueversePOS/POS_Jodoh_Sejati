@@ -302,6 +302,7 @@ namespace ProjectXYZAPI.Model
         public decimal Sum_Amount_PayIn { get; set; }
         public int Count_Customers { get; set; }
         public int Status_Batch { get; set; }
+        public string UserID { get; set; }
     }
 
     public class GetSummShiftParam
