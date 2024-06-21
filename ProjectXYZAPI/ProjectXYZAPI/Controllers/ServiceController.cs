@@ -1137,6 +1137,27 @@ namespace ProjectXYZAPI.Controllers
             }
         }
 
+        [Route("GetCashManagement")]
+        [HttpPost]
+        public dynamic GetCashManagement([FromBody] string Batch_ID)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.GetCashManagement(Batch_ID);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
         [Route("SaveSetupPrinter")]
         [HttpPost]
         public dynamic SaveSetupPrinter([FromBody] SetupPrint param)

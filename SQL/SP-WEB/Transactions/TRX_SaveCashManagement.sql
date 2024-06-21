@@ -10,12 +10,12 @@ create or alter proc TRX_SaveCashManagement
 AS          
 BEGIN
 	BEGIN TRY
-		IF EXISTS(SELECT * FROM POS_CashManagement WITH(NOLOCK) WHERE RTRIM(Batch_ID)=RTRIM(@Batch_ID))
+		IF EXISTS(SELECT * FROM POS_CashManagement WITH(NOLOCK) WHERE RTRIM(Batch_ID)=RTRIM(@Batch_ID) and Type_CashManagement=@Type_CashManagement)
 		BEGIN
 			UPDATE POS_CashManagement
-			SET Type_CashManagement=@Type_CashManagement, Amount=@Amount + ISNULL(Amount, 0), Notes=@Notes, POS_ID=@POS_ID, 
+			SET Amount=@Amount + ISNULL(Amount, 0), Notes=@Notes, POS_ID=@POS_ID, 
 			Created_User=@UserID, Created_Date=CAST(GETDATE() as date), Created_time=CAST(GETDATE() as time)
-			WHERE RTRIM(Batch_ID)=RTRIM(@Batch_ID)
+			WHERE RTRIM(Batch_ID)=RTRIM(@Batch_ID) and Type_CashManagement=@Type_CashManagement
 		END
 		ELSE
 		BEGIN

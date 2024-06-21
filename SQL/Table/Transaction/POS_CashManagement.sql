@@ -19,5 +19,11 @@ CREATE TABLE POS_CashManagement
 	Created_User nvarchar(30) NOT NULL,
 	Created_Date DATETIME NOT NULL,
 	Created_time DATETIME,
-	CONSTRAINT PK_POS_CashManagement PRIMARY KEY NONCLUSTERED (Batch_ID ASC)
+	CONSTRAINT PK_POS_CashManagement PRIMARY KEY NONCLUSTERED (Batch_ID ASC, Type_CashManagement ASC)
 )
+/*
+ALTER TABLE POS_CashManagement
+DROP CONSTRAINT PK_POS_CashManagement;
+ALTER TABLE POS_CashManagement
+ADD CONSTRAINT PK_POS_CashManagement PRIMARY KEY (Batch_ID ASC, Type_CashManagement ASC);
+*/
