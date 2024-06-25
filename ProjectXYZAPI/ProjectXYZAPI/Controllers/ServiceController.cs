@@ -1200,6 +1200,27 @@ namespace ProjectXYZAPI.Controllers
             }
         }
 
+        [Route("GetTransactionHist")]
+        [HttpPost]
+        public dynamic GetTransactionHist([FromBody] TrxHistory param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.GetTransactionHist(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
         [Route("SaveTrxPost")]
         [HttpPost]
         public dynamic SaveTrxPost([FromBody] TrxPost param)

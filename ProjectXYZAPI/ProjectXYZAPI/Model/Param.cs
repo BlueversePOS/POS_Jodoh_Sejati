@@ -387,6 +387,15 @@ namespace ProjectXYZAPI.Model
         public int SyncStatus { get; set; }
     }
 
+    public class TrxHistory
+    {
+        public string DOCNUMBER { get; set; }
+        public DateTime DateFrom { get; set; }
+        public DateTime DateTo { get; set; }
+        public string SalesType_ID { get; set; }
+        public string Search { get; set; }
+    }
+
     public class SAFilterItem
     {
         public string UserID { get; set; } = string.Empty;

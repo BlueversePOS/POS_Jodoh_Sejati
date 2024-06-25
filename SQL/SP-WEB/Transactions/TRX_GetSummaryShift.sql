@@ -9,7 +9,7 @@ BEGIN
 
 		IF EXISTS(SELECT * FROM POS_CashManagement WITH(NOLOCK) WHERE RTRIM(Batch_ID)=RTRIM(@Batch_ID))
 		BEGIN
-			SELECT @EXPECTED_AMOUNT=I.Amount - O.Amount
+			SELECT @EXPECTED_AMOUNT=ISNULL(I.Amount, 0) - ISNULL(O.Amount, 0)
 			FROM POS_CashManagement I
 			LEFT JOIN POS_CashManagement O ON I.Batch_ID=O.Batch_ID and O.Type_CashManagement='2'
 			WHERE I.Type_CashManagement='1' and RTRIM(I.Batch_ID)=RTRIM(@Batch_ID)
