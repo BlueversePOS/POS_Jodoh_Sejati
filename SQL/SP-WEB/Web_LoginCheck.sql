@@ -6,17 +6,31 @@ create or alter proc Web_LoginCheck
 AS          
 BEGIN
 	BEGIN TRY
-		IF NOT EXISTS(SELECT EmailAddress FROM POS_LoginUser WITH(NOLOCK) WHERE RTRIM(EmailAddress)=RTRIM(@EmailAddress))
+		IF EXISTS(SELECT * FROM POS_Employee WITH(NOLOCK) WHERE UserID=@EmailAddress)
 		BEGIN
-			RAISERROR('Email is not registered.', 16, 1)
+			IF NOT EXISTS(SELECT * FROM POS_Employee WITH(NOLOCK) WHERE RTRIM(UserID)=RTRIM(@EmailAddress) and RTRIM(UserPassword)=RTRIM(@PASSWORD))
+			BEGIN
+				RAISERROR('Wrong Password Employee User.', 16, 1)
+			END
+			SELECT UserID, Email as EmailAddress, UserPassword as [PASSWORD], Employee_Name as Business_Name, '' Currency, '' Country 
+			FROM POS_Employee WITH(NOLOCK) 
+			WHERE RTRIM(UserID)=RTRIM(@EmailAddress) and RTRIM(UserPassword)=RTRIM(@PASSWORD)
 		END
-		IF NOT EXISTS(SELECT EmailAddress FROM POS_LoginUser WITH(NOLOCK) WHERE RTRIM(EmailAddress)=RTRIM(@EmailAddress) and RTRIM([PASSWORD])=RTRIM(@PASSWORD))
+		ELSE
 		BEGIN
-			RAISERROR('Wrong Password.', 16, 1)
+			IF NOT EXISTS(SELECT EmailAddress FROM POS_LoginUser WITH(NOLOCK) WHERE RTRIM(EmailAddress)=RTRIM(@EmailAddress))
+			BEGIN
+				RAISERROR('Email is not registered.', 16, 1)
+			END
+			IF NOT EXISTS(SELECT EmailAddress FROM POS_LoginUser WITH(NOLOCK) WHERE RTRIM(EmailAddress)=RTRIM(@EmailAddress) and RTRIM([PASSWORD])=RTRIM(@PASSWORD))
+			BEGIN
+				RAISERROR('Wrong Email Password.', 16, 1)
+			END
+			
+			SELECT UserID, EmailAddress, [PASSWORD], Business_Name, Currency, Country 
+			FROM POS_LoginUser WITH(NOLOCK) 
+			WHERE RTRIM(EmailAddress)=RTRIM(@EmailAddress) and RTRIM([PASSWORD])=RTRIM(@PASSWORD)
 		END
-		SELECT UserID, EmailAddress, [PASSWORD], Business_Name, Currency, Country 
-		FROM POS_LoginUser WITH(NOLOCK) 
-		WHERE RTRIM(EmailAddress)=RTRIM(@EmailAddress) and RTRIM([PASSWORD])=RTRIM(@PASSWORD)
 	END TRY
 	BEGIN CATCH
 		DECLARE @ErrorMessage NVARCHAR(4000),@ErrorSeverity INT,@ErrorState INT

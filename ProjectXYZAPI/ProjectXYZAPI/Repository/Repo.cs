@@ -894,8 +894,8 @@ namespace ProjectXYZAPI.Repository
 
             try
             {
+                param.UserPassword = Encrypt(param.UserPassword);
                 ConnSql("");
-
                 trans = conn.BeginTransaction();
                 SqlCommand cmd = new SqlCommand("Web_Employee_SaveData", conn, trans);
                 cmd.CommandType = CommandType.StoredProcedure;
@@ -906,6 +906,8 @@ namespace ProjectXYZAPI.Repository
                 cmd.Parameters.AddWithValue("@Email", param.Email ?? "");
                 cmd.Parameters.AddWithValue("@Phone", param.Phone ?? "");
                 cmd.Parameters.AddWithValue("@Role_ID", param.Role_ID ?? "");
+                cmd.Parameters.AddWithValue("@User_ID", param.User_ID ?? "");
+                cmd.Parameters.AddWithValue("@UserPassword", param.UserPassword ?? "");
 
                 SqlDataAdapter adp = new SqlDataAdapter();
                 adp.SelectCommand = cmd;

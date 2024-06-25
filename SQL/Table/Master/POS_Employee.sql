@@ -16,6 +16,8 @@ CREATE TABLE POS_Employee
 	Email nvarchar(250) NOT NULL,
 	Phone nvarchar(20) NOT NULL,
 	Role_ID nvarchar(20) NOT NULL,
+	UserID nvarchar(20) NOT NULL,
+	UserPassword nvarchar(250) NOT NULL,
 	Created_User nvarchar(30),
 	Created_Date DATETIME,
 	Modified_User nvarchar(30),

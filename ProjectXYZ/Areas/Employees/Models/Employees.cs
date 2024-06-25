@@ -13,5 +13,7 @@ namespace ProjectXYZ.Areas.Employees.Models
         public string Email { get; set; }
         public string Phone { get; set; }
         public string Role_ID { get; set; }
+        public string User_ID { get; set; }
+        public string UserPassword { get; set; }
     }
 }

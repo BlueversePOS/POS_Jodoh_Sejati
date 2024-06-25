@@ -5,7 +5,9 @@ create or alter proc Web_Employee_SaveData
 	@Employee_Name nvarchar(250),
 	@Email nvarchar(250),
 	@Phone nvarchar(20),
-	@Role_ID nvarchar(20)
+	@Role_ID nvarchar(20),
+	@User_ID nvarchar(20),
+	@UserPassword nvarchar(250)
 )
 AS          
 BEGIN
@@ -14,6 +16,14 @@ BEGIN
 			IF LEN(ISNULL(@Employee_Name,''))=0
 			BEGIN
 				RAISERROR('Please fill name.',16,1)
+			END
+			IF LEN(ISNULL(@User_ID,''))=0
+			BEGIN
+				RAISERROR('Please fill user id.',16,1)
+			END
+			IF LEN(ISNULL(@UserPassword,''))=0
+			BEGIN
+				RAISERROR('Please fill password.',16,1)
 			END
 			IF LEN(ISNULL(@Email,''))=0
 			BEGIN
@@ -28,7 +38,8 @@ BEGIN
 		IF EXISTS(SELECT * FROM POS_Employee WITH(NOLOCK) WHERE RTRIM(Employee_ID)=RTRIM(@Employee_ID))
 		BEGIN
 			UPDATE POS_Employee
-			SET Employee_Name=@Employee_Name, Email=@Email, Phone=@Phone, Role_ID=@Role_ID, Modified_User=@UserID, Modified_Date=CAST(GETDATE() as date)
+			SET Employee_Name=@Employee_Name, UserID=@User_ID, UserPassword=@UserPassword, Email=@Email, 
+			Phone=@Phone, Role_ID=@Role_ID, Modified_User=@UserID, Modified_Date=CAST(GETDATE() as date)
 			WHERE RTRIM(Employee_ID)=RTRIM(@Employee_ID)
 		END
 		ELSE
@@ -38,9 +49,9 @@ BEGIN
 			SET @Employee_ID=@p
 
 			INSERT INTO [POS_Employee]
-			(Employee_ID, Employee_Name, Email, Phone, Role_ID, Created_User, Created_Date, Modified_User, Modified_Date)
+			(Employee_ID, Employee_Name, UserID, UserPassword, Email, Phone, Role_ID, Created_User, Created_Date, Modified_User, Modified_Date)
 			VALUES
-			(@Employee_ID, @Employee_Name, @Email, @Phone, @Role_ID, @UserID, CAST(GETDATE() as date), '', '')
+			(@Employee_ID, @Employee_Name, @User_ID, @UserPassword, @Email, @Phone, @Role_ID, @UserID, CAST(GETDATE() as date), '', '')
 		END
 
 		DECLARE @LINEITEM int = 0
@@ -49,9 +60,9 @@ BEGIN
 		WHERE Employee_ID=@Employee_ID
 
 		INSERT INTO [POS_Employee_History]
-		(Employee_ID, Line_Item, Employee_Name, Email, Phone, Role_ID, Created_User, Created_Date)
+		(Employee_ID, Line_Item, Employee_Name, UserID, UserPassword, Email, Phone, Role_ID, Created_User, Created_Date)
 		VALUES
-		(@Employee_ID, COALESCE(@LINEITEM, 0), @Employee_Name, @Email, @Phone, @Role_ID, @UserID, CAST(GETDATE() as date))
+		(@Employee_ID, COALESCE(@LINEITEM, 0), @Employee_Name, @User_ID, @UserPassword, @Email, @Phone, @Role_ID, @UserID, CAST(GETDATE() as date))
 			
 		SELECT CODE='200', Employee_ID=@Employee_ID
 
@@ -63,3 +74,4 @@ BEGIN
 	END CATCH
 END
 GO
+

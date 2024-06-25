@@ -94,16 +94,16 @@
         }
     });
 
-    $("#email").focusout(function () {
-        try {
-            //ResetSpan();
-            var element = $(this);
-            validateEmail(element);
-        }
-        catch (err) {
-            swal({ type: "error", title: "Error", text: err.message });
-        }
-    });
+    //$("#email").focusout(function () {
+    //    try {
+    //        //ResetSpan();
+    //        var element = $(this);
+    //        validateEmail(element);
+    //    }
+    //    catch (err) {
+    //        swal({ type: "error", title: "Error", text: err.message });
+    //    }
+    //});
 
     $("#password").focusout(function () {
         try {

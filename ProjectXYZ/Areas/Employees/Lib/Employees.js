@@ -169,12 +169,16 @@
                         $.each(result.data, function (index, value) {
                             var Employee_ID = emptyStr(value.Employee_ID) ? "" : value.Employee_ID.trim(),
                                 Employee_Name = emptyStr(value.Employee_Name) ? "" : value.Employee_Name.trim(),
+                                User_ID = emptyStr(value.UserID) ? "" : value.UserID.trim(),
+                                UserPassword = emptyStr(value.UserPassword) ? "" : value.UserPassword.trim(),
                                 Email = emptyStr(value.Email) ? "" : value.Email.trim(),
                                 Phone = emptyStr(value.Phone) ? "" : value.Phone.trim(),
                                 Role_ID = emptyStr(value.Role_ID) ? "" : value.Role_ID.trim(),
                                 Role_Name = emptyStr(value.Role_Name) ? "" : value.Role_Name.trim();
 
                             $('#EMPLOYEE_NAME').val(Employee_Name);
+                            $('#User_ID').val(User_ID);
+                            $('#UserPassword').val(UserPassword);
                             $('#EMPLOYEE_EMAIL').val(Email);
                             $('#EMPLOYEE_PHONE').val(Phone);
                             var newOption = $("<option selected='selected'></option>").val(Role_ID).text(Role_Name);
@@ -225,6 +229,8 @@
         $('#EMPLOYEE_EMAIL').val("");
         $('#EMPLOYEE_PHONE').val("");
         $('#EMPLOYEE_ROLE').val("").trigger('change');
+        $('#User_ID').val("");
+        $('#UserPassword').val("");
         $.each($('.form-input'), function () {
             $(this).removeClass('filled').parent('.form-group').removeClass('focused');
             if (!emptyStr($(this).val())) {
@@ -239,13 +245,17 @@
                 EMPLOYEE_NAME = emptyStr($('#EMPLOYEE_NAME').val()) ? "" : $('#EMPLOYEE_NAME').val(),
                 EMPLOYEE_EMAIL = emptyStr($('#EMPLOYEE_EMAIL').val()) ? "" : $('#EMPLOYEE_EMAIL').val(),
                 EMPLOYEE_PHONE = emptyStr($('#EMPLOYEE_PHONE').val()) ? "" : $('#EMPLOYEE_PHONE').val(),
-                EMPLOYEE_ROLE = emptyStr($('#EMPLOYEE_ROLE :selected').val()) ? "" : $('#EMPLOYEE_ROLE :selected').val();
+                EMPLOYEE_ROLE = emptyStr($('#EMPLOYEE_ROLE :selected').val()) ? "" : $('#EMPLOYEE_ROLE :selected').val(),
+                User_ID = emptyStr($('#User_ID').val()) ? "" : $('#User_ID').val(),
+                UserPassword = emptyStr($('#UserPassword').val()) ? "" : $('#UserPassword').val();
             var model = {
                 Employee_ID: Employee_ID,
                 Employee_Name: EMPLOYEE_NAME,
                 Email: EMPLOYEE_EMAIL,
                 Phone: EMPLOYEE_PHONE,
-                Role_ID: EMPLOYEE_ROLE
+                Role_ID: EMPLOYEE_ROLE,
+                User_ID: User_ID,
+                UserPassword: UserPassword
             }
 
             var form = $('#FormEmployee');

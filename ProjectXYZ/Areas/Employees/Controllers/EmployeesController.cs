@@ -93,7 +93,9 @@ namespace ProjectXYZ.Areas.Employees.Controllers
                                 Email = ro["Email"],
                                 Phone = ro["Phone"],
                                 Role_ID = ro["Role_ID"],
-                                Role_Name = ro["Role_Name"]
+                                Role_Name = ro["Role_Name"],
+                                UserID = ro["UserID"],
+                                UserPassword = func.Decrypt(ro["UserPassword"].ToString())
                             }).ToList();
 
                 success = true;

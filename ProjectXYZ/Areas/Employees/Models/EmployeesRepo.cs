@@ -54,7 +54,9 @@ namespace ProjectXYZ.Areas.Employees.Models
                     Employee_Name = model.Employee_Name,
                     Email = model.Email,
                     Phone = model.Phone,
-                    Role_ID = model.Role_ID
+                    Role_ID = model.Role_ID,
+                    User_ID = model.User_ID,
+                    UserPassword = model.UserPassword
                 };
 
                 string inputJson = JsonConvert.SerializeObject(param);
