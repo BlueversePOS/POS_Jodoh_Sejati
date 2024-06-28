@@ -12,6 +12,7 @@ GO
 CREATE TABLE POS_CashManagement
 (
 	Batch_ID nvarchar(20) NOT NULL, 
+	Pay_ID nvarchar(20) NOT NULL, 
 	Type_CashManagement nvarchar(20) NOT NULL,
 	Amount numeric(19,5) NOT NULL,
 	Notes nvarchar(200) NOT NULL,
@@ -19,7 +20,7 @@ CREATE TABLE POS_CashManagement
 	Created_User nvarchar(30) NOT NULL,
 	Created_Date DATETIME NOT NULL,
 	Created_time DATETIME,
-	CONSTRAINT PK_POS_CashManagement PRIMARY KEY NONCLUSTERED (Batch_ID ASC, Type_CashManagement ASC)
+	CONSTRAINT PK_POS_CashManagement PRIMARY KEY NONCLUSTERED (Batch_ID ASC, Pay_ID ASC, Type_CashManagement ASC)
 )
 /*
 ALTER TABLE POS_CashManagement

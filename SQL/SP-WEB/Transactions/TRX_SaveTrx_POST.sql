@@ -21,9 +21,9 @@ BEGIN
 		BEGIN
 			RAISERROR('Something error when save data', 16, 1)
 		END
-		ELSE IF (SELECT ISNULL(A.InStock - B.Quantity, 0) FROM POS_Item A
+		ELSE IF EXISTS(SELECT 1 FROM POS_Item A
 			INNER JOIN POS_TrxDetail_TEMP B ON A.Item_Number=B.Item_Number
-			WHERE RTRIM(B.DOCNUMBER)=RTRIM(@DOCNUMBER) and RTRIM(A.Site_ID)=RTRIM(@SiteID)) < 0
+			WHERE RTRIM(B.DOCNUMBER)=RTRIM(@DOCNUMBER) and RTRIM(A.Site_ID)=RTRIM(@SiteID) and ISNULL(A.InStock - B.Quantity, 0) < 0)
 		BEGIN
 			RAISERROR('Not enough quantity', 16, 1)
 		END

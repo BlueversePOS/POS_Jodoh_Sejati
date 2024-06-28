@@ -5,14 +5,21 @@ create or alter proc TRX_GetCashManagement
 AS          
 BEGIN
 	BEGIN TRY
-		SELECT PAYIN.Batch_ID, PAYIN.Amount AMOUNT_IN, ISNULL(PAYOUT.AMOUNT_OUT, 0) AMOUNT_OUT
-		FROM POS_CashManagement PAYIN WITH(NOLOCK)
+		SELECT CM.Batch_ID, ISNULL(PAYIN.AMOUNT_IN, 0) AMOUNT_IN, ISNULL(PAYOUT.AMOUNT_OUT, 0) AMOUNT_OUT
+		FROM POS_CashManagement CM WITH(NOLOCK)
 		LEFT JOIN (
-			SELECT X.Batch_ID, X.Type_CashManagement, X.Amount AMOUNT_OUT, X.Notes, X.POS_ID 
+			SELECT X.Batch_ID, X.Type_CashManagement, SUM(ISNULL(X.Amount, 0)) AMOUNT_IN
+			FROM POS_CashManagement X WITH(NOLOCK)
+			WHERE RTRIM(Batch_ID)=RTRIM(@Batch_ID) and Type_CashManagement='1'
+			GROUP BY X.Batch_ID, X.Type_CashManagement
+		) PAYIN ON CM.Batch_ID=PAYIN.Batch_ID
+		LEFT JOIN (
+			SELECT X.Batch_ID, X.Type_CashManagement, SUM(ISNULL(X.Amount, 0)) AMOUNT_OUT
 			FROM POS_CashManagement X WITH(NOLOCK)
 			WHERE RTRIM(Batch_ID)=RTRIM(@Batch_ID) and Type_CashManagement='2'
-		) PAYOUT ON PAYIN.Batch_ID=PAYOUT.Batch_ID
-		WHERE RTRIM(PAYIN.Batch_ID)=RTRIM(@Batch_ID) and PAYIN.Type_CashManagement='1'
+			GROUP BY X.Batch_ID, X.Type_CashManagement
+		) PAYOUT ON CM.Batch_ID=PAYOUT.Batch_ID
+		WHERE RTRIM(CM.Batch_ID)=RTRIM(@Batch_ID)
 	END TRY
 	BEGIN CATCH
 		DECLARE @ErrorMessage NVARCHAR(4000),@ErrorSeverity INT,@ErrorState INT

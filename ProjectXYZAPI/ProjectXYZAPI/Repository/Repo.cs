@@ -3060,6 +3060,54 @@ namespace ProjectXYZAPI.Repository
             return dt;
         }
 
+        public DataTable GetListPayInPayOut(string Batch_ID)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                ConnSql("");
+
+                SqlCommand cmd = new SqlCommand("TRX_GetListPayInPayOut", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                cmd.Parameters.AddWithValue("@Batch_ID", Batch_ID ?? "");
+
+                SqlDataAdapter adp = new SqlDataAdapter();
+                adp.SelectCommand = cmd;
+                adp.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                #region LOG
+                string thismethod = GetActualAsyncMethodName();
+                RequestLog log = new RequestLog
+                {
+                    url = thismethod,
+                    Body = "",
+                    db = "",
+                    user = "",
+                    msg = ex.Message
+                };
+                Insert_Request_Logs(log);
+                #endregion
+
+                throw ex;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                    conn = null;
+                }
+            }
+            return dt;
+        }
+
         public DataTable SaveSummaryShift(SummShiftParam param)
         {
             DataTable dt = new DataTable();
