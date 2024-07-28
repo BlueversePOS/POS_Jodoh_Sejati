@@ -1,4 +1,4 @@
-create or alter proc Web_UpdatePasswordUser
+create or alter proc [dbo].[Web_UpdatePasswordUser]
 (
 	@EmailAddress nvarchar(250),
 	@PASSWORD nvarchar(20)
@@ -6,10 +6,12 @@ create or alter proc Web_UpdatePasswordUser
 AS          
 BEGIN
 	BEGIN TRY
-		UPDATE POS_LoginUser 
-		SET [PASSWORD]=@PASSWORD
-		WHERE EmailAddress=@EmailAddress
+		DECLARE @CurrDate datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
 
+		UPDATE POS_LoginUser 
+		SET [PASSWORD]=@PASSWORD, Modified_User=@EmailAddress, Modified_Date=@CurrDate
+		WHERE EmailAddress=@EmailAddress
+		select * from POS_LoginUser
 		select 'success'
 	END TRY
 	BEGIN CATCH

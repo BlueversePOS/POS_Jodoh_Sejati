@@ -1,4 +1,4 @@
-create or alter proc TRX_SaveSetupPrinter
+create or alter proc [dbo].[TRX_SaveSetupPrinter]
 (
 	@PrinterID nvarchar(20), 
 	@PrinterName nvarchar(20), 
@@ -10,6 +10,7 @@ create or alter proc TRX_SaveSetupPrinter
 AS          
 BEGIN
 	BEGIN TRY
+		DECLARE @CurrDate datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
 		IF LEN(RTRIM(@PrinterName)) = 0
 		BEGIN
 			RAISERROR('Please fill printer name', 16, 1)
@@ -18,7 +19,7 @@ BEGIN
 		BEGIN
 			UPDATE POS_PrinterSetup
 			SET PrinterName=@PrinterName, Printer_Checkbox1=@Printer_Checkbox1, Printer_Checkbox2=@Printer_Checkbox2, Printer_Checkbox3=@Printer_Checkbox3,
-			Modified_User=@UserID, Modified_Date=CAST(GETDATE() as date), Modified_time=CAST(GETDATE() as time)
+			Modified_User=@UserID, Modified_Date=CAST(@CurrDate as date), Modified_time=CAST(@CurrDate as time)
 			WHERE RTRIM(PrinterID)=RTRIM(@PrinterID)
 		END
 		ELSE
@@ -32,7 +33,7 @@ BEGIN
 			INSERT INTO [POS_PrinterSetup]
 			(PrinterID, PrinterName, Printer_Checkbox1, Printer_Checkbox2, Printer_Checkbox3, Created_User, Created_Date, Created_time, Modified_User, Modified_Date, Modified_time)
 			VALUES
-			(@PrinterID, @PrinterName, @Printer_Checkbox1, @Printer_Checkbox2, @Printer_Checkbox3, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time), '', '', '')
+			(@PrinterID, @PrinterName, @Printer_Checkbox1, @Printer_Checkbox2, @Printer_Checkbox3, @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time), '', '', '')
 		END
 			
 		SELECT CODE='200', PrinterID=@PrinterID

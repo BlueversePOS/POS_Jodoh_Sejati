@@ -1,4 +1,4 @@
-create or alter proc TRX_SaveTrx_TEMP
+create or alter proc [dbo].[TRX_SaveTrx_TEMP]
 (
 	@DOCNUMBER nvarchar(20),
 	@DOCTYPE int,
@@ -28,6 +28,7 @@ create or alter proc TRX_SaveTrx_TEMP
 AS
 BEGIN
 	BEGIN TRY
+		DECLARE @CurrDate datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
 		IF LEN(RTRIM(@Batch_ID)) = 0
 		BEGIN
 			RAISERROR('Batch_ID not found', 16, 1)
@@ -37,7 +38,7 @@ BEGIN
 			UPDATE POS_TrxHeader_TEMP
 			SET DOCTYPE=@DOCTYPE, DOCDATE=@DOCDATE, Store_ID=@Store_ID, Site_ID=@Site_ID, SalesType_ID=@SalesType_ID, CustName=@CustName, Total_Line_Item=@Total_Line_Item, ORIGTOTAL=@ORIGTOTAL, SUBTOTAL=@SUBTOTAL, 
 			Tax_Amount=@Tax_Amount, Discount_ID=@Discount_ID, Discount_Amount=@Discount_Amount, Amount_Tendered=@Amount_Tendered, Change_Amount=@Change_Amount, Batch_ID=@Batch_ID, 
-			POS_Device_ID=@POS_Device_ID, POS_Version=@POS_Version, SyncStatus=@SyncStatus, Modified_User=@UserID, Modified_Date=CAST(GETDATE() as date), Modified_time=CAST(GETDATE() as time)
+			POS_Device_ID=@POS_Device_ID, POS_Version=@POS_Version, SyncStatus=@SyncStatus, Modified_User=@UserID, Modified_Date=CAST(@CurrDate as date), Modified_time=CAST(@CurrDate as time)
 			WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 		END
 		ELSE
@@ -53,24 +54,25 @@ BEGIN
 			Change_Amount, Batch_ID, POS_Device_ID, POS_Version, SyncStatus, Created_User, Created_Date, Created_time, Modified_User, Modified_Date, Modified_time)
 			VALUES
 			(@DOCNUMBER, @DOCTYPE, @DOCDATE, @Store_ID, @Site_ID, @SalesType_ID, @CustName, @Total_Line_Item, @ORIGTOTAL, @SUBTOTAL, @Tax_Amount, @Discount_ID, @Discount_Amount, @Amount_Tendered, 
-			@Change_Amount, @Batch_ID, @POS_Device_ID, @POS_Version, @SyncStatus, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time), '', '', '')
+			@Change_Amount, @Batch_ID, @POS_Device_ID, @POS_Version, @SyncStatus, @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time), '', '', '')
 		END
 
 		DELETE FROM POS_TrxDetail_TEMP
 		WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 
-		INSERT INTO POS_TrxDetail_TEMP(DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, Item_Number, Item_Description, Quantity, UofM, Item_Price, Item_Cost, Store_ID, Site_ID, 
+		INSERT INTO POS_TrxDetail_TEMP(DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, Item_Number, Item_Description, LineItem_Option, Quantity, UofM, Item_Price, Item_Cost, Store_ID, Site_ID, 
 		SalesType_ID, Discount_ID, Discount_Amount, Notes, POS_Device_ID, POS_Version, Created_User, Created_Date, Created_time, Modified_User, Modified_Date, Modified_time)
-		SELECT DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, Item_Number, Item_Description, Quantity, UofM, Item_Price, Item_Cost, Store_ID, Site_ID, 
-		SalesType_ID, Discount_ID, Discount_Amount, Notes, POS_Device_ID, POS_Version, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time), '', '', ''
+		SELECT DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, Item_Number, Item_Description, LineItem_Option, Quantity, UofM, Item_Price, Item_Cost, Store_ID, Site_ID, 
+		SalesType_ID, Discount_ID, Discount_Amount, Notes, POS_Device_ID, POS_Version, @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time), '', '', ''
 		FROM @TrxDetailTYPE
 		WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 
 		INSERT INTO POS_TrxPayTypes_TEMP(DOCNUMBER, DOCTYPE, DOCDATE, Lnitmseq, Payment_ID, Payment_Type, ORIGTOTAL, SUBTOTAL, Amount_Tendered, 
 		Change_Amount, Store_ID, POS_Device_ID, POS_Version, Created_User, Created_Date, Created_time, Modified_User, Modified_Date, Modified_time)
-		VALUES
-		(@DOCNUMBER, @DOCTYPE, @DOCDATE, @Lnitmseq, @Payment_ID, @Payment_Type, @ORIGTOTAL, @SUBTOTAL, @Amount_Tendered, 
-		@Change_Amount, @Store_ID, @POS_Device_ID, @POS_Version, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time), '', '', '')
+		SELECT @DOCNUMBER, @DOCTYPE, @DOCDATE, @Lnitmseq, @Payment_ID, Payment_Type, @ORIGTOTAL, @SUBTOTAL, @Amount_Tendered, 
+		@Change_Amount, @Store_ID, @POS_Device_ID, @POS_Version, @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time), '', '', ''
+		FROM POS_Set_PayTypes
+		where Payment_ID=@Payment_ID
 
 		EXEC TRX_SaveTrx_POST @DOCNUMBER=@DOCNUMBER, @SyncStatus=@SyncStatus, @UserID=@UserID
 			

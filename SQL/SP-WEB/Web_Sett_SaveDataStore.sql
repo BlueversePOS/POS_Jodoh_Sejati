@@ -1,4 +1,4 @@
-create or alter proc Web_Sett_SaveDataStore
+create or alter proc [dbo].[Web_Sett_SaveDataStore]
 (
 	@UserID nvarchar(20),
 	@Store_ID nvarchar(20), 
@@ -15,6 +15,7 @@ create or alter proc Web_Sett_SaveDataStore
 AS          
 BEGIN
 	BEGIN TRY
+		DECLARE @CurrDate datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
 		BEGIN
 			IF LEN(ISNULL(@Store_Name,''))=0
 			BEGIN
@@ -38,7 +39,7 @@ BEGIN
 		BEGIN
 			UPDATE POS_Set_Stores
 			SET Store_Name=@Store_Name, [Address]=@Address, Country=@Country, CountryName=@CountryName, Province=@Province, City=@City, Postal_Code=@Postal_Code, 
-			Phone=@Phone, [Description]=@Description, Modified_User=@UserID, Modified_Date=CAST(GETDATE() as date)
+			Phone=@Phone, [Description]=@Description, Modified_User=@UserID, Modified_Date=@CurrDate
 			WHERE RTRIM(Store_ID)=RTRIM(@Store_ID)
 		END
 		ELSE
@@ -50,7 +51,7 @@ BEGIN
 			INSERT INTO [POS_Set_Stores]
 			(Store_ID, Store_Name, [Address], Country, CountryName, Province, City, Postal_Code, Phone, [Description], Created_User, Created_Date, Modified_User, Modified_Date)
 			VALUES
-			(@Store_ID, @Store_Name, @Address, @Country, @CountryName, @Province, @City, @Postal_Code, @Phone, @Description, @UserID, CAST(GETDATE() as date), '', '')
+			(@Store_ID, @Store_Name, @Address, @Country, @CountryName, @Province, @City, @Postal_Code, @Phone, @Description, @UserID, @CurrDate, '', '')
 		END
 
 		DECLARE @LINEITEM int = 0
@@ -61,7 +62,7 @@ BEGIN
 		INSERT INTO [POS_Set_Stores_History]
 		(Store_ID, Line_Item, Store_Name, [Address], Country, CountryName, Province, City, Postal_Code, Phone, [Description], Created_User, Created_Date)
 		VALUES
-		(@Store_ID, COALESCE(@LINEITEM, 0), @Store_Name, @Address, @Country, @CountryName, @Province, @City, @Postal_Code, @Phone, @Description, @UserID, CAST(GETDATE() as date))
+		(@Store_ID, COALESCE(@LINEITEM, 0), @Store_Name, @Address, @Country, @CountryName, @Province, @City, @Postal_Code, @Phone, @Description, @UserID, @CurrDate)
 			
 		SELECT CODE='200', Store_ID=@Store_ID
 

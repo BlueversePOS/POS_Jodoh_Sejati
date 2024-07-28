@@ -1,4 +1,4 @@
-create or alter proc TRX_SaveTrx_POST
+create or alter proc [dbo].[TRX_SaveTrx_POST]
 (
 	@DOCNUMBER nvarchar(20),
 	@SyncStatus int,
@@ -7,6 +7,7 @@ create or alter proc TRX_SaveTrx_POST
 AS
 BEGIN
 	BEGIN TRY
+		DECLARE @CurrDate datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
 		DECLARE @SiteID varchar(20)
 		select top 1 @SiteID=Site_ID from POS_TrxDetail_TEMP WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 		IF(COALESCE(@SiteID, '') = '')
@@ -33,7 +34,7 @@ BEGIN
 		(DOCNUMBER, DOCTYPE, DOCDATE, Store_ID, Site_ID, SalesType_ID, CustName, Total_Line_Item, ORIGTOTAL, SUBTOTAL, Tax_Amount, Discount_ID, Discount_Amount, Amount_Tendered, 
 		Change_Amount, Batch_ID, POS_Device_ID, POS_Version, SyncStatus, Created_User, Created_Date, Created_time, Modified_User, Modified_Date, Modified_time)
 		SELECT DOCNUMBER, DOCTYPE, DOCDATE, Store_ID, Site_ID, SalesType_ID, CustName, Total_Line_Item, ORIGTOTAL, SUBTOTAL, Tax_Amount, Discount_ID, Discount_Amount, Amount_Tendered, 
-		Change_Amount, Batch_ID, POS_Device_ID, POS_Version, @SyncStatus, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time), '', '', ''
+		Change_Amount, Batch_ID, POS_Device_ID, POS_Version, @SyncStatus, @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time), '', '', ''
 		FROM POS_TrxHeader_TEMP A
 		WHERE RTRIM(A.DOCNUMBER)=RTRIM(@DOCNUMBER)
 
@@ -41,22 +42,22 @@ BEGIN
 		(DOCNUMBER, DOCTYPE, DOCDATE, Store_ID, Site_ID, SalesType_ID, CustName, Total_Line_Item, ORIGTOTAL, SUBTOTAL, Tax_Amount, Discount_ID, Discount_Amount, Amount_Tendered, 
 		Change_Amount, Batch_ID, POS_Device_ID, POS_Version, SyncStatus, Created_User, Created_Date, Created_time, Modified_User, Modified_Date, Modified_time)
 		SELECT DOCNUMBER, DOCTYPE, DOCDATE, Store_ID, Site_ID, SalesType_ID, CustName, Total_Line_Item, ORIGTOTAL, SUBTOTAL, Tax_Amount, Discount_ID, Discount_Amount, Amount_Tendered, 
-		Change_Amount, Batch_ID, POS_Device_ID, POS_Version, @SyncStatus, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time), '', '', ''
+		Change_Amount, Batch_ID, POS_Device_ID, POS_Version, @SyncStatus, @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time), '', '', ''
 		FROM POS_TrxHeader_TEMP A
 		WHERE RTRIM(A.DOCNUMBER)=RTRIM(@DOCNUMBER)
 
 		-- Detail
-		INSERT INTO POS_TrxDetail_POST(DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, Item_Number, Item_Description, Quantity, UofM, Item_Price, Item_Cost, Store_ID, Site_ID, 
+		INSERT INTO POS_TrxDetail_POST(DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, Item_Number, Item_Description, LineItem_Option, Quantity, UofM, Item_Price, Item_Cost, Store_ID, Site_ID, 
 		SalesType_ID, Discount_ID, Discount_Amount, Notes, POS_Device_ID, POS_Version, Created_User, Created_Date, Created_time, Modified_User, Modified_Date, Modified_time)
-		SELECT DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, Item_Number, Item_Description, Quantity, UofM, Item_Price, Item_Cost, Store_ID, Site_ID, 
-		SalesType_ID, Discount_ID, Discount_Amount, Notes, POS_Device_ID, POS_Version, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time), '', '', ''
+		SELECT DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, Item_Number, Item_Description, LineItem_Option, Quantity, UofM, Item_Price, Item_Cost, Store_ID, Site_ID, 
+		SalesType_ID, Discount_ID, Discount_Amount, Notes, POS_Device_ID, POS_Version, @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time), '', '', ''
 		FROM POS_TrxDetail_TEMP
 		WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 
-		INSERT INTO POS_TrxDetail_HIST(DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, Item_Number, Item_Description, Quantity, UofM, Item_Price, Item_Cost, Store_ID, Site_ID, 
+		INSERT INTO POS_TrxDetail_HIST(DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, Item_Number, Item_Description, LineItem_Option, Quantity, UofM, Item_Price, Item_Cost, Store_ID, Site_ID, 
 		SalesType_ID, Discount_ID, Discount_Amount, Notes, POS_Device_ID, POS_Version, Created_User, Created_Date, Created_time, Modified_User, Modified_Date, Modified_time)
-		SELECT DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, Item_Number, Item_Description, Quantity, UofM, Item_Price, Item_Cost, Store_ID, Site_ID, 
-		SalesType_ID, Discount_ID, Discount_Amount, Notes, POS_Device_ID, POS_Version, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time), '', '', ''
+		SELECT DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, Item_Number, Item_Description, LineItem_Option, Quantity, UofM, Item_Price, Item_Cost, Store_ID, Site_ID, 
+		SalesType_ID, Discount_ID, Discount_Amount, Notes, POS_Device_ID, POS_Version, @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time), '', '', ''
 		FROM POS_TrxDetail_TEMP
 		WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 
@@ -64,14 +65,14 @@ BEGIN
 		INSERT INTO POS_TrxPayTypes_POST(DOCNUMBER, DOCTYPE, DOCDATE, Lnitmseq, Payment_ID, Payment_Type, ORIGTOTAL, SUBTOTAL, Amount_Tendered, 
 		Change_Amount, Store_ID, POS_Device_ID, POS_Version, Created_User, Created_Date, Created_time, Modified_User, Modified_Date, Modified_time)
 		SELECT DOCNUMBER, DOCTYPE, DOCDATE, Lnitmseq, Payment_ID, Payment_Type, ORIGTOTAL, SUBTOTAL, Amount_Tendered, 
-		Change_Amount, Store_ID, POS_Device_ID, POS_Version, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time), '', '', ''
+		Change_Amount, Store_ID, POS_Device_ID, POS_Version, @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time), '', '', ''
 		FROM POS_TrxPayTypes_TEMP
 		WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 		
 		INSERT INTO POS_TrxPayTypes_HIST(DOCNUMBER, DOCTYPE, DOCDATE, Lnitmseq, Payment_ID, Payment_Type, ORIGTOTAL, SUBTOTAL, Amount_Tendered, 
 		Change_Amount, Store_ID, POS_Device_ID, POS_Version, Created_User, Created_Date, Created_time, Modified_User, Modified_Date, Modified_time)
 		SELECT DOCNUMBER, DOCTYPE, DOCDATE, Lnitmseq, Payment_ID, Payment_Type, ORIGTOTAL, SUBTOTAL, Amount_Tendered, 
-		Change_Amount, Store_ID, POS_Device_ID, POS_Version, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time), '', '', ''
+		Change_Amount, Store_ID, POS_Device_ID, POS_Version, @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time), '', '', ''
 		FROM POS_TrxPayTypes_TEMP
 		WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 
@@ -79,6 +80,12 @@ BEGIN
 		SET A.InStock=(A.InStock - B.Quantity)
 		FROM POS_Item A
 		INNER JOIN POS_TrxDetail_TEMP B ON A.Item_Number=B.Item_Number
+		WHERE RTRIM(B.DOCNUMBER)=RTRIM(@DOCNUMBER)
+		
+		UPDATE A
+		SET A.InStock=(A.InStock - B.Quantity)
+		FROM POS_ItemVariant A
+		INNER JOIN POS_TrxDetail_TEMP B ON A.Item_Number=B.Item_Number and A.LineItem_Option=B.LineItem_Option
 		WHERE RTRIM(B.DOCNUMBER)=RTRIM(@DOCNUMBER)
 
 		DELETE FROM POS_TrxHeader_TEMP WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)

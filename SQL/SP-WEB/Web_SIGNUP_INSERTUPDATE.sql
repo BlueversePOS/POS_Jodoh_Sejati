@@ -1,4 +1,4 @@
-create or alter proc Web_SIGNUP_INSERTUPDATE
+create or alter proc [dbo].[Web_SIGNUP_INSERTUPDATE]
 (
 	@UserID nvarchar(20),
 	@EmailAddress nvarchar(100),
@@ -10,6 +10,7 @@ create or alter proc Web_SIGNUP_INSERTUPDATE
 AS          
 BEGIN
 	BEGIN TRY
+		DECLARE @CurrDate datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
 		BEGIN
 			IF(LEN(ISNULL(@EmailAddress,''))=0)
 			BEGIN
@@ -33,7 +34,7 @@ BEGIN
 		BEGIN
 			UPDATE POS_LoginUser
 			SET EmailAddress=@EmailAddress, [PASSWORD]=@PASSWORD, Business_Name=@Business_Name, Currency=@Currency, Country=@Country,
-				Modified_User=@EmailAddress, Modified_Date=DATEADD(HOUR,1,GETDATE())
+				Modified_User=@EmailAddress, Modified_Date=@CurrDate
 			WHERE UserID=@UserID
 		END
 		ELSE
@@ -53,12 +54,12 @@ BEGIN
 			INSERT INTO [POS_LoginUser]
 			(UserID, EmailAddress, [PASSWORD], Business_Name, Currency, Country, Verify, Created_User, Created_Date, Modified_User, Modified_Date)
 			VALUES
-			(@USER, RTRIM(@EmailAddress), RTRIM(@PASSWORD), RTRIM(@Business_Name), RTRIM(@Currency), RTRIM(@Country), 0, @USER, DATEADD(HOUR,1,GETDATE()), '', '')
+			(@USER, RTRIM(@EmailAddress), RTRIM(@PASSWORD), RTRIM(@Business_Name), RTRIM(@Currency), RTRIM(@Country), 0, @USER, @CurrDate, '', '')
 
 			INSERT INTO [POS_Account]
 			(UserID, Business_Name, EmailAddress, Password, CurrencyID, Currency, Timezone, Created_User, Created_Date, Modified_User, Modified_Date)
 			VALUES
-			(@USER, RTRIM(@Business_Name), RTRIM(@EmailAddress), RTRIM(@PASSWORD), RTRIM(@Currency), RTRIM(@Currency), '', @USER, DATEADD(HOUR,1,GETDATE()), '', '')
+			(@USER, RTRIM(@Business_Name), RTRIM(@EmailAddress), RTRIM(@PASSWORD), RTRIM(@Currency), RTRIM(@Currency), '', @USER, @CurrDate, '', '')
 		END
 			
 		SELECT CODE='200', EmailAddress=@EmailAddress

@@ -11,7 +11,7 @@ BEGIN
 	BEGIN TRY
 		IF @DOCNUMBER=''
 		BEGIN
-			select distinct HDR.DOCNUMBER, HDR.DOCTYPE, HDR.DOCDATE, HDR.Store_ID, HDR.SalesType_ID, COALESCE(SLS.SalesType_Name, '') SalesType_Name, 
+			select distinct HDR.DOCNUMBER, HDR.DOCTYPE, HDR.DOCDATE, HDR.Store_ID, HDR.SalesType_ID, HDR.CustName, COALESCE(SLS.SalesType_Name, '') SalesType_Name, 
 			COALESCE(PAY.Payment_ID, '') Payment_ID, COALESCE(PYT.Payment_Name, '') Payment_Name, HDR.Total_Line_Item, HDR.ORIGTOTAL, ISNULL(PAY.SUBTOTAL, HDR.SUBTOTAL) SUBTOTAL, 
 			ISNULL(PAY.Amount_Tendered, HDR.Amount_Tendered) Amount_Tendered, HDR.Tax_Amount, HDR.Discount_ID, HDR.Discount_Amount, HDR.Amount_Tendered, HDR.Change_Amount, 
 			HDR.Batch_ID, HDR.Created_User, HDR.Created_Date, HDR.Created_time, COALESCE(RFN.REFUNDNUMBER, '') REFUNDNUMBER, COALESCE(RFN.SUBTOTAL, 0) Amt_Refund,
@@ -32,10 +32,11 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			select distinct HDR.DOCNUMBER, HDR.DOCTYPE, HDR.DOCDATE, HDR.Store_ID, HDR.SalesType_ID, COALESCE(SLS.SalesType_Name, '') SalesType_Name, 
-			COALESCE(PAY.Payment_ID, '') Payment_ID, COALESCE(PYT.Payment_Name, '') Payment_Name, HDR.Total_Line_Item, HDR.ORIGTOTAL, ISNULL(PAY.SUBTOTAL, HDR.SUBTOTAL) SUBTOTAL, 
-			ISNULL(PAY.Amount_Tendered, HDR.Amount_Tendered) Amount_Tendered, HDR.Tax_Amount, HDR.Discount_ID, HDR.Discount_Amount, HDR.Amount_Tendered, HDR.Change_Amount, HDR.Batch_ID, 
-			HDR.Created_User, HDR.Created_Date, HDR.Created_time, ISNULL(DTL.Lineitmseq, 0) Lineitmseq, COALESCE(DTL.Item_Number, '') Item_Number, COALESCE(DTL.Item_Description, '') Item_Description, 
+			select distinct HDR.DOCNUMBER, HDR.DOCTYPE, HDR.DOCDATE, HDR.Store_ID, HDR.SalesType_ID, HDR.CustName, COALESCE(SLS.SalesType_Name, '') SalesType_Name, 
+			ISNULL(DTL.Item_Price, 0) Item_Price, COALESCE(PAY.Payment_ID, '') Payment_ID, COALESCE(PYT.Payment_Name, '') Payment_Name, HDR.Total_Line_Item, HDR.ORIGTOTAL, 
+			ISNULL(PAY.SUBTOTAL, HDR.SUBTOTAL) SUBTOTAL, ISNULL(PAY.Amount_Tendered, HDR.Amount_Tendered) Amount_Tendered, HDR.Tax_Amount, HDR.Discount_ID, HDR.Discount_Amount, 
+			HDR.Amount_Tendered, HDR.Change_Amount, HDR.Batch_ID, HDR.Created_User, HDR.Created_Date, HDR.Created_time, ISNULL(DTL.Lineitmseq, 0) Lineitmseq, 
+			COALESCE(DTL.Item_Number, '') Item_Number, COALESCE(DTL.Item_Description, '') Item_Description, COALESCE(ITV.Variant_Name, '') Variant_Name, 
 			ISNULL(DTL.Quantity, 0) Quantity, COALESCE(DTL.UofM, '') UofM, COALESCE(DTL.Notes, '') Notes, COALESCE(RFN.REFUNDNUMBER, '') REFUNDNUMBER, COALESCE(RFN.SUBTOTAL, 0) Amt_Refund,
 			CASE WHEN COALESCE(EMP.Employee_Name, '') <> '' THEN EMP.Employee_Name
 			WHEN COALESCE(ACC.Business_Name, '')  <> '' THEN ACC.Business_Name ELSE '' END UserName
@@ -48,6 +49,11 @@ BEGIN
 			LEFT JOIN POS_Account ACC ON HDR.Created_User=ACC.UserID
 			LEFT JOIN POS_Set_Stores STO ON HDR.Store_ID=STO.Store_ID
 			LEFT JOIN POS_Set_SalesType SLS ON HDR.SalesType_ID=SLS.SalesType_ID
+			LEFT JOIN (
+				select distinct A.Item_Number, A.LineItem_Option, A.Variant_Name 
+				FROM POS_ItemVariant A
+				where A.Site_ID in(select Site_ID from POS_Set_Site where DefaultSite=1)
+			)ITV ON DTL.Item_Number=ITV.Item_Number and DTL.LineItem_Option=ITV.LineItem_Option
 			WHERE RTRIM(HDR.DOCNUMBER)=RTRIM(@DOCNUMBER)
 		END
 	END TRY
@@ -57,4 +63,3 @@ BEGIN
 		RAISERROR (@ErrorMessage,@ErrorSeverity,@ErrorState)
 	END CATCH
 END
-GO

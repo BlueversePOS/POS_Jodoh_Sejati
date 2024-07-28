@@ -1,4 +1,4 @@
-create or alter proc Web_Sett_SaveDataPayment
+create or alter proc [dbo].[Web_Sett_SaveDataPayment]
 (
 	@UserID nvarchar(20),
 	@Payment_ID nvarchar(20), 
@@ -10,6 +10,7 @@ create or alter proc Web_Sett_SaveDataPayment
 AS          
 BEGIN
 	BEGIN TRY
+		DECLARE @CurrDate datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
 		BEGIN
 			IF LEN(ISNULL(@Payment_Name,''))=0
 			BEGIN
@@ -19,16 +20,12 @@ BEGIN
 			BEGIN
 				RAISERROR('Please choose payment type.',16,1)
 			END
-			IF EXISTS(SELECT 1 FROM @PAYTYPE WHERE Store_ID='') or NOT EXISTS(SELECT * FROM @PAYTYPE)
-			BEGIN
-				RAISERROR('Please choose store.',16,1)
-			END
 		END
-		SELECT 1 FROM @PAYTYPE WHERE Store_ID=''
+
 		IF EXISTS(SELECT * FROM POS_Set_PayTypes WITH(NOLOCK) WHERE RTRIM(Payment_ID)=RTRIM(@Payment_ID))
 		BEGIN
 			UPDATE POS_Set_PayTypes
-			SET Payment_Type=@Payment_Type, Payment_Name=@Payment_Name, AllStore=@AllStore, Modified_User=@UserID, Modified_Date=CAST(GETDATE() as date)
+			SET Payment_Type=@Payment_Type, Payment_Name=@Payment_Name, AllStore=@AllStore, Modified_User=@UserID, Modified_Date=@CurrDate
 			WHERE RTRIM(Payment_ID)=RTRIM(@Payment_ID)
 		END
 		ELSE
@@ -58,7 +55,7 @@ BEGIN
 			FROM @PAYTYPE2 WHERE ROWID=@I
 
 			INSERT INTO [POS_Set_PayTypes] (Payment_ID, Payment_Type, Payment_Name, LineItem, AllStore, Store_ID, Store_Name, Created_User, Created_Date, Modified_User, Modified_Date)
-			SELECT @Payment_ID, @Payment_Type, @Payment_Name, LineItem, AllStore, Store_ID, Store_Name, @UserID, CAST(GETDATE() as date), @UserID, CAST(GETDATE() as date)
+			SELECT @Payment_ID, @Payment_Type, @Payment_Name, LineItem, AllStore, Store_ID, Store_Name, @UserID, @CurrDate, @UserID, @CurrDate
 			FROM @PAYTYPE2
 
 			SELECT @LINEITEM2=MAX(COALESCE(Line_Item, 0)) + 1
@@ -68,7 +65,7 @@ BEGIN
 			INSERT INTO [POS_Set_PayTypes_History]
 			(Payment_ID, Payment_Type, Line_Item, Payment_Name, LineItem, AllStore, Store_ID, Store_Name, Created_User, Created_Date)
 			VALUES
-			(@Payment_ID, @Payment_Type, COALESCE(@LINEITEM2, 0), @Payment_Name, @LineItem, @AllStore, @Store_ID, @Store_Name, @UserID, CAST(GETDATE() as date))
+			(@Payment_ID, @Payment_Type, COALESCE(@LINEITEM2, 0), @Payment_Name, @LineItem, @AllStore, @Store_ID, @Store_Name, @UserID, @CurrDate)
 
 			SET @I = @I + 1
 		END

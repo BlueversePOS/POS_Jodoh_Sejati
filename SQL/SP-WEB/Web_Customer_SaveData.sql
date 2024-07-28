@@ -1,4 +1,4 @@
-create or alter proc Web_Customer_SaveData
+create or alter proc [dbo].[Web_Customer_SaveData]
 (
 	@UserID nvarchar(20),
 	@Customer_ID nvarchar(20), 
@@ -16,6 +16,7 @@ create or alter proc Web_Customer_SaveData
 AS          
 BEGIN
 	BEGIN TRY
+		DECLARE @CurrDate datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
 		BEGIN
 			IF LEN(ISNULL(@Customer_Name,''))=0
 			BEGIN
@@ -43,7 +44,7 @@ BEGIN
 		BEGIN
 			UPDATE POS_Customer
 			SET Customer_Name=@Customer_Name, Email=@Email, Phone=@Phone, Address=@Address, Country=@Country, Province=@Province, 
-			City=@City, Postal_Code=@Postal_Code, Note=@Note, Modified_User=@UserID, Modified_Date=CAST(GETDATE() as date)
+			City=@City, Postal_Code=@Postal_Code, Note=@Note, Modified_User=@UserID, Modified_Date=@CurrDate
 			WHERE RTRIM(Customer_ID)=RTRIM(@Customer_ID) and RTRIM(Customer_Code)=RTRIM(@Customer_Code)
 		END
 		ELSE
@@ -55,7 +56,7 @@ BEGIN
 			INSERT INTO [POS_Customer]
 			(Customer_ID, Customer_Name, Email, Phone, Address, Country, Province, City, Postal_Code, Customer_Code, Note, Created_User, Created_Date, Modified_User, Modified_Date)
 			VALUES
-			(@Customer_ID, @Customer_Name, @Email, @Phone, @Address, @Country, @Province, @City, @Postal_Code, @Customer_Code, @Note, @UserID, CAST(GETDATE() as date), '', '')
+			(@Customer_ID, @Customer_Name, @Email, @Phone, @Address, @Country, @Province, @City, @Postal_Code, @Customer_Code, @Note, @UserID, @CurrDate, '', '')
 		END
 
 		DECLARE @LINEITEM int = 0
@@ -66,7 +67,7 @@ BEGIN
 		INSERT INTO [POS_Customer_History]
 		(Customer_ID, Customer_Name, Line_Item, Email, Phone, Address, Country, Province, City, Postal_Code, Customer_Code, Note, Created_User, Created_Date)
 		VALUES
-		(@Customer_ID, @Customer_Name, COALESCE(@LINEITEM, 0), @Email, @Phone, @Address, @Country, @Province, @City, @Postal_Code, @Customer_Code, @Note, @UserID, CAST(GETDATE() as date))
+		(@Customer_ID, @Customer_Name, COALESCE(@LINEITEM, 0), @Email, @Phone, @Address, @Country, @Province, @City, @Postal_Code, @Customer_Code, @Note, @UserID, @CurrDate)
 			
 		SELECT CODE='200', Customer_Name=@Customer_Name
 

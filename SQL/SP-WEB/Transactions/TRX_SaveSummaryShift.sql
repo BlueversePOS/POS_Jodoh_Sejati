@@ -1,4 +1,4 @@
-create or alter proc TRX_SaveSummaryShift
+create or alter proc [dbo].[TRX_SaveSummaryShift]
 (
 	@Batch_ID nvarchar(20),
 	@Store_ID nvarchar(20),
@@ -24,10 +24,11 @@ create or alter proc TRX_SaveSummaryShift
 AS          
 BEGIN
 	BEGIN TRY
+		DECLARE @CurrDate datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
 		IF EXISTS(SELECT * FROM POS_Summ_OpenCloseShift WITH(NOLOCK) WHERE RTRIM(Batch_ID)=RTRIM(@Batch_ID))
 		BEGIN
 			UPDATE POS_Summ_OpenCloseShift
-			SET LastEdit_Date=CAST(GETDATE() as date), LastEdit_time=CAST(GETDATE() as time), Store_ID=@Store_ID, POS_Device_ID=@POS_Device_ID, 
+			SET LastEdit_Date=CAST(@CurrDate as date), LastEdit_time=CAST(@CurrDate as time), Store_ID=@Store_ID, POS_Device_ID=@POS_Device_ID, 
 			Opening_Date=@Opening_Date, Opening_time=@Opening_time, Closing_Date=@Closing_Date, Closing_time=@Closing_time, Sum_Amount_Opening=@Sum_Amount_Opening, 
 			Sum_Amount_Closing=@Sum_Amount_Closing, Sum_Invoice_Posted=@Sum_Invoice_Posted, Sum_Tendered=@Sum_Tendered, Sum_Changes=@Sum_Changes, 
 			Sum_Amount_Discount=@Sum_Amount_Discount, Sum_Amount_Tax=@Sum_Amount_Tax, Sum_Invoice_Refund_Posted=@Sum_Invoice_Refund_Posted, Sum_Amount_PayOut=@Sum_Amount_PayOut, 
@@ -41,9 +42,9 @@ BEGIN
 			Sum_Amount_Closing, Sum_Invoice_Posted, Sum_Tendered, Sum_Changes, Sum_Amount_Discount, Sum_Amount_Tax, Sum_Invoice_Refund_Posted, Sum_Amount_PayOut, 
 			Sum_Amount_PayIn, Count_Customers, Status_Batch, Created_User, Created_Date, Created_time)
 			VALUES
-			(@Batch_ID, CAST(GETDATE() as date), CAST(GETDATE() as time), @Store_ID, @POS_Device_ID, @Opening_Date, @Opening_time, @Closing_Date, @Closing_time, @Sum_Amount_Opening, 
+			(@Batch_ID, CAST(@CurrDate as date), CAST(@CurrDate as time), @Store_ID, @POS_Device_ID, @Opening_Date, @Opening_time, @Closing_Date, @Closing_time, @Sum_Amount_Opening, 
 			@Sum_Amount_Closing, @Sum_Invoice_Posted, @Sum_Tendered, @Sum_Changes, @Sum_Amount_Discount, @Sum_Amount_Tax, @Sum_Invoice_Refund_Posted, @Sum_Amount_PayOut, 
-			@Sum_Amount_PayIn, @Count_Customers, @Status_Batch, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time))
+			@Sum_Amount_PayIn, @Count_Customers, @Status_Batch, @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time))
 		END
 	END TRY
 	BEGIN CATCH

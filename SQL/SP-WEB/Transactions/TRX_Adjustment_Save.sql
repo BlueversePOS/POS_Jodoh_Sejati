@@ -8,7 +8,7 @@ exec TRX_Adjustment_Save @DOCNUMBER=N'',@DOCDATE='2024-01-27 09:46:54',@Site_ID=
 
 rollback
 */
-create or alter proc TRX_Adjustment_Save
+create or alter proc [dbo].[TRX_Adjustment_Save]
 (
 	@DOCNUMBER nvarchar(20), 
 	@DOCDATE DATETIME,
@@ -23,6 +23,7 @@ create or alter proc TRX_Adjustment_Save
 AS          
 BEGIN
 	BEGIN TRY
+		DECLARE @CurrDate datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
 		IF LEN(RTRIM(@Reason)) = 0
 		BEGIN
 			RAISERROR('Please choose reason', 16, 1)
@@ -39,7 +40,7 @@ BEGIN
 		BEGIN
 			UPDATE POS_TrxAdjustment_Header
 			SET DOCDATE=@DOCDATE, Site_ID=@Site_ID, Site_Name=@Site_Name, Reason=@Reason, Total_Line_Item=@Total_Line_Item, Notes=@Notes,
-			Modified_User=@UserID, Modified_Date=CAST(GETDATE() as date), Modified_time=CAST(GETDATE() as time)
+			Modified_User=@UserID, Modified_Date=CAST(@CurrDate as date), Modified_time=CAST(@CurrDate as time)
 			WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 		END
 		ELSE
@@ -55,7 +56,7 @@ BEGIN
 			INSERT INTO [POS_TrxAdjustment_Header]
 			(DOCNUMBER, DOCDATE, Site_ID, Site_Name, Reason, Total_Line_Item, Notes, Created_User, Created_Date, Created_time, Modified_User, Modified_Date, Modified_time)
 			VALUES
-			(@DOCNUMBER, @DOCDATE, @Site_ID, @Site_Name, @Reason, @Total_Line_Item, @Notes, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time), '', '', '')
+			(@DOCNUMBER, @DOCDATE, @Site_ID, @Site_Name, @Reason, @Total_Line_Item, @Notes, @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time), '', '', '')
 		END
 
 		DELETE FROM POS_TrxAdjustment_Detail WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
@@ -63,7 +64,8 @@ BEGIN
 		INSERT INTO POS_TrxAdjustment_Detail(DOCNUMBER, DOCDATE, Reason, Lineitmseq, Item_Number, LineItem_Option, Item_Description, Qty_Stock, Qty_Add_Stock, Qty_Remove_Stock, 
 		Item_Cost, Qty_After_Stock, Expected_Stock, Counted_Stock, Created_User, Created_Date, Created_time, Modified_User, Modified_Date, Modified_time)
 		SELECT @DOCNUMBER, DOCDATE, Reason, Lineitmseq, Item_Number, LineItem_Option, Item_Description, Qty_Stock, Qty_Add_Stock, Qty_Remove_Stock, 
-		Item_Cost, Qty_After_Stock, Expected_Stock, Counted_Stock, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time), @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time)
+		Item_Cost, Qty_After_Stock, Expected_Stock, Counted_Stock, @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time), 
+		@UserID, CAST(@CurrDate as date), CAST(@CurrDate as time)
 		FROM @TrxAdjDetailTYPE
 
 		UPDATE A
@@ -86,21 +88,21 @@ BEGIN
 		WHERE RTRIM(B.DOCNUMBER)=RTRIM(@DOCNUMBER) and RTRIM(A.Site_ID)=RTRIM(@Site_ID)
 
 		INSERT INTO POS_TrxAdjustment_HeaderHIST(DOCNUMBER, DOCDATE, Site_ID, Site_Name, Reason, Total_Line_Item, Notes, Created_User, Created_Date, Created_time)
-		SELECT DOCNUMBER, DOCDATE, Site_ID, Site_Name, Reason, Total_Line_Item, Notes, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time)
+		SELECT DOCNUMBER, DOCDATE, Site_ID, Site_Name, Reason, Total_Line_Item, Notes, @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time)
 		FROM POS_TrxAdjustment_Header
 		WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 
 		INSERT INTO POS_TrxAdjustment_DetailHIST(DOCNUMBER, DOCDATE, Reason, Lineitmseq, Item_Number, LineItem_Option, Item_Description, Qty_Stock, 
 		Qty_Add_Stock, Qty_Remove_Stock, Item_Cost, Qty_After_Stock, Expected_Stock, Counted_Stock, Created_User, Created_Date, Created_time)
 		SELECT DOCNUMBER, DOCDATE, Reason, Lineitmseq, Item_Number, LineItem_Option, Item_Description, Qty_Stock, Qty_Add_Stock, Qty_Remove_Stock, Item_Cost, 
-		Qty_After_Stock, Expected_Stock, Counted_Stock, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time)
+		Qty_After_Stock, Expected_Stock, Counted_Stock, @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time)
 		FROM POS_TrxAdjustment_Detail
 		WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 
 		INSERT INTO POS_ItemVariant_History(Item_Number, Site_ID, LineItem_Option, Line_Item, CB_Available, Option_ID, Option_Name, 
 		LineItem_Variant, Variant_Name, Item_Price, Item_Cost, InStock, LowStock, OptimalStock, Item_SKU, Item_Barcode, Created_User, Created_Date)
 		SELECT A.Item_Number, A.Site_ID, A.LineItem_Option, ISNULL(HIST.Line_Item, 0) + 1, A.CB_Available, A.Option_ID, A.Option_Name, 
-		A.LineItem_Variant, A.Variant_Name, A.Item_Price, A.Item_Cost, A.InStock, A.LowStock, A.OptimalStock, A.Item_SKU, A.Item_Barcode, @UserID, CAST(GETDATE() as date) 
+		A.LineItem_Variant, A.Variant_Name, A.Item_Price, A.Item_Cost, A.InStock, A.LowStock, A.OptimalStock, A.Item_SKU, A.Item_Barcode, @UserID, CAST(@CurrDate as date) 
 		FROM POS_ItemVariant A
 		INNER JOIN POS_TrxAdjustment_Detail B ON A.Item_Number=B.Item_Number and A.LineItem_Option=B.LineItem_Option
 		LEFT JOIN (

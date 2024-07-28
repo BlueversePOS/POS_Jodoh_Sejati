@@ -1,4 +1,4 @@
-create or alter proc Web_Sett_SaveDataDevice
+create or alter proc [dbo].[Web_Sett_SaveDataDevice]
 (
 	@UserID nvarchar(20),
 	@POS_Device_ID nvarchar(20), 
@@ -9,6 +9,7 @@ create or alter proc Web_Sett_SaveDataDevice
 AS          
 BEGIN
 	BEGIN TRY
+		DECLARE @CurrDate datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
 		BEGIN
 			IF LEN(ISNULL(@POS_Device_Name,''))=0
 			BEGIN
@@ -23,7 +24,7 @@ BEGIN
 		IF EXISTS(SELECT * FROM POS_Device WITH(NOLOCK) WHERE RTRIM(POS_Device_ID)=RTRIM(@POS_Device_ID))
 		BEGIN
 			UPDATE POS_Device
-			SET POS_Device_Name=@POS_Device_Name, Store_ID=@Store_ID, Store_Name=@Store_Name, Modified_User=@UserID, Modified_Date=CAST(GETDATE() as date)
+			SET POS_Device_Name=@POS_Device_Name, Store_ID=@Store_ID, Store_Name=@Store_Name, Modified_User=@UserID, Modified_Date=@CurrDate
 			WHERE RTRIM(POS_Device_ID)=RTRIM(@POS_Device_ID)
 		END
 		ELSE
@@ -35,7 +36,7 @@ BEGIN
 			INSERT INTO [POS_Device]
 			(POS_Device_ID, POS_Device_Name, Store_ID, Store_Name, Created_User, Created_Date, Modified_User, Modified_Date)
 			VALUES
-			(@POS_Device_ID, @POS_Device_Name, @Store_ID, @Store_Name, @UserID, CAST(GETDATE() as date), '', '')
+			(@POS_Device_ID, @POS_Device_Name, @Store_ID, @Store_Name, @UserID, @CurrDate, '', '')
 		END
 
 		DECLARE @LINEITEM int = 0
@@ -46,7 +47,7 @@ BEGIN
 		INSERT INTO [POS_Device_History]
 		(POS_Device_ID, Line_Item, POS_Device_Name, Store_ID, Store_Name, Created_User, Created_Date)
 		VALUES
-		(@POS_Device_ID, COALESCE(@LINEITEM, 0), @POS_Device_Name, @Store_ID, @Store_Name, @UserID, CAST(GETDATE() as date))
+		(@POS_Device_ID, COALESCE(@LINEITEM, 0), @POS_Device_Name, @Store_ID, @Store_Name, @UserID, @CurrDate)
 			
 		SELECT CODE='200', POS_Device_ID=@POS_Device_ID
 

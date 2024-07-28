@@ -1,4 +1,4 @@
-create or alter proc Web_Account_SaveData
+create or alter proc [dbo].[Web_Account_SaveData]
 (
 	@UserID nvarchar(20),
 	@EmailAddress nvarchar(100),
@@ -10,6 +10,7 @@ create or alter proc Web_Account_SaveData
 AS          
 BEGIN
 	BEGIN TRY
+		DECLARE @CurrDate datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
 		BEGIN
 			IF(LEN(ISNULL(@EmailAddress,''))=0)
 			BEGIN
@@ -33,12 +34,12 @@ BEGIN
 		BEGIN
 			UPDATE POS_Account
 			SET EmailAddress=@EmailAddress, [Password]=@PASSWORD, Business_Name=@Business_Name, CurrencyID=@Currency, Currency=@Currency, 
-			Timezone=@Timezone, Modified_User=@EmailAddress, Modified_Date=DATEADD(HOUR,1,GETDATE())
+			Timezone=@Timezone, Modified_User=@EmailAddress, Modified_Date=@CurrDate
 			WHERE UserID=@UserID
 			
 			UPDATE POS_LoginUser
 			SET EmailAddress=@EmailAddress, [PASSWORD]=@PASSWORD, Business_Name=@Business_Name, Currency=@Currency,
-				Modified_User=@EmailAddress, Modified_Date=DATEADD(HOUR,1,GETDATE())
+				Modified_User=@EmailAddress, Modified_Date=@CurrDate
 			WHERE UserID=@UserID
 		END
 		ELSE
@@ -54,7 +55,7 @@ BEGIN
 		INSERT INTO [POS_Account_History]
 		(UserID, Line_Item, Business_Name, EmailAddress, [Password], CurrencyID, Currency, Timezone, Created_User, Created_Date)
 		VALUES
-		(@UserID, COALESCE(@LINEITEM, 0), RTRIM(@Business_Name), RTRIM(@EmailAddress), RTRIM(@PASSWORD), RTRIM(@Currency), RTRIM(@Currency), RTRIM(@Timezone), RTRIM(@EmailAddress), DATEADD(HOUR,1,GETDATE()))
+		(@UserID, COALESCE(@LINEITEM, 0), RTRIM(@Business_Name), RTRIM(@EmailAddress), RTRIM(@PASSWORD), RTRIM(@Currency), RTRIM(@Currency), RTRIM(@Timezone), RTRIM(@EmailAddress), @CurrDate)
 			
 		SELECT CODE='200', EmailAddress=@EmailAddress
 

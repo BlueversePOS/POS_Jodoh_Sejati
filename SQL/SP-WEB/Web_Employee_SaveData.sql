@@ -1,4 +1,4 @@
-create or alter proc Web_Employee_SaveData
+create or alter proc [dbo].[Web_Employee_SaveData]
 (
 	@UserID nvarchar(20),
 	@Employee_ID nvarchar(20),
@@ -12,6 +12,7 @@ create or alter proc Web_Employee_SaveData
 AS          
 BEGIN
 	BEGIN TRY
+		DECLARE @CurrDate datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
 		BEGIN
 			IF LEN(ISNULL(@Employee_Name,''))=0
 			BEGIN
@@ -39,7 +40,7 @@ BEGIN
 		BEGIN
 			UPDATE POS_Employee
 			SET Employee_Name=@Employee_Name, UserID=@User_ID, UserPassword=@UserPassword, Email=@Email, 
-			Phone=@Phone, Role_ID=@Role_ID, Modified_User=@UserID, Modified_Date=CAST(GETDATE() as date)
+			Phone=@Phone, Role_ID=@Role_ID, Modified_User=@UserID, Modified_Date=@CurrDate
 			WHERE RTRIM(Employee_ID)=RTRIM(@Employee_ID)
 		END
 		ELSE
@@ -51,7 +52,7 @@ BEGIN
 			INSERT INTO [POS_Employee]
 			(Employee_ID, Employee_Name, UserID, UserPassword, Email, Phone, Role_ID, Created_User, Created_Date, Modified_User, Modified_Date)
 			VALUES
-			(@Employee_ID, @Employee_Name, @User_ID, @UserPassword, @Email, @Phone, @Role_ID, @UserID, CAST(GETDATE() as date), '', '')
+			(@Employee_ID, @Employee_Name, @User_ID, @UserPassword, @Email, @Phone, @Role_ID, @UserID, @CurrDate, '', '')
 		END
 
 		DECLARE @LINEITEM int = 0
@@ -62,7 +63,7 @@ BEGIN
 		INSERT INTO [POS_Employee_History]
 		(Employee_ID, Line_Item, Employee_Name, UserID, UserPassword, Email, Phone, Role_ID, Created_User, Created_Date)
 		VALUES
-		(@Employee_ID, COALESCE(@LINEITEM, 0), @Employee_Name, @User_ID, @UserPassword, @Email, @Phone, @Role_ID, @UserID, CAST(GETDATE() as date))
+		(@Employee_ID, COALESCE(@LINEITEM, 0), @Employee_Name, @User_ID, @UserPassword, @Email, @Phone, @Role_ID, @UserID, @CurrDate)
 			
 		SELECT CODE='200', Employee_ID=@Employee_ID
 

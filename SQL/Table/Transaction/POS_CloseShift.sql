@@ -20,5 +20,5 @@ CREATE TABLE POS_CloseShift
 	Created_Date DATETIME NOT NULL,
 	Modified_User nvarchar(30),
 	Modified_Date DATETIME,
-	CONSTRAINT PK_POS_CloseShift PRIMARY KEY NONCLUSTERED (Batch_ID ASC)
+	CONSTRAINT PK_POS_CloseShift PRIMARY KEY NONCLUSTERED (Batch_ID ASC, Lineitmseq ASC, Payment_ID ASC)
 )

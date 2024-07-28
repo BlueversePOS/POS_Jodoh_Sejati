@@ -9,12 +9,21 @@ AS BEGIN
 	BEGIN TRY
 		declare @IDMAX INT = 0, @p15 nvarchar(255)=''
 		DECLARE @DocNo varchar(max)=''
-		DECLARE @CURRENTDATE DATETIME = CAST(GETDATE() as DATE)
+		DECLARE @CURRENTDATE DATETIME = CAST(SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time' as DATE)
 		DECLARE @LineItem int = 10
 
 		IF RTRIM(COALESCE(@DOCID, '')) = ''
 		BEGIN
 			RAISERROR('Document ID not found.', 16, 1)
+		END
+		
+		DECLARE @LastDocNo varchar(max)=''
+		IF UPPER(@DOCID) = 'INV'
+		BEGIN
+			select top 1 @LastDocNo=ISNULL(cast(REPLACE(DOCNUMBER,@DOCID + '-' + FORMAT(@CURRENTDATE, 'dd-MM-yyyy') + '-','') as INT), 0) 
+			from POS_TrxHeader_POST
+			where CAST(DOCDATE as DATE)=CAST(@CURRENTDATE as DATE) 
+			order by DOCDATE desc, DOCNUMBER desc
 		END
 
 		IF NOT EXISTS(select DocumentID from POS_RunningNumber where DocumentID=@DOCID and CAST(CurrentDate as DATE)=CAST(@CURRENTDATE as DATE))
@@ -26,10 +35,20 @@ AS BEGIN
 		BEGIN
 			SELECT top 1 @IDMAX=ISNULL(cast(REPLACE(CurrentNumber,@DOCID + '-' + FORMAT(@CURRENTDATE, 'dd-MM-yyyy') + '-','') as INT), 0)
 			FROM POS_RunningNumber 
-			WHERE DocumentID=@DOCID
+			WHERE DocumentID=@DOCID and CAST(CurrentDate as DATE)=CAST(@CURRENTDATE as DATE)
 
-			SET @IDMAX = @IDMAX + 1
-
+			IF UPPER(@DOCID) <> 'INV'
+			BEGIN
+				SET @LastDocNo = @IDMAX
+			END
+			IF @IDMAX = @LastDocNo
+			BEGIN
+				SET @IDMAX = @IDMAX + 1
+			END
+			ELSE
+			BEGIN
+				SET @IDMAX = @LastDocNo + 1
+			END
 			SET @DocNo = @DOCID + '-' + FORMAT(@CURRENTDATE, 'dd-MM-yyyy') + '-' + REPLICATE('0', 3 - LEN(@IDMAX)) + CONVERT(nvarchar(68), @IDMAX)
 		END
 

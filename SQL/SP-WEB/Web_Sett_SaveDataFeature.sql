@@ -1,4 +1,4 @@
-create or alter proc Web_Sett_SaveDataFeature
+create or alter proc [dbo].[Web_Sett_SaveDataFeature]
 (
 	@UserID nvarchar(20),
 	@Feature_ID nvarchar(20),
@@ -10,11 +10,12 @@ create or alter proc Web_Sett_SaveDataFeature
 AS          
 BEGIN
 	BEGIN TRY
+		DECLARE @CurrDate datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
 		IF EXISTS(SELECT * FROM POS_Set_Features WITH(NOLOCK) WHERE RTRIM(Feature_ID)=RTRIM(@Feature_ID))
 		BEGIN
 			UPDATE POS_Set_Features
 			SET Feature_Shift=@Feature_Shift, Feature_TimeClock=@Feature_TimeClock, Feature_LowStock=@Feature_LowStock, 
-			Feature_NegativeStock=@Feature_NegativeStock, Modified_User=@UserID, Modified_Date=CAST(GETDATE() as date)
+			Feature_NegativeStock=@Feature_NegativeStock, Modified_User=@UserID, Modified_Date=@CurrDate
 			WHERE RTRIM(Feature_ID)=RTRIM(@Feature_ID)
 		END
 		ELSE
@@ -26,7 +27,7 @@ BEGIN
 			INSERT INTO [POS_Set_Features]
 			(Feature_ID, Feature_Shift, Feature_TimeClock, Feature_LowStock, Feature_NegativeStock, Created_User, Created_Date, Modified_User, Modified_Date)
 			VALUES
-			(@Feature_ID, @Feature_Shift, @Feature_TimeClock, @Feature_LowStock, @Feature_NegativeStock, @UserID, CAST(GETDATE() as date), '', '')
+			(@Feature_ID, @Feature_Shift, @Feature_TimeClock, @Feature_LowStock, @Feature_NegativeStock, @UserID, @CurrDate, '', '')
 		END
 
 		DECLARE @LINEITEM int = 0
@@ -37,7 +38,7 @@ BEGIN
 		INSERT INTO [POS_Set_Features_History]
 		(Feature_ID, Line_Item, Feature_Shift, Feature_TimeClock, Feature_LowStock, Feature_NegativeStock, Created_User, Created_Date)
 		VALUES
-		(@Feature_ID, COALESCE(@LINEITEM, 0), @Feature_Shift, @Feature_TimeClock, @Feature_LowStock, @Feature_NegativeStock, @UserID, CAST(GETDATE() as date))
+		(@Feature_ID, COALESCE(@LINEITEM, 0), @Feature_Shift, @Feature_TimeClock, @Feature_LowStock, @Feature_NegativeStock, @UserID, @CurrDate)
 			
 		SELECT CODE='200', Feature_ID=@Feature_ID
 

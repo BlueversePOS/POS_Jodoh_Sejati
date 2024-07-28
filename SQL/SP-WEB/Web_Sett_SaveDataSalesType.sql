@@ -1,4 +1,4 @@
-create or alter proc Web_Sett_SaveDataSalesType
+create or alter proc [dbo].[Web_Sett_SaveDataSalesType]
 (
 	@UserID nvarchar(20),
 	@SalesType_ID nvarchar(20), 
@@ -9,6 +9,7 @@ create or alter proc Web_Sett_SaveDataSalesType
 AS          
 BEGIN
 	BEGIN TRY
+		DECLARE @CurrDate datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
 		BEGIN
 			IF LEN(ISNULL(@SalesType_ID,''))=0
 			BEGIN
@@ -27,7 +28,7 @@ BEGIN
 		IF EXISTS(SELECT * FROM POS_Set_SalesType WITH(NOLOCK) WHERE RTRIM(SalesType_ID)=RTRIM(@SalesType_ID))
 		BEGIN
 			UPDATE POS_Set_SalesType
-			SET SalesType_Name=@SalesType_Name, Store_ID=@Store_ID, Store_Name=@Store_Name, Modified_User=@UserID, Modified_Date=CAST(GETDATE() as date)
+			SET SalesType_Name=@SalesType_Name, Store_ID=@Store_ID, Store_Name=@Store_Name, Modified_User=@UserID, Modified_Date=@CurrDate
 			WHERE RTRIM(SalesType_ID)=RTRIM(@SalesType_ID)
 		END
 		ELSE
@@ -35,7 +36,7 @@ BEGIN
 			INSERT INTO [POS_Set_SalesType]
 			(SalesType_ID, SalesType_Name, Store_ID, Store_Name, Created_User, Created_Date, Modified_User, Modified_Date)
 			VALUES
-			(@SalesType_ID, @SalesType_Name, @Store_ID, @Store_Name, @UserID, CAST(GETDATE() as date), '', '')
+			(@SalesType_ID, @SalesType_Name, @Store_ID, @Store_Name, @UserID, @CurrDate, '', '')
 		END
 
 		DECLARE @LINEITEM int = 0
@@ -46,7 +47,7 @@ BEGIN
 		INSERT INTO [POS_Set_SalesType_History]
 		(SalesType_ID, Line_Item, SalesType_Name, Store_ID, Store_Name, Created_User, Created_Date)
 		VALUES
-		(@SalesType_ID, COALESCE(@LINEITEM, 0), @SalesType_Name, @Store_ID, @Store_Name, @UserID, CAST(GETDATE() as date))
+		(@SalesType_ID, COALESCE(@LINEITEM, 0), @SalesType_Name, @Store_ID, @Store_Name, @UserID, @CurrDate)
 			
 		SELECT CODE='200', SalesType_ID=@SalesType_ID
 

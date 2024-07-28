@@ -17,6 +17,7 @@ CREATE TABLE POS_TrxDetail_HIST
 	Lineitmseq int NOT NULL,
 	Item_Number nvarchar(20) NOT NULL, 
 	Item_Description nvarchar(500) NOT NULL, 
+	LineItem_Option numeric(19, 5) NULL,
 	Quantity numeric(19,5) NOT NULL,
 	UofM nvarchar(20) NOT NULL, 
 	Item_Price numeric(19,5) NOT NULL,

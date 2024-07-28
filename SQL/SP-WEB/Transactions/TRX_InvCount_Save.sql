@@ -9,7 +9,7 @@ exec TRX_InvCount_Save @DOCNUMBER=N'',@Site_ID=N'SITE0002',@Site_Name=N'SITE B',
 
 rollback
 */
-create or alter proc TRX_InvCount_Save
+create or alter proc [dbo].[TRX_InvCount_Save]
 (
 	@DOCNUMBER nvarchar(20), 
 	@Site_ID nvarchar(20), 
@@ -24,6 +24,7 @@ create or alter proc TRX_InvCount_Save
 AS          
 BEGIN
 	BEGIN TRY
+		DECLARE @CurrDate datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
 		IF @InvCount=1
 		BEGIN
 			SELECT @Site_ID=Site_ID, @Site_Name=Site_Name, @Type_Inventory_Count=Type_Inventory_Count, @Notes=Notes 
@@ -78,12 +79,12 @@ BEGIN
 			) A
 			order by A.Item_SKU
 		END
-		DECLARE @DOCDATE DATETIME = CAST(GETDATE() as date), @Completed_Date DATETIME = '1900-01-01',
+		DECLARE @DOCDATE DATETIME = CAST(@CurrDate as date), @Completed_Date DATETIME = '1900-01-01',
 				@Total_Line_Item int=0
 		
 		SELECT @Total_Line_Item=COUNT(*) FROM @TrxInvCountTABLE
 
-		IF @Status=3 BEGIN SET @Completed_Date = CAST(GETDATE() as date) END
+		IF @Status=3 BEGIN SET @Completed_Date = CAST(@CurrDate as date) END
 
 		IF @Status < 3
 		BEGIN
@@ -91,7 +92,7 @@ BEGIN
 			BEGIN
 				UPDATE POS_TrxInvCount_HeaderTEMP
 				SET Completed_Date=CASE WHEN @Status=3 THEN @Completed_Date ELSE '' END, Site_ID=@Site_ID, Site_Name=@Site_Name, Type_Inventory_Count=@Type_Inventory_Count,
-				Total_Line_Item=@Total_Line_Item, Notes=@Notes, [Status]=@Status, Modified_User=@UserID, Modified_Date=CAST(GETDATE() as date), Modified_time=CAST(GETDATE() as time)
+				Total_Line_Item=@Total_Line_Item, Notes=@Notes, [Status]=@Status, Modified_User=@UserID, Modified_Date=CAST(@CurrDate as date), Modified_time=CAST(@CurrDate as time)
 				WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 			END
 			ELSE IF LEN(RTRIM(@DOCNUMBER)) = 0
@@ -118,7 +119,7 @@ BEGIN
 				Notes, [Status], Created_User, Created_Date, Created_time, Modified_User, Modified_Date, Modified_time)
 				VALUES
 				(@DOCNUMBER, @DOCDATE, @Completed_Date, @Site_ID, @Site_Name, @Type_Inventory_Count, @Total_Line_Item, 
-				@Notes, @Status, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time), '', '', '')
+				@Notes, @Status, @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time), '', '', '')
 			END
 		END
 
@@ -135,36 +136,36 @@ BEGIN
 		WHEN MATCHED THEN
 		UPDATE 
 		SET Item_Number=B.Item_Number, Item_Description=B.Item_Description, Item_SKU=B.Item_SKU, Expected_Stock=B.Expected_Stock, Counted_Stock=B.Counted_Stock, Different_Stock=B.Different_Stock, 
-		Item_Cost=B.Item_Cost, Item_Cost_Different=B.Item_Cost_Different, Modified_User=@UserID, Modified_Date= cast(getdate() as date), Modified_time= cast(getdate() as time)
+		Item_Cost=B.Item_Cost, Item_Cost_Different=B.Item_Cost_Different, Modified_User=@UserID, Modified_Date= cast(@CurrDate as date), Modified_time= cast(@CurrDate as time)
 
 		WHEN NOT MATCHED BY TARGET THEN
 		INSERT(DOCNUMBER, DOCDATE, Lineitmseq, Item_Number, Item_Description, Item_SKU, Expected_Stock, Counted_Stock, Different_Stock, 
 		Item_Cost, Item_Cost_Different, Created_User, Created_Date, Created_time, Modified_User, Modified_Date, Modified_time)
 		VALUES(@DOCNUMBER, @DOCDATE, B.Lineitmseq, B.Item_Number, B.Item_Description, B.Item_SKU, B.Expected_Stock, B.Counted_Stock, B.Different_Stock, 
-		B.Item_Cost, B.Item_Cost_Different, @UserID, cast(getdate() as date), cast(getdate() as time), '','','' );
+		B.Item_Cost, B.Item_Cost_Different, @UserID, cast(@CurrDate as date), cast(@CurrDate as time), '','','' );
 		
 		INSERT INTO POS_TrxInvCount_HeaderHIST(DOCNUMBER, DOCDATE, Completed_Date, Site_ID, Site_Name, Type_Inventory_Count, Total_Line_Item, Notes, [Status], Created_User, Created_Date, Created_time)
-		SELECT DOCNUMBER, DOCDATE, Completed_Date, Site_ID, Site_Name, Type_Inventory_Count, Total_Line_Item, Notes, @Status, Created_User, cast(getdate() as date), cast(getdate() as time)
+		SELECT DOCNUMBER, DOCDATE, Completed_Date, Site_ID, Site_Name, Type_Inventory_Count, Total_Line_Item, Notes, @Status, Created_User, cast(@CurrDate as date), cast(@CurrDate as time)
 		FROM POS_TrxInvCount_HeaderTEMP WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 
 		INSERT INTO POS_TrxInvCount_DetailHIST(DOCNUMBER, DOCDATE, Lineitmseq, Item_Number, Item_Description, Item_SKU, Expected_Stock, 
 		Counted_Stock, Different_Stock, Item_Cost, Item_Cost_Different, Created_User, Created_Date, Created_time, Modified_User, Modified_Date, Modified_time)
 		SELECT DOCNUMBER, DOCDATE, Lineitmseq, Item_Number, Item_Description, Item_SKU, Expected_Stock, Counted_Stock, Different_Stock, 
-		Item_Cost, Item_Cost_Different, Created_User, cast(getdate() as date), cast(getdate() as time), Modified_User, cast(getdate() as date), cast(getdate() as time)
+		Item_Cost, Item_Cost_Different, Created_User, cast(@CurrDate as date), cast(@CurrDate as time), Modified_User, cast(@CurrDate as date), cast(@CurrDate as time)
 		FROM POS_TrxInvCount_DetailTEMP WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 
 		IF @Status=3
 		BEGIN
 			INSERT INTO POS_TrxInvCount_HeaderPOST(DOCNUMBER, DOCDATE, Completed_Date, Site_ID, Site_Name, Type_Inventory_Count, 
 			Total_Line_Item, Notes, [Status], Created_User, Created_Date, Created_time, Modified_User, Modified_Date, Modified_time)
-			SELECT DOCNUMBER, DOCDATE, cast(getdate() as date), Site_ID, Site_Name, Type_Inventory_Count, Total_Line_Item, 
-			Notes, @Status, Created_User, cast(getdate() as date), cast(getdate() as time), Modified_User, cast(getdate() as date), cast(getdate() as time)
+			SELECT DOCNUMBER, DOCDATE, cast(@CurrDate as date), Site_ID, Site_Name, Type_Inventory_Count, Total_Line_Item, 
+			Notes, @Status, Created_User, cast(@CurrDate as date), cast(@CurrDate as time), Modified_User, cast(@CurrDate as date), cast(@CurrDate as time)
 			FROM POS_TrxInvCount_HeaderTEMP WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 
 			INSERT INTO POS_TrxInvCount_DetailPOST(DOCNUMBER, DOCDATE, Lineitmseq, Item_Number, Item_Description, Item_SKU, Expected_Stock, 
 			Counted_Stock, Different_Stock, Item_Cost, Item_Cost_Different, Created_User, Created_Date, Created_time, Modified_User, Modified_Date, Modified_time)
 			SELECT DOCNUMBER, DOCDATE, Lineitmseq, Item_Number, Item_Description, Item_SKU, Expected_Stock, Counted_Stock, Different_Stock, 
-			Item_Cost, Item_Cost_Different, Created_User, cast(getdate() as date), cast(getdate() as time), Modified_User, cast(getdate() as date), cast(getdate() as time)
+			Item_Cost, Item_Cost_Different, Created_User, cast(@CurrDate as date), cast(@CurrDate as time), Modified_User, cast(@CurrDate as date), cast(@CurrDate as time)
 			FROM POS_TrxInvCount_DetailTEMP WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 			
 			DELETE FROM POS_TrxInvCount_HeaderTEMP WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)

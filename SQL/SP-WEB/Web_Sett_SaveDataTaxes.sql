@@ -1,4 +1,4 @@
-create or alter proc Web_Sett_SaveDataTaxes
+create or alter proc [dbo].[Web_Sett_SaveDataTaxes]
 (
 	@UserID nvarchar(20),
 	@Tax_ID nvarchar(20), 
@@ -10,10 +10,11 @@ create or alter proc Web_Sett_SaveDataTaxes
 AS          
 BEGIN
 	BEGIN TRY
+		DECLARE @CurrDate datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
 		IF EXISTS(SELECT * FROM POS_Set_Taxes WITH(NOLOCK) WHERE RTRIM(Tax_ID)=RTRIM(@Tax_ID))
 		BEGIN
 			UPDATE POS_Set_Taxes
-			SET Tax_Name=@Tax_Name, Tax_Rate=@Tax_Rate, Tax_Type=@Tax_Type, Tax_Option=@Tax_Option, Modified_User=@UserID, Modified_Date=CAST(GETDATE() as date)
+			SET Tax_Name=@Tax_Name, Tax_Rate=@Tax_Rate, Tax_Type=@Tax_Type, Tax_Option=@Tax_Option, Modified_User=@UserID, Modified_Date=@CurrDate
 			WHERE RTRIM(Tax_ID)=RTRIM(@Tax_ID)
 		END
 		ELSE
@@ -25,7 +26,7 @@ BEGIN
 			INSERT INTO [POS_Set_Taxes]
 			(Tax_ID, Tax_Name, Tax_Rate, Tax_Type, Tax_Option, Created_User, Created_Date, Modified_User, Modified_Date)
 			VALUES
-			(@Tax_ID, @Tax_Name, @Tax_Rate, @Tax_Type, @Tax_Option, @UserID, CAST(GETDATE() as date), '', '')
+			(@Tax_ID, @Tax_Name, @Tax_Rate, @Tax_Type, @Tax_Option, @UserID, @CurrDate, '', '')
 		END
 
 		DECLARE @LINEITEM int = 0
@@ -36,7 +37,7 @@ BEGIN
 		INSERT INTO [POS_Set_Taxes_History]
 		(Tax_ID, Line_Item, Tax_Name, Tax_Rate, Tax_Type, Tax_Option, Created_User, Created_Date)
 		VALUES
-		(@Tax_ID, COALESCE(@LINEITEM, 0), @Tax_Name, @Tax_Rate, @Tax_Type, @Tax_Option, @UserID, CAST(GETDATE() as date))
+		(@Tax_ID, COALESCE(@LINEITEM, 0), @Tax_Name, @Tax_Rate, @Tax_Type, @Tax_Option, @UserID, @CurrDate)
 			
 		SELECT CODE='200', Tax_ID=@Tax_ID
 

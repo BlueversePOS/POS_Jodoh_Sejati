@@ -1,4 +1,4 @@
-create or alter proc Web_Categories_SaveData
+create or alter proc [dbo].[Web_Categories_SaveData]
 (
 	@UserID nvarchar(20),
 	@Category_ID nvarchar(20),
@@ -8,6 +8,7 @@ create or alter proc Web_Categories_SaveData
 AS          
 BEGIN
 	BEGIN TRY
+		DECLARE @CurrDate datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
 		BEGIN
 			IF LEN(ISNULL(@Category_Name,''))=0
 			BEGIN
@@ -22,7 +23,7 @@ BEGIN
 		IF EXISTS(SELECT * FROM POS_CategoryItem WITH(NOLOCK) WHERE RTRIM(Category_ID)=RTRIM(@Category_ID))
 		BEGIN
 			UPDATE POS_CategoryItem
-			SET Category_Name=@Category_Name, Category_Color=@Category_Color, Modified_User=@UserID, Modified_Date=DATEADD(HOUR,1,GETDATE())
+			SET Category_Name=@Category_Name, Category_Color=@Category_Color, Modified_User=@UserID, Modified_Date=@CurrDate
 			WHERE RTRIM(Category_ID)=RTRIM(@Category_ID)
 		END
 		ELSE
@@ -34,7 +35,7 @@ BEGIN
 			INSERT INTO [POS_CategoryItem]
 			(Category_ID, Category_Name, Category_Color, Created_User, Created_Date, Modified_User, Modified_Date)
 			VALUES
-			(@Category_ID, @Category_Name, @Category_Color, @UserID, DATEADD(HOUR,1,GETDATE()), '', '')
+			(@Category_ID, @Category_Name, @Category_Color, @UserID, @CurrDate, '', '')
 		END
 
 		DECLARE @LINEITEM int = 0
@@ -45,7 +46,7 @@ BEGIN
 		INSERT INTO [POS_CategoryItem_History]
 		(Category_ID, Line_Item, Category_Name, Category_Color, Created_User, Created_Date)
 		VALUES
-		(@Category_ID, COALESCE(@LINEITEM, 0), @Category_Name, @Category_Color, @UserID, DATEADD(HOUR,1,GETDATE()))
+		(@Category_ID, COALESCE(@LINEITEM, 0), @Category_Name, @Category_Color, @UserID, @CurrDate)
 			
 		SELECT CODE='200', Category_Name=@Category_Name
 

@@ -1,4 +1,4 @@
-create or alter proc TRX_SaveCloseShift
+create or alter proc [dbo].[TRX_SaveCloseShift]
 (
 	@Batch_ID nvarchar(20),
 	@Lineitmseq int,
@@ -10,12 +10,18 @@ create or alter proc TRX_SaveCloseShift
 AS          
 BEGIN
 	BEGIN TRY
-		IF EXISTS(SELECT * FROM POS_CloseShift WITH(NOLOCK) WHERE RTRIM(Batch_ID)=RTRIM(@Batch_ID))
+		DECLARE @CurrDate datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
+		IF EXISTS(SELECT * FROM POS_CloseShift WITH(NOLOCK) WHERE RTRIM(Batch_ID)=RTRIM(@Batch_ID) and Payment_ID=@Payment_ID)
 		BEGIN
-			UPDATE POS_CloseShift
-			SET Lineitmseq=@Lineitmseq, Payment_ID=@Payment_ID, Payment_Type=@Payment_Type, Amount_Opening=@Amount_Opening,
-			Modified_User=@UserID, Modified_Date=CAST(GETDATE() as datetime)
-			WHERE RTRIM(Batch_ID)=RTRIM(@Batch_ID)
+			UPDATE A
+			SET A.Payment_Type=COALESCE(B.Payment_Type, ''), 
+			A.Amount=@Amount_Opening, A.Modified_User=@UserID, A.Modified_Date=CAST(@CurrDate as datetime)
+			FROM POS_CloseShift A
+			OUTER APPLY (
+				SELECT Payment_Type 
+				FROM POS_Set_PayTypes where Payment_ID=@Payment_ID
+			) B
+			WHERE RTRIM(A.Batch_ID)=RTRIM(@Batch_ID) and A.Payment_ID=@Payment_ID
 		END
 		ELSE
 		BEGIN
@@ -25,10 +31,16 @@ BEGIN
 				EXEC Web_Generate_NumberMaster @TABLE=N'POS_CloseShift', @FIELD=N'Batch_ID', @DOCID=N'SHF', @NEWNUMBER=@p output
 				SET @Batch_ID=@p
 			END
+			
+			SELECT @Lineitmseq = ISNULL(MAX(Lineitmseq), 0) + 1
+			FROM POS_CloseShift
+			WHERE RTRIM(Batch_ID)=RTRIM(@Batch_ID) and Payment_ID=@Payment_ID
+
 			INSERT INTO [POS_CloseShift]
-			(Batch_ID, Lineitmseq, Payment_ID, Payment_Type, Amount_Opening, Created_User, Created_Date, Modified_User, Modified_Date)
-			VALUES
-			(@Batch_ID, @Lineitmseq, @Payment_ID, @Payment_Type, @Amount_Opening, @UserID, CAST(GETDATE() as datetime), '', '')
+			(Batch_ID, Lineitmseq, Payment_ID, Payment_Type, Amount, Created_User, Created_Date, Modified_User, Modified_Date)
+			SELECT @Batch_ID, @Lineitmseq, @Payment_ID, Payment_Type, @Amount_Opening, @UserID, CAST(@CurrDate as datetime), '', ''
+			FROM POS_Set_PayTypes
+			where Payment_ID=@Payment_ID
 		END
 			
 		SELECT CODE='200', Batch_ID=@Batch_ID

@@ -1,4 +1,4 @@
-create or alter proc Web_AccessRight_SaveData
+create or alter proc [dbo].[Web_AccessRight_SaveData]
 (
 	@UserID nvarchar(20),
 	@Role_ID nvarchar(20),
@@ -27,6 +27,7 @@ create or alter proc Web_AccessRight_SaveData
 AS          
 BEGIN
 	BEGIN TRY
+		DECLARE @CurrDate datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
 		BEGIN
 			IF LEN(ISNULL(@Role_Name,''))=0
 			BEGIN
@@ -42,7 +43,7 @@ BEGIN
 			POS_ViewCostPOS=@POS_ViewCostPOS, POS_ChangeSetting=@POS_ChangeSetting, BckOffice_Flag=@BckOffice_Flag, BckOffice_ViewSales=@BckOffice_ViewSales, 
 			BckOffice_ManageItemsOff=@BckOffice_ManageItemsOff, BckOffice_ViewCostOff=@BckOffice_ViewCostOff, BckOffice_ManageEmployee=@BckOffice_ManageEmployee, 
 			BckOffice_ManageCustomers=@BckOffice_ManageCustomers, BckOffice_EditSetting=@BckOffice_EditSetting, BckOffice_ManagePayTypes=@BckOffice_ManagePayTypes, 
-			BckOffice_ManageTaxes=@BckOffice_ManageTaxes, BckOffice_POSDevices=@BckOffice_POSDevices, Modified_User=@UserID, Modified_Date=CAST(GETDATE() as date)
+			BckOffice_ManageTaxes=@BckOffice_ManageTaxes, BckOffice_POSDevices=@BckOffice_POSDevices, Modified_User=@UserID, Modified_Date=@CurrDate
 			WHERE RTRIM(Role_ID)=RTRIM(@Role_ID)
 		END
 		ELSE
@@ -60,7 +61,7 @@ BEGIN
 			(@Role_ID, @Role_Name, @POS_Flag, @POS_AccessPayments, @POS_ApplyDiscount, @POS_ChangeTaxes, @POS_ViewReceipt, @POS_ReprintSendReceipt, @POS_ViewShift, 
 			@POS_ManageItemsPOS, @POS_ViewCostPOS, @POS_ChangeSetting, @BckOffice_Flag, @BckOffice_ViewSales, @BckOffice_ManageItemsOff, @BckOffice_ViewCostOff, 
 			@BckOffice_ManageEmployee, @BckOffice_ManageCustomers, @BckOffice_EditSetting, @BckOffice_ManagePayTypes, @BckOffice_ManageTaxes, @BckOffice_POSDevices, 
-			@UserID, CAST(GETDATE() as date), '', '')
+			@UserID, @CurrDate, '', '')
 		END
 
 		DECLARE @LINEITEM int = 0
@@ -75,7 +76,7 @@ BEGIN
 		VALUES
 		(@Role_ID, @Role_Name, COALESCE(@LINEITEM, 0), @POS_Flag, @POS_AccessPayments, @POS_ApplyDiscount, @POS_ChangeTaxes, @POS_ViewReceipt, @POS_ReprintSendReceipt, @POS_ViewShift, 
 		@POS_ManageItemsPOS, @POS_ViewCostPOS, @POS_ChangeSetting, @BckOffice_Flag, @BckOffice_ViewSales, @BckOffice_ManageItemsOff, @BckOffice_ViewCostOff, 
-		@BckOffice_ManageEmployee, @BckOffice_ManageCustomers, @BckOffice_EditSetting, @BckOffice_ManagePayTypes, @BckOffice_ManageTaxes, @BckOffice_POSDevices, @UserID, CAST(GETDATE() as date))
+		@BckOffice_ManageEmployee, @BckOffice_ManageCustomers, @BckOffice_EditSetting, @BckOffice_ManagePayTypes, @BckOffice_ManageTaxes, @BckOffice_POSDevices, @UserID, @CurrDate)
 			
 		SELECT CODE='200', Role_ID=@Role_ID
 

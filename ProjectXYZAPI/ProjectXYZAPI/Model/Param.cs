@@ -368,6 +368,7 @@ namespace ProjectXYZAPI.Model
         public int Lineitmseq { get; set; }
         public string Item_Number { get; set; }
         public string Item_Description { get; set; }
+        public decimal LineItem_Option { get; set; }
         public decimal Quantity { get; set; }
         public string UofM { get; set; }
         public decimal Item_Price { get; set; }

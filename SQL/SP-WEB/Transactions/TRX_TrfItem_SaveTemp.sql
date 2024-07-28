@@ -8,7 +8,7 @@ exec TRX_TrfItem_Save @DOCNUMBER=N'',@DOCDATE='2024-01-27 09:46:54',@Site_ID=N'S
 
 rollback
 */
-create or alter proc TRX_TrfItem_SaveTemp
+create or alter proc [dbo].[TRX_TrfItem_SaveTemp]
 (
 	@DOCNUMBER nvarchar(20), 
 	@DOCDATE DATETIME,
@@ -25,6 +25,7 @@ create or alter proc TRX_TrfItem_SaveTemp
 AS          
 BEGIN
 	BEGIN TRY
+		DECLARE @CurrDate datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
 		IF LEN(RTRIM(@SourceSite_ID)) = 0
 		BEGIN
 			RAISERROR('Please choose source site', 16, 1)
@@ -41,7 +42,7 @@ BEGIN
 		BEGIN
 			UPDATE POS_TrxItemTrf_HeaderTEMP
 			SET DOCDATE=@DOCDATE, SourceSite_ID=@SourceSite_ID, SourceSite_Name=@SourceSite_Name, DestSite_ID=@DestSite_ID, DestSite_Name=@DestSite_Name, 
-			Total_Line_Item=@Total_Line_Item, Notes=@Notes, [Status]=@Status, Modified_User=@UserID, Modified_Date=CAST(GETDATE() as date), Modified_time=CAST(GETDATE() as time)
+			Total_Line_Item=@Total_Line_Item, Notes=@Notes, [Status]=@Status, Modified_User=@UserID, Modified_Date=CAST(@CurrDate as date), Modified_time=CAST(@CurrDate as time)
 			WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 		END
 		ELSE
@@ -64,24 +65,24 @@ BEGIN
 			INSERT INTO [POS_TrxItemTrf_HeaderTEMP]
 			(DOCNUMBER, DOCDATE, SourceSite_ID, SourceSite_Name, DestSite_ID, DestSite_Name, Total_Line_Item, Notes, [Status], Created_User, Created_Date, Created_time, Modified_User, Modified_Date, Modified_time)
 			VALUES
-			(@DOCNUMBER, @DOCDATE, @SourceSite_ID, @SourceSite_Name, @DestSite_ID, @DestSite_Name, @Total_Line_Item, @Notes, @Status, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time), @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time))
+			(@DOCNUMBER, @DOCDATE, @SourceSite_ID, @SourceSite_Name, @DestSite_ID, @DestSite_Name, @Total_Line_Item, @Notes, @Status, @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time), @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time))
 		END
 
 		DELETE FROM POS_TrxItemTrf_DetailTEMP WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 
 		INSERT INTO POS_TrxItemTrf_DetailTEMP(DOCNUMBER, DOCDATE, Lineitmseq, Item_Number, Item_Description, Item_SKU, Source_Stock, Dest_Stock, Qty_Transfer, Created_User, Created_Date, Created_time, Modified_User, Modified_Date, Modified_time)
-		SELECT @DOCNUMBER, DOCDATE, Lineitmseq, Item_Number, Item_Description, Item_SKU, Source_Stock, Dest_Stock, Qty_Transfer, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time), @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time)
+		SELECT @DOCNUMBER, DOCDATE, Lineitmseq, Item_Number, Item_Description, Item_SKU, Source_Stock, Dest_Stock, Qty_Transfer, @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time), @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time)
 		FROM @TrxItemTrfDetailTYPE
 
 		IF @Status = 2
 		BEGIN
 			INSERT INTO POS_TrxItemTrf_HeaderPOST
 			(DOCNUMBER, DOCDATE, SourceSite_ID, SourceSite_Name, DestSite_ID, DestSite_Name, Total_Line_Item, Notes, [Status], Created_User, Created_Date, Created_time, Modified_User, Modified_Date, Modified_time)
-			SELECT DOCNUMBER, DOCDATE, SourceSite_ID, SourceSite_Name, DestSite_ID, DestSite_Name, Total_Line_Item, Notes, [Status], @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time), @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time)
+			SELECT DOCNUMBER, DOCDATE, SourceSite_ID, SourceSite_Name, DestSite_ID, DestSite_Name, Total_Line_Item, Notes, [Status], @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time), @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time)
 			FROM POS_TrxItemTrf_HeaderTEMP WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 			
 			INSERT INTO POS_TrxItemTrf_DetailPOST(DOCNUMBER, DOCDATE, Lineitmseq, Item_Number, Item_Description, Item_SKU, Source_Stock, Dest_Stock, Qty_Transfer, Created_User, Created_Date, Created_time, Modified_User, Modified_Date, Modified_time)
-			SELECT DOCNUMBER, DOCDATE, Lineitmseq, Item_Number, Item_Description, Item_SKU, Source_Stock, Dest_Stock, Qty_Transfer, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time), @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time)
+			SELECT DOCNUMBER, DOCDATE, Lineitmseq, Item_Number, Item_Description, Item_SKU, Source_Stock, Dest_Stock, Qty_Transfer, @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time), @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time)
 			FROM POS_TrxItemTrf_DetailTEMP WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 
 			IF NOT EXISTS(SELECT * FROM POS_ItemVariant A 
@@ -91,7 +92,7 @@ BEGIN
 				INSERT INTO POS_ItemVariant(Item_Number, Site_ID, LineItem_Option, CB_Available, Option_ID, Option_Name, LineItem_Variant, Variant_Name, 
 				Item_Price, Item_Cost, InStock, LowStock, OptimalStock, Item_SKU, Item_Barcode, Created_User, Created_Date, Modified_User, Modified_Date)
 				SELECT DISTINCT A.Item_Number, @DestSite_ID, A.LineItem_Option, A.CB_Available, A.Option_ID, A.Option_Name, A.LineItem_Variant, A.Variant_Name, 
-				A.Item_Price, A.Item_Cost, 0, A.LowStock, A.OptimalStock, A.Item_SKU, A.Item_Barcode, @UserID, CAST(GETDATE() as date), @UserID, CAST(GETDATE() as date)
+				A.Item_Price, A.Item_Cost, 0, A.LowStock, A.OptimalStock, A.Item_SKU, A.Item_Barcode, @UserID, CAST(@CurrDate as date), @UserID, CAST(@CurrDate as date)
 				FROM POS_ItemVariant A
 				INNER JOIN POS_TrxItemTrf_DetailTEMP B ON A.Item_Number=B.Item_Number
 				WHERE RTRIM(B.DOCNUMBER)=RTRIM(@DOCNUMBER)
@@ -124,7 +125,7 @@ BEGIN
 			INSERT INTO POS_ItemVariant_History(Item_Number, Site_ID, LineItem_Option, Line_Item, CB_Available, Option_ID, Option_Name, LineItem_Variant, Variant_Name, 
 			Item_Price, Item_Cost, InStock, LowStock, OptimalStock, Item_SKU, Item_Barcode, Created_User, Created_Date)
 			SELECT DISTINCT A.Item_Number, A.Site_ID, A.LineItem_Option, ISNULL(Y.Line_Item, 0), A.CB_Available, A.Option_ID, A.Option_Name, A.LineItem_Variant, A.Variant_Name, 
-			A.Item_Price, A.Item_Cost, A.InStock, A.LowStock, A.OptimalStock, A.Item_SKU, A.Item_Barcode, @UserID, CAST(GETDATE() as date)
+			A.Item_Price, A.Item_Cost, A.InStock, A.LowStock, A.OptimalStock, A.Item_SKU, A.Item_Barcode, @UserID, CAST(@CurrDate as date)
 			FROM POS_ItemVariant A
 			INNER JOIN POS_TrxItemTrf_DetailTEMP B ON A.Item_Number=B.Item_Number
 			OUTER APPLY (
@@ -136,11 +137,11 @@ BEGIN
 			
 			INSERT INTO POS_TrxItemTrf_HeaderHIST
 			(DOCNUMBER, DOCDATE, SourceSite_ID, SourceSite_Name, DestSite_ID, DestSite_Name, Total_Line_Item, Notes, [Status], Created_User, Created_Date, Created_time)
-			SELECT DOCNUMBER, DOCDATE, SourceSite_ID, SourceSite_Name, DestSite_ID, DestSite_Name, Total_Line_Item, Notes, [Status], @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time)
+			SELECT DOCNUMBER, DOCDATE, SourceSite_ID, SourceSite_Name, DestSite_ID, DestSite_Name, Total_Line_Item, Notes, [Status], @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time)
 			FROM POS_TrxItemTrf_HeaderPOST WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 			
 			INSERT INTO POS_TrxItemTrf_DetailHIST(DOCNUMBER, DOCDATE, Lineitmseq, Item_Number, Item_Description, Item_SKU, Source_Stock, Dest_Stock, Qty_Transfer, Created_User, Created_Date, Created_time)
-			SELECT DOCNUMBER, DOCDATE, Lineitmseq, Item_Number, Item_Description, Item_SKU, Source_Stock, Dest_Stock, Qty_Transfer, @UserID, CAST(GETDATE() as date), CAST(GETDATE() as time)
+			SELECT DOCNUMBER, DOCDATE, Lineitmseq, Item_Number, Item_Description, Item_SKU, Source_Stock, Dest_Stock, Qty_Transfer, @UserID, CAST(@CurrDate as date), CAST(@CurrDate as time)
 			FROM POS_TrxItemTrf_DetailPOST WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)
 
 			DELETE FROM POS_TrxItemTrf_HeaderTEMP WHERE RTRIM(DOCNUMBER)=RTRIM(@DOCNUMBER)

@@ -1,4 +1,4 @@
-create or alter proc Web_Discounts_SaveData
+create or alter proc [dbo].[Web_Discounts_SaveData]
 (
 	@UserID nvarchar(20),
 	@Discount_ID nvarchar(30),
@@ -11,6 +11,7 @@ create or alter proc Web_Discounts_SaveData
 AS          
 BEGIN
 	BEGIN TRY
+		DECLARE @CurrDate datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
 		BEGIN
 			IF LEN(ISNULL(@Discount_Name,''))=0
 			BEGIN
@@ -30,7 +31,7 @@ BEGIN
 		BEGIN
 			UPDATE POS_Discount
 			SET Discount_Name=@Discount_Name, [TYPE]=@TYPE, Discount_Type=@Discount_Type, Discount_Value=@Discount_Value, 
-			Restricted_Access=@Restricted_Access, Modified_User=@UserID, Modified_Date=DATEADD(HOUR,1,GETDATE())
+			Restricted_Access=@Restricted_Access, Modified_User=@UserID, Modified_Date=@CurrDate
 			WHERE RTRIM(Discount_ID)=RTRIM(@Discount_ID)
 		END
 		ELSE
@@ -42,7 +43,7 @@ BEGIN
 			INSERT INTO [POS_Discount]
 			(Discount_ID, Discount_Name, [TYPE], Discount_Type, Discount_Value, Restricted_Access, Created_User, Created_Date, Modified_User, Modified_Date)
 			VALUES
-			(@Discount_ID, @Discount_Name, @TYPE, @Discount_Type, @Discount_Value, @Restricted_Access, @UserID, DATEADD(HOUR,1,GETDATE()), '', '')
+			(@Discount_ID, @Discount_Name, @TYPE, @Discount_Type, @Discount_Value, @Restricted_Access, @UserID, @CurrDate, '', '')
 		END
 
 		DECLARE @LINEITEM int = 0
@@ -53,7 +54,7 @@ BEGIN
 		INSERT INTO [POS_Discount_History]
 		(Discount_ID, Discount_Name, Line_Item, [TYPE], Discount_Type, Discount_Value, Restricted_Access, Created_User, Created_Date)
 		VALUES
-		(@Discount_ID, @Discount_Name, COALESCE(@LINEITEM, 0), @TYPE, @Discount_Type, @Discount_Value, @Restricted_Access, @UserID, DATEADD(HOUR,1,GETDATE()))
+		(@Discount_ID, @Discount_Name, COALESCE(@LINEITEM, 0), @TYPE, @Discount_Type, @Discount_Value, @Restricted_Access, @UserID, @CurrDate)
 			
 		SELECT CODE='200', Discount_Name=@Discount_Name
 

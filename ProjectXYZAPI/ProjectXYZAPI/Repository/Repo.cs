@@ -3300,6 +3300,7 @@ namespace ProjectXYZAPI.Repository
                                            N.Lineitmseq,
                                            N.Item_Number,
                                            N.Item_Description,
+                                           N.LineItem_Option,
                                            N.Quantity,
                                            N.UofM,
                                            N.Item_Price,
@@ -3324,6 +3325,7 @@ namespace ProjectXYZAPI.Repository
                     dtTbl.Columns.Add("Lineitmseq", typeof(int));
                     dtTbl.Columns.Add("Item_Number", typeof(string));
                     dtTbl.Columns.Add("Item_Description", typeof(string));
+                    dtTbl.Columns.Add("LineItem_Option", typeof(decimal));
                     dtTbl.Columns.Add("Quantity", typeof(decimal));
                     dtTbl.Columns.Add("UofM", typeof(string));
                     dtTbl.Columns.Add("Item_Price", typeof(decimal));

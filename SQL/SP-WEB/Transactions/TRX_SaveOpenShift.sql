@@ -1,4 +1,4 @@
-create or alter proc TRX_SaveOpenShift
+create or alter proc [dbo].[TRX_SaveOpenShift]
 (
 	@Batch_ID nvarchar(20),
 	@Lineitmseq int,
@@ -10,11 +10,17 @@ create or alter proc TRX_SaveOpenShift
 AS          
 BEGIN
 	BEGIN TRY
+		DECLARE @CurrDate datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
 		IF EXISTS(SELECT * FROM POS_OpenShift WITH(NOLOCK) WHERE RTRIM(Batch_ID)=RTRIM(@Batch_ID))
 		BEGIN
-			UPDATE POS_OpenShift
-			SET Lineitmseq=@Lineitmseq, Payment_ID=@Payment_ID, Payment_Type=@Payment_Type, Amount_Opening=@Amount_Opening,
-			Modified_User=@UserID, Modified_Date=CAST(GETDATE() as datetime)
+			UPDATE A
+			SET A.Lineitmseq=@Lineitmseq, A.Payment_ID=@Payment_ID, A.Payment_Type=COALESCE(B.Payment_Type, ''), 
+			Amount_Opening=@Amount_Opening, Modified_User=@UserID, Modified_Date=CAST(@CurrDate as datetime)
+			FROM POS_OpenShift A
+			OUTER APPLY (
+				SELECT Payment_Type 
+				FROM POS_Set_PayTypes where Payment_ID=@Payment_ID
+			) B
 			WHERE RTRIM(Batch_ID)=RTRIM(@Batch_ID)
 		END
 		ELSE
@@ -27,8 +33,9 @@ BEGIN
 			END
 			INSERT INTO [POS_OpenShift]
 			(Batch_ID, Lineitmseq, Payment_ID, Payment_Type, Amount_Opening, Created_User, Created_Date, Modified_User, Modified_Date)
-			VALUES
-			(@Batch_ID, @Lineitmseq, @Payment_ID, @Payment_Type, @Amount_Opening, @UserID, CAST(GETDATE() as datetime), '', '')
+			SELECT @Batch_ID, @Lineitmseq, @Payment_ID, Payment_Type, @Amount_Opening, @UserID, CAST(@CurrDate as datetime), '', ''
+			FROM POS_Set_PayTypes
+			where Payment_ID=@Payment_ID
 		END
 			
 		SELECT CODE='200', Batch_ID=@Batch_ID

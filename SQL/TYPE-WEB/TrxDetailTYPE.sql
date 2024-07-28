@@ -10,6 +10,7 @@ CREATE TYPE [dbo].[TrxDetailTYPE] AS TABLE(
 	Lineitmseq int NULL,
 	Item_Number nvarchar(20) NULL, 
 	Item_Description nvarchar(500) NULL, 
+	LineItem_Option numeric(19, 5) NULL,
 	Quantity numeric(19,5) NULL,
 	UofM nvarchar(20) NULL, 
 	Item_Price numeric(19,5) NULL,
