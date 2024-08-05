@@ -39,6 +39,128 @@
 
     //#region FUNCTION
 
+    $('#reportrange').daterangepicker(
+        {
+            ranges: {
+                'Today': [moment(), moment()],
+                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            startDate: moment().subtract(29, 'days'),
+            endDate: moment()
+        },
+        function (start, end) {
+            $('#reportrange span').html(start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY'));
+        }
+    );
+
+    Clear();
+
+    function Clear() {
+        $('#reportrange span').html(moment().subtract('days', 29).format('DD/MM/YYYY') + ' - ' + moment().format('DD/MM/YYYY'));
+        $('input[name="rbDay"]').prop('checked', false);
+        $('input#AllDay').prop('checked', true);
+        $('.CustomDay').find('.datetimepicker-input').prop('disabled', true);
+        $('#starttime').val(moment(new Date()).format('LT'));
+        $('#endtime').val(moment(new Date()).format('LT'));
+        GetDataTop5();
+    }
+
+    function emptyStr(str) {
+        return !str || !/[^\s]+/.test(str);
+    }
+
+    function formatCurrency(curr) {
+        curr = parseFloat(curr);
+        curr = curr.toFixed(0, 0);
+        curr = curr.replace(".", ",");
+        curr = ("Rp " + curr).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+        return curr;
+    }
+
+    function delFormatCurrency(curr) {
+        var fixed;
+        fixed = curr.substr(0, 3);
+        curr = curr.replace(fixed, "");
+        for (i = 1; curr.length > i * 3; i++) {
+            curr = curr.replace(".", "");
+        }
+        return curr;
+    }
+
+    function GetDataTop5() {
+        try {
+            var startDate = $('#reportrange').data('daterangepicker').startDate._d;
+            var endDate = $('#reportrange').data('daterangepicker').endDate._d;
+            startDate = moment(startDate).format('YYYY-MM-DD');
+            endDate = moment(endDate).format('YYYY-MM-DD');
+            var TimeFrom = moment($('#starttime').val(), 'LT').format('HH:mm:ss');
+            var TimeTo = moment($('#endtime').val(), 'LT').format('HH:mm:ss');
+            var AllDay = $('input#AllDay').is(':checked');
+
+            var model = {
+                'DateFrom': startDate,
+                'DateTo': endDate,
+                'FilterTime': AllDay,
+                'TimeFrom': TimeFrom,
+                'TimeTo': TimeTo
+            }
+
+            $("#table_netSales").find("tbody tr").remove();
+            $("#table_netSales").find("tbody").empty();
+            $.ajax({
+                url: rootUrl + "Reports/SalesByItem/ReportsItemsGetDataTop5",
+                type: "POST",
+                dataType: "json",
+                data: { model: model },
+                success: function (result) {
+                    if (result.success) {
+                        $.each(result.data, function (index, value) {
+                            var Item_Number = emptyStr(value.Item_Number) ? "" : value.Item_Number.trim(),
+                                Item_Description = emptyStr(value.Item_Description) ? "" : value.Item_Description.trim(),
+                                Item_Color = emptyStr(value.Item_Color) ? "" : value.Item_Color.trim(),
+                                Net_Sales = emptyStr(value.Net_Sales) ? "" : value.Net_Sales;
+                            var tbody =
+                                '<tr>' +
+                                '<td class="pb-1" style="width: 70%;">' +
+                                '<div class="row mx-0">' +
+                                '<div class="shapes ' + Item_Color + ' mr-2 text-center text-white pt-1" style="border-radius: 50%;"></div>' +
+                                '<span>' + Item_Description + '</span></div></td>' +
+                                '<td class="pb-1 text-right" style="width: 30%;">' + formatCurrency(Net_Sales) + '</td>' +
+                                '</tr>';
+                            $("#table_netSales").append(tbody);
+                        });
+                    }
+                    else {
+                        swal({ type: "error", title: "Error", text: result.message });
+                    }
+                },
+                error: function (xhr) {
+                    if (xhr.status != "200") {
+                        var doc = $.parseHTML(xhr.responseText);
+                        if (!emptyStr(doc)) {
+                            var titleNode = doc.filter(function (node) {
+                                return node.localName === "title";
+                            });
+                            var msg = titleNode[0].textContent;
+                            swal("Error", "Error : " + msg, "error");
+                        }
+                        else {
+                            if (xhr.statusText.toUpperCase().trim() != "OK") {
+                                swal({ type: "error", title: "Error", text: xhr.statusText });
+                            }
+                        }
+                    }
+                }
+            });
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    };
+
     //#endregion
 
     //#region EVENT
@@ -63,35 +185,66 @@
         }
     });
 
-    $('#reportrange span').html(moment().subtract('days', 29).format('DD/MM/YYYY') + ' - ' + moment().format('DD/MM/YYYY'));
+    $.fn.dataTable.moment = function (format, locale) {
+        var types = $.fn.dataTable.ext.type;
 
-    $('#reportrange').daterangepicker(
-        {
-            ranges: {
-                'Today': [moment(), moment()],
-                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                'This Month': [moment().startOf('month'), moment().endOf('month')],
-                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-            },
-            startDate: moment().subtract(29, 'days'),
-            endDate: moment()
-        },
-        function (start, end) {
-            $('#reportrange span').html(start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY'));
+        // Add type detection
+        types.detect.unshift(function (d) {
+            return moment(d, format, locale, true).isValid() ?
+                'moment-' + format :
+                null;
+        });
+
+        // Add sorting method - use an integer for the sorting
+        types.order['moment-' + format + '-pre'] = function (d) {
+            return moment(d, format, locale, true).unix();
+        };
+    };
+
+    $.fn.dataTable.moment($("#dafor").val());
+
+    $('.datetimepicker-input').datetimepicker({
+        format: 'LT'
+    });
+
+    $('.datetimepicker-input').on('hide.datetimepicker', function () {
+        try {
+            //GetData();
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
         }
-    );
+    });
 
-    var placeHolder = '<span><i class="far fa-clock pr-2"></i>All Day</span>';
-    $("#times").select2({
-        dropdownParent: $("#times").parent(),
-        placeholder: placeHolder,
-        multiple: false,
-        allowClear: true,
-        width: "100%",
-        escapeMarkup: function (m) {
-            return m;
+    $('.datetimepicker-input').on('change.datetimepicker', function () {
+        try {
+            var TimeFrom = moment($('#starttime').val(), 'LT').format('HH:mm:ss');
+            var TimeTo = moment($('#endtime').val(), 'LT').format('HH:mm:ss');
+            var starttime = $('#starttime').val();
+            var endtime = $('#endtime').val();
+            var id = $(this).attr("id");
+            if (TimeFrom > TimeTo) {
+                if (id == "starttime") {
+                    $('#endtime').val(starttime);
+                } else if (id == "endtime") {
+                    $('#starttime').val(endtime);
+                }
+            }
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    });
+
+    $('input[name="rbDay"]').on('click', function () {
+        try {
+            $('input[name="rbDay"]').prop('checked', false);
+            $(this).prop('checked', true);
+            $('.CustomDay').find('.datetimepicker-input').prop('disabled', true);
+            var id = emptyStr($(this).attr('id')) ? "" : $(this).attr('id');
+            if (!emptyStr(id) && id.toLowerCase() == "customday") {
+                $('.CustomDay').find('.datetimepicker-input').prop('disabled', false);
+            }
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
         }
     });
 

@@ -12,7 +12,8 @@ BEGIN
 		SELECT DISTINCT HDR.Discount_ID, COALESCE(DIS.Discount_Name, '') Discount_Name, HDR.Discount_Amount, COUNT(HDR.DOCNUMBER) Disc_Applied
 		FROM POS_TrxHeader_HIST HDR with (nolock)
 		LEFT JOIN POS_Discount DIS with (nolock) ON HDR.Discount_ID=DIS.Discount_ID
-		WHERE HDR.DOCNUMBER not in(SELECT DISTINCT HDR.DOCNUMBER FROM POS_TrxRefund_HIST HDR with (nolock))
+		WHERE ISNULL(HDR.Discount_ID, '') <> ''
+		AND HDR.DOCNUMBER not in(SELECT DISTINCT HDR.DOCNUMBER FROM POS_TrxRefund_HIST HDR with (nolock))
 		AND (HDR.Created_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date)
 		OR HDR.Modified_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date))
 		AND ((CAST(HDR.Created_time as time) > CAST(@TimeFrom as time) and CAST(HDR.Created_time as time) < CAST(@TimeTo as time)) OR @FilterTime=0)

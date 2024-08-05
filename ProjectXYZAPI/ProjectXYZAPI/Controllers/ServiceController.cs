@@ -1703,6 +1703,27 @@ namespace ProjectXYZAPI.Controllers
             }
         }
 
+        [Route("ReportsItemsGetDataTop5")]
+        [HttpPost]
+        public dynamic ReportsItemsGetDataTop5([FromBody] ParamReport param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.ReportsItemsGetDataTop5(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
         #endregion
 
         #endregion
