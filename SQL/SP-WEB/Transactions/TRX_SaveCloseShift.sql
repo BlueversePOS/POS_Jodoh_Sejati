@@ -34,7 +34,7 @@ BEGIN
 			
 			SELECT @Lineitmseq = ISNULL(MAX(Lineitmseq), 0) + 1
 			FROM POS_CloseShift
-			WHERE RTRIM(Batch_ID)=RTRIM(@Batch_ID) and Payment_ID=@Payment_ID
+			WHERE RTRIM(Batch_ID)=RTRIM(@Batch_ID) --and Payment_ID=@Payment_ID
 
 			INSERT INTO [POS_CloseShift]
 			(Batch_ID, Lineitmseq, Payment_ID, Payment_Type, Amount, Created_User, Created_Date, Modified_User, Modified_Date)

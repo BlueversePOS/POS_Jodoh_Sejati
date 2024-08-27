@@ -12,7 +12,7 @@ BEGIN
 		SELECT PAY.Payment_ID, PAY.Payment_Type, ISNULL(TRX.Payment_TRX, 0) Payment_TRX, ISNULL(TRX.Payment_Amount, 0) Payment_Amount,
 		ISNULL(REF.Payment_REF, 0) Payment_REF, ISNULL(REF.Payment_Refund, 0) Payment_Refund, ISNULL(TRX.Payment_Amount, 0) - ISNULL(REF.Payment_Refund, 0) Net_Amount
 		FROM POS_Set_PayTypes PAY with (nolock)
-		LEFT JOIN (
+		INNER JOIN (
 			SELECT COUNT(X.DOCNUMBER) Payment_TRX, SUM(X.SUBTOTAL) Payment_Amount, X.Payment_ID
 			FROM POS_TrxPayTypes_HIST X with (nolock)
 			WHERE DOCNUMBER not in(select Y.DOCNUMBER from POS_TrxRefund_HIST Y with (nolock))
@@ -42,5 +42,5 @@ BEGIN
 END
 GO
 /*
-exec TRX_ReportsPayTypes_GetDataList '2024-03-01', '2024-03-30', 0, '', ''
+exec TRX_ReportsPayTypes_GetDataList '2024-07-16', '2024-08-14', 0, '', ''
 */

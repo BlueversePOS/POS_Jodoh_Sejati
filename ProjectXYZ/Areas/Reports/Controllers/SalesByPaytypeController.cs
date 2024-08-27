@@ -13,7 +13,7 @@ namespace ProjectXYZ.Areas.Reports.Controllers
     public class SalesByPaytypeController : Controller
     {
         private string FORMATDATE = System.Configuration.ConfigurationManager.AppSettings["FORMATDATE"];
-        SalesCategoryRepo repo = new SalesCategoryRepo();
+        SalesByPaytypeRepo repo = new SalesByPaytypeRepo();
         FuncHelper func = new FuncHelper();
 
         // GET: Reports/SalesByPaytype
