@@ -2,9 +2,9 @@
 
     $(".main-header").find(".title").html("Sales By Item");
 
-    const xValues = ["Jul 07", "Jul 08", "Jul 09", "Jul 10", "Jul 11", "Jul 12", "Jul 13", "Jul 14", "Jul 15", "Jul 16", "Jul 17", "Jul 18", "Jul 19", "Jul 20", "Jul 21", "Jul 22",
+    var xValues = ["Jul 07", "Jul 08", "Jul 09", "Jul 10", "Jul 11", "Jul 12", "Jul 13", "Jul 14", "Jul 15", "Jul 16", "Jul 17", "Jul 18", "Jul 19", "Jul 20", "Jul 21", "Jul 22",
         "Jul 23", "Jul 24", "Jul 25", "Jul 26", "Jul 27", "Jul 28", "Jul 29", "Jul 30", "Jul 31", "Aug 01", "Aug 02", "Aug 03", "Aug 04", "Aug 05"];
-    const yValues = [
+    var yValues = [
         { x: "Jul 07", y: 0 },
         { x: "Jul 08", y: 0 },
         { x: "Jul 09", y: 0 },
@@ -36,6 +36,7 @@
         { x: "Aug 04", y: 17000 },
         { x: "Aug 05", y: 0 }
     ];
+    var cValues = [];
 
     //#region FUNCTION
 
@@ -91,6 +92,28 @@
         return curr;
     }
 
+    function refreshChart(maxValue) {
+        new Chart("divChart", {
+            type: "bar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                    backgroundColor: cValues,
+                    borderColor: cValues,
+                    label: "", //"Gross Sales",
+                    data: yValues,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                legend: { display: false },
+                scales: {
+                    yAxes: [{ ticks: { min: 0, max: maxValue } }]
+                }
+            }
+        });
+    }
+
     function GetDataTop5() {
         try {
             var startDate = $('#reportrange').data('daterangepicker').startDate._d;
@@ -100,7 +123,7 @@
             var TimeFrom = moment($('#starttime').val(), 'LT').format('HH:mm:ss');
             var TimeTo = moment($('#endtime').val(), 'LT').format('HH:mm:ss');
             var AllDay = $('input#AllDay').is(':checked');
-
+            var maxValue = 1000000;
             var model = {
                 'DateFrom': startDate,
                 'DateTo': endDate,
@@ -118,11 +141,20 @@
                 data: { model: model },
                 success: function (result) {
                     if (result.success) {
+                        xValues.length = 0;
+                        yValues.length = 0;
+                        var filterDate = startDate;
+                        while (filterDate <= endDate) {
+                            filterDate = moment(filterDate).add('days', 1).format('YYYY-MM-DD');
+                            xValues.push(moment(filterDate).format("MMM DD"));
+                        }
                         $.each(result.data, function (index, value) {
                             var Item_Number = emptyStr(value.Item_Number) ? "" : value.Item_Number.trim(),
                                 Item_Description = emptyStr(value.Item_Description) ? "" : value.Item_Description.trim(),
+                                DOCDATE = moment(value.DOCDATE).format("MMM DD"),
                                 Item_Color = emptyStr(value.Item_Color) ? "" : value.Item_Color.trim(),
                                 Net_Sales = emptyStr(value.Net_Sales) ? "" : value.Net_Sales;
+                            maxValue = index == 0 || Net_Sales > maxValue ? value.Net_Sales : maxValue;
                             var tbody =
                                 '<tr>' +
                                 '<td class="pb-1" style="width: 70%;">' +
@@ -132,6 +164,11 @@
                                 '<td class="pb-1 text-right" style="width: 30%;">' + formatCurrency(Net_Sales) + '</td>' +
                                 '</tr>';
                             $("#table_netSales").append(tbody);
+
+                            yValues.push({
+                                x: DOCDATE, y: Net_Sales
+                            });
+                            cValues.push(Item_Color.replace("bg-", ""));
                         });
                     }
                     else {
@@ -155,6 +192,8 @@
                         }
                     }
                 }
+            }).done(function () {
+                refreshChart(maxValue);
             });
         } catch (err) {
             swal({ type: "error", title: "Error", text: err.message });
@@ -164,26 +203,6 @@
     //#endregion
 
     //#region EVENT
-
-    new Chart("divChart", {
-        type: "bar",
-        data: {
-            labels: xValues,
-            datasets: [{
-                backgroundColor: "white",
-                borderColor: "green",
-                label: "", //"Gross Sales",
-                data: yValues,
-                borderWidth: 2
-            }]
-        },
-        options: {
-            legend: { display: false },
-            scales: {
-                yAxes: [{ ticks: { min: 0, max: 20000 } }]
-            }
-        }
-    });
 
     $.fn.dataTable.moment = function (format, locale) {
         var types = $.fn.dataTable.ext.type;

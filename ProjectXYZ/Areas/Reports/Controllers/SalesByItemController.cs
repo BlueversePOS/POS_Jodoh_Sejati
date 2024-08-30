@@ -42,6 +42,7 @@ namespace ProjectXYZ.Areas.Reports.Controllers
                             {
                                 Item_Number = ro["Item_Number"],
                                 Item_Description = ro["Item_Description"],
+                                DOCDATE = ro["DOCDATE"],
                                 Net_Sales = ro["Net_Sales"],
                                 Item_Color = ro["Item_Color"]
                             }).ToList();
