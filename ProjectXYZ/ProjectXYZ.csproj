@@ -167,6 +167,8 @@
     <Compile Include="Areas\Reports\Controllers\SalesByPaytypeController.cs" />
     <Compile Include="Areas\Reports\Controllers\SalesDiscountController.cs" />
     <Compile Include="Areas\Reports\Controllers\SalesSummaryController.cs" />
+    <Compile Include="Areas\Reports\Models\SalesByItem.cs" />
+    <Compile Include="Areas\Reports\Models\SalesByItemRepo.cs" />
     <Compile Include="Areas\Reports\Models\SalesByPaytype.cs" />
     <Compile Include="Areas\Reports\Models\SalesByPaytypeRepo.cs" />
     <Compile Include="Areas\Reports\Models\SalesCategory.cs" />
