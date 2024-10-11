@@ -15,8 +15,6 @@ namespace ProjectXYZ
         private TraceLogWriterListener traceLogWriter = null;
         protected void Application_Start()
         {
-            #region BY TEGUH
-
             string path = Server.MapPath("~");
             string logFolder = Path.Combine(path, string.Format("Logs{0}XYZ", Path.DirectorySeparatorChar));
 
@@ -27,8 +25,6 @@ namespace ProjectXYZ
             Trace.Listeners.Add(this.traceLogWriter);
             Trace.WriteLine(logFolder);
 
-
-            #endregion
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);

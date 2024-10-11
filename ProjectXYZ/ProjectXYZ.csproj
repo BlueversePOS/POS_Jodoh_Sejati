@@ -175,6 +175,8 @@
     <Compile Include="Areas\Reports\Models\SalesCategoryRepo.cs" />
     <Compile Include="Areas\Reports\Models\SalesDiscount.cs" />
     <Compile Include="Areas\Reports\Models\SalesDiscountRepo.cs" />
+    <Compile Include="Areas\Reports\Models\SalesSummary.cs" />
+    <Compile Include="Areas\Reports\Models\SalesSummaryRepo.cs" />
     <Compile Include="Areas\Reports\ReportsAreaRegistration.cs" />
     <Compile Include="Areas\Setting\Controllers\SettingsController.cs" />
     <Compile Include="Areas\Setting\Models\Settings.cs" />
