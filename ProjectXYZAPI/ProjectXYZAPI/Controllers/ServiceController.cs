@@ -1724,6 +1724,69 @@ namespace ProjectXYZAPI.Controllers
             }
         }
 
+        [Route("ReportsItemsGetDataList")]
+        [HttpPost]
+        public dynamic ReportsItemsGetDataList([FromBody] ParamReport param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.ReportsItemsGetDataList(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("ReportsSummaryGetHeaderChart")]
+        [HttpPost]
+        public dynamic ReportsSummaryGetHeaderChart([FromBody] ParamReport param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.ReportsSummaryGetHeaderChart(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
+        [Route("ReportsSummaryGetDataChart")]
+        [HttpPost]
+        public dynamic ReportsSummaryGetDataChart([FromBody] ParamReportSummary param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.ReportsSummaryGetDataChart(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
         #endregion
 
         #endregion

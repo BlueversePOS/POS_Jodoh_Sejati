@@ -148,6 +148,20 @@
                         }
                     }
                 ],
+                buttons: [
+                    {
+                        extend: 'excel',
+                        className: 'hidden',
+                        text: '',
+                        exportOptions: {
+                            modifier: {
+                                page: 'all',
+                                order: 'index',
+                                search: 'none'
+                            },
+                        }
+                    }
+                ],
                 dom: "<'row'<'col-6 col-sm-6 col-md-6 col-lg-6'l><'col-6 col-sm-6 col-md-6 col-lg-6'>>" +
                     "<'row'<'col-lg-12 col-md-12 col-sm-12 col-12'tr>>" +
                     "<'row'<'col-6 col-sm-6 col-md-6 col-lg-6'i><'col-6 col-sm-6 col-md-6 col-lg-6'p>>",
@@ -226,6 +240,14 @@
             if (!emptyStr(id) && id.toLowerCase() == "customday") {
                 $('.CustomDay').find('.datetimepicker-input').prop('disabled', false);
             }
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    });
+
+    $('#btnExport').on('click', function () {
+        try {
+            dtTable.buttons(0).trigger();
         } catch (err) {
             swal({ type: "error", title: "Error", text: err.message });
         }

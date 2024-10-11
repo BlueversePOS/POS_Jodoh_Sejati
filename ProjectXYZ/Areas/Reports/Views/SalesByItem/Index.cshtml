@@ -62,7 +62,7 @@
                         <div class="form-group my-0 col-lg-6 col-md-12 col-12 px-0">
                             <div class="row pull-right">
                                 <div class="dropdown col-12">
-                                    <button class="btn btn-default btn-block bg-transparent dropdown-toggle dropdown-toggle-split text-center" type="button" id="dropdownDay" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <button class="btn btn-default btn-block bg-white dropdown-toggle dropdown-toggle-split text-center" type="button" id="dropdownDay" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="far fa-clock pr-2"></i> <span>All Day</span>
                                     </button>
                                     <ul class="dropdown-menu checkbox-menu allow-focus allDay" aria-labelledby="dropdownDay">
@@ -127,12 +127,16 @@
                                 <h3 class="card-title">
                                     Sales by item chart
                                 </h3>
-                                <div class="float-right col-md-6 col-12 px-0 pt-md-0 pt-2 row m-0">
-                                    <div class="col-6">
+                                <div class="float-right col-md-6 col-12 px-0 pt-md-0 pt-2">
+                                    @*<div class="col-6">
                                         <select class="form-control select2" id="typeChart"></select>
-                                    </div>
-                                    <div class="col-6">
-                                        <select class="form-control select2" id="typeTimes"></select>
+                                    </div>*@
+                                    <div class="col-6 float-right">
+                                        <select class="form-control select2" id="typeTimes">
+                                            <option value="1" selected>Daily</option>
+                                            <option value="2">Monthly</option>
+                                            <option value="3">Yearly</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>

@@ -11,7 +11,7 @@ using System.Web;
 
 namespace ProjectXYZ.Areas.Reports.Models
 {
-    public class SalesByItemRepo
+    public class SalesSummaryRepo
     {
         private string urlpwoapi = System.Configuration.ConfigurationManager.AppSettings["PORTALAPI"];
         private string tokenapi = System.Configuration.ConfigurationManager.AppSettings["PORTALTOKEN"];
@@ -35,7 +35,7 @@ namespace ProjectXYZ.Areas.Reports.Models
             return rtn;
         }
 
-        public DataTable ReportsItemsGetDataTop5(SalesByItem model)
+        public DataTable ReportsSummaryGetHeaderChart(SalesSummary model)
         {
             DataTable dt = new DataTable();
             string jsonapiresult = "";
@@ -56,7 +56,7 @@ namespace ProjectXYZ.Areas.Reports.Models
                 };
 
                 string inputJson = JsonConvert.SerializeObject(param);
-                string urlapi = urlpwoapi + "/api/Service/ReportsItemsGetDataTop5";
+                string urlapi = urlpwoapi + "/api/Service/ReportsSummaryGetHeaderChart";
                 jsonapiresult = Task.Run(async () => await callAPI(urlapi, inputJson)).Result;
 
                 //JavaScriptSerializer jss = new JavaScriptSerializer();
@@ -166,7 +166,7 @@ namespace ProjectXYZ.Areas.Reports.Models
             return dt;
         }
 
-        public DataTable ReportsItemsGetDataList(SalesByItem model)
+        public DataTable ReportsSummaryGetDataChart(SalesSummary model)
         {
             DataTable dt = new DataTable();
             string jsonapiresult = "";
@@ -183,11 +183,12 @@ namespace ProjectXYZ.Areas.Reports.Models
                     DateTo = model.DateTo,
                     FilterTime = model.FilterTime,
                     TimeFrom = model.TimeFrom,
-                    TimeTo = model.TimeTo
+                    TimeTo = model.TimeTo,
+                    FilterChart = model.FilterChart
                 };
 
                 string inputJson = JsonConvert.SerializeObject(param);
-                string urlapi = urlpwoapi + "/api/Service/ReportsItemsGetDataList";
+                string urlapi = urlpwoapi + "/api/Service/ReportsSummaryGetDataChart";
                 jsonapiresult = Task.Run(async () => await callAPI(urlapi, inputJson)).Result;
 
                 //JavaScriptSerializer jss = new JavaScriptSerializer();
