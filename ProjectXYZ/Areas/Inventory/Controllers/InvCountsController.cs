@@ -31,7 +31,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpGet]
-        [Obsolete]
+        
         public JsonResult ICGetCategory()
         {
             bool success = false;
@@ -63,7 +63,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult ICGetDataItems(ICFilterItem model)
         {
             bool success = false;
@@ -99,7 +99,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult ICGetDataList(ICFilterItem model)
         {
             bool success = false;
@@ -145,7 +145,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult ICGetDataDetail(ICFilterItem model)
         {
             bool success = false;
@@ -189,7 +189,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult ICSaveCount(string param)
         {
             bool success = false;

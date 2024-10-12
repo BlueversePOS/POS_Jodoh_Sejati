@@ -252,6 +252,21 @@
 
     function GetData() {
         try {
+            var startDate = $('#reportrange').data('daterangepicker').startDate._d;
+            var endDate = $('#reportrange').data('daterangepicker').endDate._d;
+            startDate = moment(startDate).format('YYYY-MM-DD');
+            endDate = moment(endDate).format('YYYY-MM-DD');
+            var TimeFrom = moment($('#starttime').val(), 'LT').format('HH:mm:ss');
+            var TimeTo = moment($('#endtime').val(), 'LT').format('HH:mm:ss');
+            var AllDay = $('input#AllDay').is(':checked');
+            var model = {
+                'DateFrom': startDate,
+                'DateTo': endDate,
+                'FilterTime': AllDay,
+                'TimeFrom': TimeFrom,
+                'TimeTo': TimeTo
+            }
+
             $('#table_export tbody').empty();
             $('#table_export').DataTable().destroy();
 
@@ -262,18 +277,73 @@
                 lengthMenu: [[10, 25, 50], [10, 25, 50]],
                 responsive: true,
                 searchable: true,
-                data: dtValues,
+                ajax: {
+                    type: "POST",
+                    url: rootUrl + 'Reports/SalesSummary/ReportsSummaryGetDataList',
+                    "datatype": "json",
+                    //async: false,
+                    data: { 'model': model },
+                    beforeSend: function () {
+                        $("#loading").show();
+                    },
+                    complete: function () {
+                        $("#loading").hide();
+                    },
+                    error: function (xhr) {
+                        var doc = $.parseHTML(xhr.responseText);
+                        if (!emptyStr(doc)) {
+                            var titleNode = doc.filter(function (node) {
+                                return node.localName === "title";
+                            });
+                            var msg = titleNode[0].textContent;
+                            swal("Error", "Error : " + msg, "error");
+                        }
+                        else {
+                            if (xhr.statusText.toUpperCase().trim() != "OK") {
+                                swal({ type: "error", title: "Error", text: xhr.statusText });
+                            }
+                        }
+                    }
+                },
                 columns: [
                     {
-                        data: 'DATE',
-                        className: 'no-wrap'
+                        data: 'DOCDATE',
+                        className: 'no-wrap',
+                        render: function (data, type, row) {
+                            return moment(data).format("MMM DD, YYYY");
+                        }
                     },
-                    { data: 'GROSS_SALES' },
-                    { data: 'REFUNDS' },
-                    { data: 'DISCOUNTS' },
-                    { data: 'NET_SALES' },
-                    { data: 'COST_OF_GOODS' },
-                    { data: 'GROSS_PROFIT' }
+                    { data: 'Gross_Sales' },
+                    { data: 'Refund_Amount' },
+                    { data: 'Discount_Amount' },
+                    { data: 'Net_Sales' },
+                    { data: 'CostofGoods' },
+                    { data: 'Gross_Profit' }
+                ],
+                columnDefs: [
+                    {
+                        targets: [1, 2, 3, 4, 5, 6],
+                        className: "text-right no-wrap",
+                        render: function (data, type, row) {
+                            var amount = emptyStr(data) ? 0 : data;
+                            return formatCurrency(amount);
+                        }
+                    }
+                ],
+                order: [],
+                buttons: [
+                    {
+                        extend: 'excel',
+                        className: 'hidden',
+                        text: '',
+                        exportOptions: {
+                            modifier: {
+                                page: 'all',
+                                order: 'index',
+                                search: 'none'
+                            },
+                        }
+                    }
                 ],
                 dom: "<'row'<'col-6 col-sm-6 col-md-6 col-lg-6'l><'col-6 col-sm-6 col-md-6 col-lg-6'f>>" +
                     "<'row'<'col-lg-12 col-md-12 col-sm-12 col-12'tr>>" +
@@ -294,6 +364,24 @@
     //#endregion
 
     //#region EVENT
+
+    $.fn.dataTable.moment = function (format, locale) {
+        var types = $.fn.dataTable.ext.type;
+
+        // Add type detection
+        types.detect.unshift(function (d) {
+            return moment(d, format, locale, true).isValid() ?
+                'moment-' + format :
+                null;
+        });
+
+        // Add sorting method - use an integer for the sorting
+        types.order['moment-' + format + '-pre'] = function (d) {
+            return moment(d, format, locale, true).unix();
+        };
+    };
+
+    $.fn.dataTable.moment($("#dafor").val());
 
     $('#reportrange span').html(moment().subtract('days', 29).format('DD/MM/YYYY') + ' - ' + moment().format('DD/MM/YYYY'));
 
@@ -350,8 +438,53 @@
         multiple: false,
         allowClear: true,
         width: "100%",
+        ajax: {
+            url: rootUrl + 'Dashboard/GetEmployee',
+            type: 'POST',
+            dataType: 'json',
+            data: function (params) {
+                return {
+                    Prefix: params.term
+                }
+            },
+            processResults: function (data) {
+                return {
+                    results: $.map(data.data,
+                        function (obj) {
+                            var nilai = obj.Employee_ID.trim();
+                            var textnilai = obj.Employee_Name.trim();
+                            return { id: nilai, text: textnilai };
+                        })
+                };
+            },
+            error: function (xhr) {
+                if (xhr.status != "200") {
+                    var doc = $.parseHTML(xhr.responseText);
+                    if (!emptyStr(doc)) {
+                        var titleNode = doc.filter(function (node) {
+                            return node.localName === "title";
+                        });
+                        var msg = titleNode[0].textContent;
+                        swal("Error", "Error : " + msg, "error");
+                    }
+                    else {
+                        if (xhr.statusText.toUpperCase().trim() != "OK") {
+                            swal({ type: "error", title: "Error", text: xhr.statusText });
+                        }
+                    }
+                }
+            }
+        },
         escapeMarkup: function (m) {
             return m;
+        }
+    });
+
+    $('#btnExport').on('click', function () {
+        try {
+            dtTable.buttons(0).trigger();
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
         }
     });
 

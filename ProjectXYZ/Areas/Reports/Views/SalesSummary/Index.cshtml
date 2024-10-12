@@ -1,13 +1,13 @@
 ﻿
 @{
-    ViewBag.Title = "Dashboard";
+    ViewBag.Title = "Sales Summary";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Dashboard</title>
+    <title>Sales Summary</title>
     <style>
         .breadcrumb-item + .nav-item::before {
             content: ">";
@@ -148,14 +148,6 @@
                         <h3 class="card-title" id="titleChart">
                             Gross Sales
                         </h3>
-                        @*<div class="card-tools">
-                                <button type="button" class="btn bg-info btn-sm" data-card-widget="collapse">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <button type="button" class="btn bg-info btn-sm" data-card-widget="remove">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>*@
                     </div>
                     <div class="card-body col-12" style="display: block;">
                         <div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
@@ -164,7 +156,7 @@
                 </div>
                 <div class="card">
                     <div class="card-header border-0 ui-sortable-handle">
-                        <h3 class="card-title">
+                        <h3 class="card-title" id="btnExport" style="cursor: pointer;">
                             EXPORT
                         </h3>
                         <img src="~/Content/icons/Icon_columns.png" style="float: right;" width="28" height="28" />
@@ -195,5 +187,5 @@
 
 @section Scripts
 {
-    <script src="~/Areas/Reports/Lib/SalesSummary.js"></script>
+    <script src="~/Areas/Reports/Lib/SalesSummary.js?v=2"></script>
 }

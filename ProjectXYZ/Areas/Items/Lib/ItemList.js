@@ -1,23 +1,9 @@
 ﻿$(document).ready(function () {
 
-    const dtValues = [
-        { ID: "1", ITEM_NAME: "Kopi Susu", ITEM_CATEGORY: "Kopi Susu", ITEM_PRICE: "Variable", ITEM_COST: "Rp15.000", MARGIN_COST: "-", ITEM_STOCK: "99" }
-    ];
-
-    var optOption = [
-        { id: "COFFEE", text: "Coffee Level" },
-        { id: "SUGAR", text: "Sugar Level" },
-        { id: "ICE", text: "Ice Level" },
-    ];
-
+    const dtValues = [];
+    var optOption = [];
     var optOption2 = [];
-
-    const optVariant = [
-        { id: "More", text: "More" },
-        { id: "Normal", text: "Normal" },
-        { id: "Less", text: "Less" },
-        { id: "No", text: "No" },
-    ];
+    const optVariant = [];
     var arrVariant = [];
 
     var validCodes = [8, 9, 13, 46, 37, 39, 46, 18, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105];
@@ -210,6 +196,20 @@
                     }
                 ],
                 order: [],
+                buttons: [
+                    {
+                        extend: 'excel',
+                        className: 'hidden',
+                        text: '',
+                        exportOptions: {
+                            modifier: {
+                                page: 'all',
+                                order: 'index',
+                                search: 'none'
+                            },
+                        }
+                    }
+                ],
                 dom: "<'row'<'col-12'>>" +
                     "<'row'<'col-lg-12 col-md-12 col-sm-12 col-12'tr>>" +
                     "<'row'<'col-12'>>",
@@ -1589,8 +1589,16 @@
 
     $('#btnImport').on('click', function () {
         try {
-            $('.items').hide();
+            $('.itemList').hide();
             $('.import').show();
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    });
+
+    $('#btnExport').on('click', function () {
+        try {
+            dtTable.buttons(0).trigger();
         } catch (err) {
             swal({ type: "error", title: "Error", text: err.message });
         }

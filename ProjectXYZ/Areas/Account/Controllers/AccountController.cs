@@ -32,7 +32,7 @@ namespace ProjectXYZ.Areas.Account.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpGet]
-        [Obsolete]
+        
         public JsonResult GetDataAccount()
         {
             bool success = false;
@@ -70,7 +70,7 @@ namespace ProjectXYZ.Areas.Account.Controllers
         [AuthorizeActionFilterAttribute]
         [ValidateAntiForgeryToken]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult SaveAccount(string param)
         {
             bool success = false;

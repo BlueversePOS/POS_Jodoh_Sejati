@@ -28,7 +28,7 @@ namespace ProjectXYZ.Areas.Reports.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult ReportsItemsGetDataTop5(SalesByItem model)
         {
             bool success = false;
@@ -63,7 +63,7 @@ namespace ProjectXYZ.Areas.Reports.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult ReportsItemsGetDataList(SalesByItem model)
         {
             bool success = false;

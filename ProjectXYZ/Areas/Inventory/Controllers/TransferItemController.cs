@@ -32,7 +32,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult GetDataSites(string Prefix)
         {
             bool success = false;
@@ -73,7 +73,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult TrfItemGetItemBySite(TrfItemFilter model)
         {
             bool success = false;
@@ -109,7 +109,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult TrfItemSearchItemBySite(TrfItemFilter model, string Prefix)
         {
             bool success = false;
@@ -151,7 +151,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult TrfItemGetDataTransfer(TrfItemFilter model)
         {
             bool success = false;
@@ -190,7 +190,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult TrfItemGetDataHeader(TrfItemFilter model)
         {
             bool success = false;
@@ -231,7 +231,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult TrfItemGetDataDetail(TrfItemFilter model)
         {
             bool success = false;
@@ -271,7 +271,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult TrfItemSaveTransfer(string param)
         {
             bool success = false;
@@ -302,7 +302,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult TrfItemReceiveItem(string param)
         {
             bool success = false;

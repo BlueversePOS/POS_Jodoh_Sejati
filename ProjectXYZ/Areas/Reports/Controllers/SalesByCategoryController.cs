@@ -29,7 +29,7 @@ namespace ProjectXYZ.Areas.Reports.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult ReportsGetDataList(SalesCategory model)
         {
             bool success = false;

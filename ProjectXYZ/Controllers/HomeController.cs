@@ -25,7 +25,7 @@ namespace ProjectXYZ.Controllers
 {
     public class HomeController : Controller
     {
-        [Obsolete]
+        
         private string FORMATDATE = ConfigurationSettings.AppSettings["FORMATDATE"];
 
         FuncHelper func = new FuncHelper();
@@ -98,7 +98,7 @@ namespace ProjectXYZ.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Obsolete]
+        
         public ActionResult LoginAction(string param)
         {
             //string code = "", description = "";
@@ -160,7 +160,7 @@ namespace ProjectXYZ.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Obsolete]
+        
         public JsonResult SignUpUser(string param)
         {
             bool success = false;
@@ -194,7 +194,7 @@ namespace ProjectXYZ.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Obsolete]
+        
         public JsonResult ResetPassword(string param)
         {
             string success = "";

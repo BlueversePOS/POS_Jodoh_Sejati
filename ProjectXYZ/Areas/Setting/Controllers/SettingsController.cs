@@ -37,7 +37,7 @@ namespace ProjectXYZ.Areas.Setting.Controllers
         }
 
         [AuthorizeActionFilterAttribute]
-        [Obsolete]
+        
         public JsonResult GetDataFeatures(string ID)
         {
             bool success = false;
@@ -75,7 +75,7 @@ namespace ProjectXYZ.Areas.Setting.Controllers
         [AuthorizeActionFilterAttribute]
         [ValidateAntiForgeryToken]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult SaveFeatures(string param)
         {
             bool success = false;
@@ -110,7 +110,7 @@ namespace ProjectXYZ.Areas.Setting.Controllers
         }
 
         [AuthorizeActionFilterAttribute]
-        [Obsolete]
+        
         public JsonResult GetDataPaymentType(string ID)
         {
             bool success = false;
@@ -150,7 +150,7 @@ namespace ProjectXYZ.Areas.Setting.Controllers
         [AuthorizeActionFilterAttribute]
         [ValidateAntiForgeryToken]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult SavePaymentType(string param)
         {
             bool success = false;
@@ -185,7 +185,7 @@ namespace ProjectXYZ.Areas.Setting.Controllers
         }
 
         [AuthorizeActionFilterAttribute]
-        [Obsolete]
+        
         public JsonResult GetDataTaxes(string ID)
         {
             bool success = false;
@@ -223,7 +223,7 @@ namespace ProjectXYZ.Areas.Setting.Controllers
         [AuthorizeActionFilterAttribute]
         [ValidateAntiForgeryToken]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult SaveTaxes(string param)
         {
             bool success = false;
@@ -258,7 +258,7 @@ namespace ProjectXYZ.Areas.Setting.Controllers
         }
 
         [AuthorizeActionFilterAttribute]
-        [Obsolete]
+        
         public JsonResult GetDataStores(string ID)
         {
             bool success = false;
@@ -301,7 +301,7 @@ namespace ProjectXYZ.Areas.Setting.Controllers
         [AuthorizeActionFilterAttribute]
         [ValidateAntiForgeryToken]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult SaveStore(string param)
         {
             bool success = false;
@@ -336,7 +336,7 @@ namespace ProjectXYZ.Areas.Setting.Controllers
         }
 
         [AuthorizeActionFilterAttribute]
-        [Obsolete]
+        
         public JsonResult GetDataSalesType(string ID)
         {
             bool success = false;
@@ -371,7 +371,7 @@ namespace ProjectXYZ.Areas.Setting.Controllers
         }
 
         [AuthorizeActionFilterAttribute]
-        [Obsolete]
+        
         public JsonResult GetNumberMaster(string param)
         {
             bool success = false;
@@ -408,7 +408,7 @@ namespace ProjectXYZ.Areas.Setting.Controllers
         [AuthorizeActionFilterAttribute]
         [ValidateAntiForgeryToken]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult SaveSalesType(string param)
         {
             bool success = false;
@@ -443,7 +443,7 @@ namespace ProjectXYZ.Areas.Setting.Controllers
         }
 
         [AuthorizeActionFilterAttribute]
-        [Obsolete]
+        
         public JsonResult GetDataSites(string ID)
         {
             bool success = false;
@@ -481,7 +481,7 @@ namespace ProjectXYZ.Areas.Setting.Controllers
         [AuthorizeActionFilterAttribute]
         [ValidateAntiForgeryToken]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult SaveSite(string param)
         {
             bool success = false;
@@ -516,7 +516,7 @@ namespace ProjectXYZ.Areas.Setting.Controllers
         }
 
         [AuthorizeActionFilterAttribute]
-        [Obsolete]
+        
         public JsonResult GetDataDevices(string ID)
         {
             bool success = false;
@@ -553,7 +553,7 @@ namespace ProjectXYZ.Areas.Setting.Controllers
         [AuthorizeActionFilterAttribute]
         [ValidateAntiForgeryToken]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult SaveDevice(string param)
         {
             bool success = false;
@@ -588,7 +588,7 @@ namespace ProjectXYZ.Areas.Setting.Controllers
         }
 
         [AuthorizeActionFilterAttribute]
-        [Obsolete]
+        
         public JsonResult GetDataStoresDDL(string Prefix)
         {
             bool success = false;

@@ -40,7 +40,7 @@ namespace ProjectXYZ.Areas.Employees.Controllers
         }
 
         [AuthorizeActionFilterAttribute]
-        [Obsolete]
+        
         public JsonResult GetAccessRight(string Prefix)
         {
             bool success = false;
@@ -76,7 +76,7 @@ namespace ProjectXYZ.Areas.Employees.Controllers
         }
 
         [AuthorizeActionFilterAttribute]
-        [Obsolete]
+        
         public JsonResult GetEmployee(string Employee_ID)
         {
             bool success = false;
@@ -115,7 +115,7 @@ namespace ProjectXYZ.Areas.Employees.Controllers
         [AuthorizeActionFilterAttribute]
         [ValidateAntiForgeryToken]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult SaveEmployee(string param)
         {
             bool success = false;

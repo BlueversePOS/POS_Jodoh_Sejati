@@ -33,7 +33,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpGet]
-        [Obsolete]
+        
         public JsonResult GetDataStores()
         {
             bool success = false;
@@ -75,7 +75,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpGet]
-        [Obsolete]
+        
         public JsonResult GetDataSites()
         {
             bool success = false;
@@ -110,7 +110,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpGet]
-        [Obsolete]
+        
         public JsonResult GetEmployee()
         {
             bool success = false;
@@ -146,7 +146,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult InvHistGetDataList(InvHistory model)
         {
             bool success = false;

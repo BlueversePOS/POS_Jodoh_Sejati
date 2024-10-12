@@ -38,7 +38,7 @@ namespace ProjectXYZ.Areas.Customer.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpGet]
-        [Obsolete]
+        
         public JsonResult GetDatalistCustomer()
         {
             bool success = false;
@@ -79,7 +79,7 @@ namespace ProjectXYZ.Areas.Customer.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult GetDataCustomer(string param)
         {
             bool success = false;
@@ -125,7 +125,7 @@ namespace ProjectXYZ.Areas.Customer.Controllers
         [AuthorizeActionFilterAttribute]
         [ValidateAntiForgeryToken]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult SaveCustomer(string param)
         {
             bool success = false;

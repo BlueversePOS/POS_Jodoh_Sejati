@@ -75,7 +75,7 @@ namespace ProjectXYZ.Models
         private SqlConnection conn;
         private SqlTransaction trans;
 
-        //[Obsolete]
+        //
         internal void ErrorLogging(Logging log)
         {
             if (log.url.Length > 255)

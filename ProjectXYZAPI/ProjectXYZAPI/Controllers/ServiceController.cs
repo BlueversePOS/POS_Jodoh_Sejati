@@ -1787,6 +1787,27 @@ namespace ProjectXYZAPI.Controllers
             }
         }
 
+        [Route("ReportsSummaryGetDataList")]
+        [HttpPost]
+        public dynamic ReportsSummaryGetDataList([FromBody] ParamReportSummary param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.ReportsSummaryGetDataList(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
         #endregion
 
         #endregion

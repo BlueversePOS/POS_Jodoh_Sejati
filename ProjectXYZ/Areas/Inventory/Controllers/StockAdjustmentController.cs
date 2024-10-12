@@ -32,7 +32,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult GetReason(string Prefix)
         {
             bool success = false;
@@ -69,7 +69,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult GetDataSites(string Prefix)
         {
             bool success = false;
@@ -110,7 +110,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult GetDataStores(string Prefix)
         {
             bool success = false;
@@ -156,7 +156,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult AdjGetDataItems(SAFilterItem model)
         {
             bool success = false;
@@ -192,7 +192,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult AdjSearchDataItems(SAFilterItem model, string Prefix)
         {
             bool success = false;
@@ -234,7 +234,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult SaveAdj(string param)
         {
             bool success = false;
@@ -265,7 +265,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult AdjGetDataList(SAFilterItem model)
         {
             bool success = false;
@@ -302,7 +302,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult AdjGetDataHeader(SAFilterItem model)
         {
             bool success = false;
@@ -341,7 +341,7 @@ namespace ProjectXYZ.Areas.Inventory.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult AdjGetDataDetail(SAFilterItem model)
         {
             bool success = false;

@@ -29,7 +29,7 @@ namespace ProjectXYZ.Areas.Items.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpGet]
-        [Obsolete]
+        
         public JsonResult GetDataCategories()
         {
             bool success = false;
@@ -63,7 +63,7 @@ namespace ProjectXYZ.Areas.Items.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult GetDetailCategories(string param)
         {
             bool success = false;
@@ -105,7 +105,7 @@ namespace ProjectXYZ.Areas.Items.Controllers
         [AuthorizeActionFilterAttribute]
         [ValidateAntiForgeryToken]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult SaveCategories(string param)
         {
             bool success = false;

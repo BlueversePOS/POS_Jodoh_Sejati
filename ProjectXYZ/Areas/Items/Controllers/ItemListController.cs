@@ -34,7 +34,7 @@ namespace ProjectXYZ.Areas.Items.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult GetCategories(string Prefix)
         {
             bool success = false;
@@ -73,7 +73,7 @@ namespace ProjectXYZ.Areas.Items.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult GetCompositeItems(string Item_Number)
         {
             bool success = false;
@@ -108,7 +108,7 @@ namespace ProjectXYZ.Areas.Items.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult GetTaxes(string Prefix)
         {
             bool success = false;
@@ -149,7 +149,7 @@ namespace ProjectXYZ.Areas.Items.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult SaveItem(string param)
         {
             bool success = false;
@@ -185,7 +185,7 @@ namespace ProjectXYZ.Areas.Items.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult GetDataItems(FilterItem model)
         {
             bool success = false;
@@ -224,7 +224,7 @@ namespace ProjectXYZ.Areas.Items.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult GetDetailItems(string param)
         {
             bool success = false;
@@ -314,7 +314,7 @@ namespace ProjectXYZ.Areas.Items.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult GetDataItemComposite(string Item_Number)
         {
             bool success = false;
@@ -349,7 +349,7 @@ namespace ProjectXYZ.Areas.Items.Controllers
 
         [AuthorizeActionFilterAttribute]
         [HttpPost]
-        [Obsolete]
+        
         public JsonResult GetDataItemVariant(string Item_Number)
         {
             bool success = false;

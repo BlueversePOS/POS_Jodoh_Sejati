@@ -13,15 +13,15 @@ BEGIN
 		declare @dateNow datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
 		if @DateFrom = '1900-01-01'
 		begin
-			set @DateFrom = DATEADD(DAY, -31, @dateNow)
+			set @DateFrom = DATEADD(DAY, -30, CAST(@dateNow as date))
 		end
 		if @DateTo = '1900-01-01'
 		begin
-			set @DateTo = DATEADD(DAY, -1, @dateNow)
+			set @DateTo = CAST(@dateNow as date)
 		end
 		if @TimeTo = '1900-01-01'
 		begin
-			set @TimeTo = @dateNow
+			set @TimeTo = CAST(@dateNow as datetime)
 		end
 
 		declare @temp table(DateValue datetime)

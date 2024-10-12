@@ -39,6 +39,11 @@
         .select2-container--default .select2-selection--single .select2-selection__arrow {
             top: 8px;
         }
+
+        .active-title {
+            border-bottom: 4px solid green;
+            padding-bottom: 4px;
+        }
     </style>
 </head>
 <body>
@@ -98,76 +103,71 @@
                     <div class="card-header border-0 ui-sortable-handle">
                         <div class="row">
                             <div class="col-lg-3 col-md-4 col-6">
-                                <div class="small-box text-center">
+                                <div class="small-box text-center titleChart" id="1" style="cursor:pointer;">
                                     <div class="inner">
                                         <p>Gross Sales</p>
-                                        <h2>Rp18.000</h2>
+                                        <h2 id="GrossSales">Rp18.000</h2>
                                     </div>
-                                    @*<div class="icon">
-                                <i class="ion ion-bag"></i>
-                            </div>*@
-                                    @*<a href="#" class="text-green">More info <i class="fas fa-arrow-circle-right"></i></a>*@
-                                    <a href="#" class="text-green">+Rp18.000 (+100%)</a>
+                                    <a href="#" class="text-green" id="bGrossSales">+Rp18.000 (+100%)</a>
                                 </div>
                             </div>
                             <div class="col-lg-3 col-md-4 col-6">
-                                <div class="small-box text-center">
+                                <div class="small-box text-center titleChart" id="2" style="cursor:pointer;">
                                     <div class="inner">
                                         <p>Refunds</p>
-                                        <h2>Rp0</h2>
+                                        <h2 id="Refund">Rp0</h2>
                                     </div>
-                                    <a href="#" class="text-green">+Rp0 (0%)</a>
+                                    <a href="#" class="text-green" id="bRefund">+Rp0 (0%)</a>
                                 </div>
                             </div>
                             <div class="col-lg-3 col-md-4 col-6">
-                                <div class="small-box text-center">
+                                <div class="small-box text-center titleChart" id="3" style="cursor:pointer;">
                                     <div class="inner">
-                                        <p>Dicounts</p>
-                                        <h2>Rp0</h2>
+                                        <p>Discounts</p>
+                                        <h2 id="Discount">Rp0</h2>
                                     </div>
-                                    <a href="#" class="text-green">+Rp0 (0%)</a>
+                                    <a href="#" class="text-green" id="bDiscount">+Rp0 (0%)</a>
                                 </div>
                             </div>
                             <div class="col-lg-3 col-md-4 col-6">
-                                <div class="small-box text-center">
+                                <div class="small-box text-center titleChart" id="4" style="cursor:pointer;">
                                     <div class="inner">
                                         <p>Net Sales</p>
-                                        <h2>Rp18.000</h2>
+                                        <h2 id="NetSales">Rp18.000</h2>
                                     </div>
-                                    <a href="#" class="text-green">+Rp18.000 (+100%)</a>
+                                    <a href="#" class="text-green" id="bNetSales">+Rp18.000 (+100%)</a>
                                 </div>
                             </div>
                             <div class="col-lg-3 col-md-4 col-6">
-                                <div class="small-box text-center">
+                                <div class="small-box text-center titleChart" id="5" style="cursor:pointer;">
                                     <div class="inner">
                                         <p>Gross Profit</p>
-                                        <h2>Rp3.000</h2>
+                                        <h2 id="GrossProfit">Rp3.000</h2>
                                     </div>
-                                    <a href="#" class="text-green">+Rp3.000 (+100%)</a>
+                                    <a href="#" class="text-green" id="bGrossProfit">+Rp3.000 (+100%)</a>
                                 </div>
                             </div>
                         </div>
-                        <h3 class="card-title">
-                            @*<i class="fas fa-th mr-1"></i>*@
+                        <h3 class="card-title" id="titleChart">
                             Gross Sales
                         </h3>
                         @*<div class="card-tools">
-                    <button type="button" class="btn bg-info btn-sm" data-card-widget="collapse">
-                        <i class="fas fa-minus"></i>
-                    </button>
-                    <button type="button" class="btn bg-info btn-sm" data-card-widget="remove">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>*@
+            <button type="button" class="btn bg-info btn-sm" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn bg-info btn-sm" data-card-widget="remove">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>*@
                     </div>
                     <div class="card-body col-12" style="display: block;">
                         <div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-                        <canvas class="chart chartjs-render-monitor" id="line-chart" style="min-height: 320px; max-height: 250px; max-width: 100%; display: block;" width="580" height="312"></canvas>
+                        <canvas class="chart chartjs-render-monitor" id="line-chart" style="min-height: 320px; max-height: 420px; max-width: 100%; display: block;" width="580" height="360""></canvas>
                     </div>
                 </div>
                 <div class="card">
                     <div class="card-header border-0 ui-sortable-handle">
-                        <h3 class="card-title">
+                        <h3 class="card-title" id="btnExport" style="cursor: pointer;">
                             EXPORT
                         </h3>
                         <img src="~/Content/icons/Icon_columns.png" style="float: right;" width="28" height="28" />
@@ -198,5 +198,5 @@
 
 @section Scripts
 {
-    <script src="~/Lib/Dashboard.js"></script>
+    <script src="~/Lib/Dashboard.js?v=2"></script>
 }

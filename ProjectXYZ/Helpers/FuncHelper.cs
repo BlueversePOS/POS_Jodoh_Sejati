@@ -18,9 +18,9 @@ namespace ProjectXYZ.Helpers
 {
     public class FuncHelper
     {
-        [Obsolete]
+        
         private readonly string urlapi = ConfigurationSettings.AppSettings["PORTALAPI"];
-        [Obsolete]
+        
         private readonly string tokenapi = ConfigurationSettings.AppSettings["PORTALTOKEN"];
 
         public static Dictionary<string, object> ConvertDataTableToDictionary(DataTable dtDtl, string detailtagname, int cnt)
@@ -109,7 +109,7 @@ namespace ProjectXYZ.Helpers
             return jsonData.Trim().Substring(0, 1).IndexOfAny(new[] { '[', '{' }) == 0;
         }
 
-        [Obsolete]
+        
         public dynamic SyncAPI(string urlwebapi, dynamic model)
         {
             DataTable dt = new DataTable();

@@ -1,0 +1,2 @@
+[23:12:20] infolog: {"url":"ReportsDiscountGetDataList","user":"","db":"","Body":"","apiresult":"","msg":"SqlDateTime overflow. Must be between 1/1/1753 12:00:00 AM and 12/31/9999 11:59:59 PM.","logdate":"2024-04-24T00:00:00+07:00","logtime":"1900-01-01T23:12:20"}
+[23:13:11] infolog: {"url":"ReportsDiscountGetDataList","user":"","db":"","Body":"","apiresult":"","msg":"Could not find stored procedure 'TRX_ReportsDiscount_GetDataList'.","logdate":"2024-04-24T00:00:00+07:00","logtime":"1900-01-01T23:13:11"}
