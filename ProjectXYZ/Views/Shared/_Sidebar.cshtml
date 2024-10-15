@@ -63,6 +63,13 @@
                         </a>
                     </li>
                 </ul>
+                <ul class="nav nav-treeview ul-padd">
+                    <li class="nav-item WINDOWNAME @Html.IsSelected(controller: "Receipt")" id="Receipt">
+                        <a href="@Url.Action("Index", "Receipt" , new { area="Reports" })" class="nav-link pl-5 pt-2 w-100">
+                            <p>Receipt</p>
+                        </a>
+                    </li>
+                </ul>
             </li>
             <li class="nav-item MENU">
                 <a href="#" class="nav-link w-100 PARENTID" id="Items">

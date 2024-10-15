@@ -5,13 +5,7 @@
     const xValues = [];
     const yValues = [];
 
-    const dtValues = [
-        { DATE: "Jul 30, 2023 - Aug 05, 2023", GROSS_SALES: "Rp18.000", REFUNDS: "Rp0", DISCOUNTS: "Rp0", NET_SALES: "Rp18.000", COST_OF_GOODS: "Rp15.000", GROSS_PROFIT: "Rp3.000" },
-        { DATE: "Jul 23, 2023 - Jul 29, 2023", GROSS_SALES: "Rp0", REFUNDS: "Rp0", DISCOUNTS: "Rp0", NET_SALES: "Rp0", COST_OF_GOODS: "Rp0", GROSS_PROFIT: "Rp0" },
-        { DATE: "Jul 16, 2023 - Jul 22, 2023", GROSS_SALES: "Rp0", REFUNDS: "Rp0", DISCOUNTS: "Rp0", NET_SALES: "Rp0", COST_OF_GOODS: "Rp0", GROSS_PROFIT: "Rp0" },
-        { DATE: "Jul 09, 2023 - Jul 15, 2023", GROSS_SALES: "Rp0", REFUNDS: "Rp0", DISCOUNTS: "Rp0", NET_SALES: "Rp0", COST_OF_GOODS: "Rp0", GROSS_PROFIT: "Rp0" },
-        { DATE: "Jul 07, 2023 - Jul 08, 2023", GROSS_SALES: "Rp0", REFUNDS: "Rp0", DISCOUNTS: "Rp0", NET_SALES: "Rp0", COST_OF_GOODS: "Rp0", GROSS_PROFIT: "Rp0" },
-    ];
+    const dtValues = [];
     var bChart = null;
     var FilterChart = 1;
     var maxValue = 200000;
@@ -125,12 +119,14 @@
             var TimeFrom = moment($('#starttime').val(), 'LT').format('HH:mm:ss');
             var TimeTo = moment($('#endtime').val(), 'LT').format('HH:mm:ss');
             var AllDay = $('input#AllDay').is(':checked');
+            var Employee_ID = emptyStr($('#employees').val()) ? "" : $('#employees').val();
             var model = {
                 'DateFrom': startDate,
                 'DateTo': endDate,
                 'FilterTime': AllDay,
                 'TimeFrom': TimeFrom,
-                'TimeTo': TimeTo
+                'TimeTo': TimeTo,
+                'Employee_ID': Employee_ID
             }
 
             $.ajax({
@@ -191,13 +187,15 @@
             var TimeFrom = moment($('#starttime').val(), 'LT').format('HH:mm:ss');
             var TimeTo = moment($('#endtime').val(), 'LT').format('HH:mm:ss');
             var AllDay = $('input#AllDay').is(':checked');
+            var Employee_ID = emptyStr($('#employees').val()) ? "" : $('#employees').val();
             var model = {
                 'DateFrom': startDate,
                 'DateTo': endDate,
                 'FilterTime': AllDay,
                 'TimeFrom': TimeFrom,
                 'TimeTo': TimeTo,
-                'FilterChart': FilterChart
+                'FilterChart': FilterChart,
+                'Employee_ID': Employee_ID
             }
             xValues.length = 0;
             yValues.length = 0;
@@ -259,12 +257,14 @@
             var TimeFrom = moment($('#starttime').val(), 'LT').format('HH:mm:ss');
             var TimeTo = moment($('#endtime').val(), 'LT').format('HH:mm:ss');
             var AllDay = $('input#AllDay').is(':checked');
+            var Employee_ID = emptyStr($('#employees').val()) ? "" : $('#employees').val();
             var model = {
                 'DateFrom': startDate,
                 'DateTo': endDate,
                 'FilterTime': AllDay,
                 'TimeFrom': TimeFrom,
-                'TimeTo': TimeTo
+                'TimeTo': TimeTo,
+                'Employee_ID': Employee_ID
             }
 
             $('#table_export tbody').empty();

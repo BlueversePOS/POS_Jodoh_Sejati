@@ -170,6 +170,14 @@
         document.body.style.zoom = 1.0
     }
     $("#pushMenu").trigger("click");
+
+    $(".nav-link.PARENTID").on("click", function () {
+        if (!$(this).parent(".nav-item.MENU").hasClass("menu-open")) {
+            $(".nav-item.MENU.menu-open").removeClass("menu-is-opening").removeClass("menu-open").find(".nav-treeview").toggle();
+            $(this).parent(".nav-item.MENU").addClass("menu-is-opening");
+        }
+    });
+
     //$("#pushMenu").on("click", function () {
     //    try {
     //        var sidebar = $(".main-sidebar").is(":visible");

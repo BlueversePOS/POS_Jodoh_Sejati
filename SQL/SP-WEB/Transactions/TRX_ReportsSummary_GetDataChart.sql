@@ -5,11 +5,16 @@ create or alter proc TRX_ReportsSummary_GetDataChart
 	@FilterTime int=0,
 	@TimeFrom datetime='1900-01-01',
 	@TimeTo datetime='1900-01-01',
-	@FilterChart int=1
+	@FilterChart int=1,
+	@Employee_ID varchar(40)=''
 )
 AS          
 BEGIN
 	BEGIN TRY
+		declare @UserID varchar(30)
+		select top 1 @UserID=UserID from POS_Employee
+		where Employee_ID=@Employee_ID
+
 		declare @dateNow datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
 		if @DateFrom = '1900-01-01'
 		begin
@@ -53,7 +58,7 @@ BEGIN
 			and (DTL.Created_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date)
 			OR DTL.Modified_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date))
 			AND ((CAST(DTL.Created_time as time) > CAST(@TimeFrom as time) and CAST(DTL.Created_time as time) < CAST(@TimeTo as time)) OR @FilterTime=0)
-			AND @FilterChart=1 -- Gross Sales
+			AND (Created_User=@UserID or @UserID='') AND @FilterChart=1 -- Gross Sales
 			group by DOCDATE
 			union 
 			select DOCDATE, SUM(RFD.ORIGTOTAL) Amount
@@ -61,7 +66,7 @@ BEGIN
 			where (RFD.Created_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date)
 			OR RFD.Modified_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date))
 			AND ((CAST(RFD.Created_time as time) > CAST(@TimeFrom as time) and CAST(RFD.Created_time as time) < CAST(@TimeTo as time)) OR @FilterTime=0)
-			AND @FilterChart=2 -- Refund
+			AND (Created_User=@UserID or @UserID='') AND @FilterChart=2 -- Refund
 			group by DOCDATE
 			union 
 			select DOCDATE, SUM(Discount_Amount) Amount
@@ -71,7 +76,7 @@ BEGIN
 			and (DTL.Created_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date)
 			OR DTL.Modified_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date))
 			AND ((CAST(DTL.Created_time as time) > CAST(@TimeFrom as time) and CAST(DTL.Created_time as time) < CAST(@TimeTo as time)) OR @FilterTime=0)
-			AND @FilterChart=3 -- Discount
+			AND (Created_User=@UserID or @UserID='') AND @FilterChart=3 -- Discount
 			group by DOCDATE
 			union 
 			select DOCDATE, SUM((Item_Price * Quantity) - (ISNULL(Discount_Amount, 0) * Quantity)) Amount
@@ -81,7 +86,7 @@ BEGIN
 			and (DTL.Created_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date)
 			OR DTL.Modified_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date))
 			AND ((CAST(DTL.Created_time as time) > CAST(@TimeFrom as time) and CAST(DTL.Created_time as time) < CAST(@TimeTo as time)) OR @FilterTime=0)
-			AND @FilterChart=4 -- Net Sales
+			AND (Created_User=@UserID or @UserID='') AND @FilterChart=4 -- Net Sales
 			group by DOCDATE
 			union 
 			select DOCDATE, SUM((Item_Price * Quantity) - (ISNULL(Discount_Amount, 0) * Quantity)) - SUM(Item_Cost * Quantity) Amount
@@ -91,7 +96,7 @@ BEGIN
 			and (DTL.Created_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date)
 			OR DTL.Modified_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date))
 			AND ((CAST(DTL.Created_time as time) > CAST(@TimeFrom as time) and CAST(DTL.Created_time as time) < CAST(@TimeTo as time)) OR @FilterTime=0)
-			AND @FilterChart=5 -- Gross Profit
+			AND (Created_User=@UserID or @UserID='') AND @FilterChart=5 -- Gross Profit
 			group by DOCDATE
 		) x on DT.DateValue=x.DOCDATE
 		OPTION (MAXRECURSION 0);

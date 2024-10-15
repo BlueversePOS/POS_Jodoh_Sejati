@@ -1,13 +1,14 @@
-create or alter proc TRX_ReportsSummary_GetHeaderChart
+create or alter proc TRX_ReportsReceipts_GetDataList
 (
 	@DateFrom datetime='1900-01-01',
 	@DateTo datetime='1900-01-01',
 	@FilterTime int=0,
 	@TimeFrom datetime='1900-01-01',
 	@TimeTo datetime='1900-01-01',
-	@Employee_ID varchar(40)=''
+	@Employee_ID varchar(40)='',
+	@Store_ID varchar(40)=''
 )
-AS          
+AS
 BEGIN
 	BEGIN TRY
 		declare @UserID varchar(30)
@@ -28,26 +29,30 @@ BEGIN
 			set @TimeTo = CAST(@dateNow as datetime)
 		end
 
-		select SUM(ISNULL(Quantity, 0)) Quantity, SUM(ISNULL(Gross_Sales, 0)) Gross_Sales, SUM(ISNULL(Refund_Amount, 0)) Refund_Amount, 
-		SUM(ISNULL(Discount_Amount, 0)) Discount_Amount, SUM(ISNULL(Net_Sales, 0)) Net_Sales, SUM(ISNULL(Gross_Profit, 0)) Gross_Profit
-		from(
-			select SUM(Quantity) Quantity, SUM(Item_Price * Quantity) Gross_Sales, SUM((Item_Price * Quantity) - (ISNULL(Discount_Amount, 0) * Quantity)) Net_Sales,
-			SUM(Discount_Amount) Discount_Amount, SUM((Item_Price * Quantity) - (ISNULL(Discount_Amount, 0) * Quantity)) - SUM(Item_Cost * Quantity) Gross_Profit, 0 Refund_Amount
+		select x.DOCNUMBER, x.DOCDATE, x.Store_ID, x.Store_Name, x.Employee_Name, x.Customer, x.TrxType, x. Total
+		from (
+			select DTL.DOCNUMBER, DTL.DOCDATE, DTL.Store_ID, ISNULL(ST.Store_Name, '') Store_Name, 
+			ISNULL(EMP.Employee_Name, '') Employee_Name, '' Customer, 'Sale' TrxType, (DTL.Item_Price * DTL.Quantity) Total
 			from POS_TrxDetail_HIST DTL
+			left join POS_Set_Stores ST ON DTL.Store_ID=ST.Store_ID
+			left join POS_Employee EMP ON DTL.Created_User=EMP.UserID
 			where DTL.DOCNUMBER not in(SELECT DISTINCT RFD.DOCNUMBER FROM POS_TrxRefund_HIST RFD)
 			and DTL.Quantity > 0
 			and (DTL.Created_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date)
 			OR DTL.Modified_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date))
 			AND ((CAST(DTL.Created_time as time) > CAST(@TimeFrom as time) and CAST(DTL.Created_time as time) < CAST(@TimeTo as time)) OR @FilterTime=0)
-			AND (Created_User=@UserID or @UserID='')
+			AND (DTL.Created_User=@UserID or @Employee_ID='') AND (DTL.Store_ID=@Store_ID or @Store_ID='')
 			union 
-			select 0 Quantity, 0 Gross_Sales, 0 Net_Sales, 0 Discount_Amount, 0 Gross_Profit, SUM(RFD.ORIGTOTAL) ORIGTOTAL
+			select RFD.REFUNDNUMBER, RFD.Refund_Date, RFD.Store_ID, ISNULL(ST.Store_Name, '') Store_Name, 
+			ISNULL(EMP.Employee_Name, '') Employee_Name, RFD.CustName, 'Refund' TrxType, RFD.SUBTOTAL Total
 			from POS_TrxRefund_HIST RFD
-			where (RFD.Created_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date)
-			OR RFD.Modified_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date))
-			AND ((CAST(RFD.Created_time as time) > CAST(@TimeFrom as time) and CAST(RFD.Created_time as time) < CAST(@TimeTo as time)) OR @FilterTime=0)
-			AND (Created_User=@UserID or @UserID='')
+			left join POS_Set_Stores ST ON RFD.Store_ID=ST.Store_ID
+			left join POS_Employee EMP ON RFD.Refund_User=EMP.UserID
+			where RFD.Refund_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date)
+			AND ((CAST(RFD.Refund_Time as time) > CAST(@TimeFrom as time) and CAST(RFD.Created_time as time) < CAST(@TimeTo as time)) OR @FilterTime=0)
+			AND (RFD.Refund_User=@UserID or @Employee_ID='') AND (RFD.Store_ID=@Store_ID or @Store_ID='')
 		) x
+
 	END TRY
 	BEGIN CATCH
 		DECLARE @ErrorMessage NVARCHAR(4000),@ErrorSeverity INT,@ErrorState INT

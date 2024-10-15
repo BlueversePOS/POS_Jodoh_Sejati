@@ -4866,7 +4866,7 @@ namespace ProjectXYZAPI.Repository
             return dt;
         }
 
-        public DataTable ReportsSummaryGetHeaderChart(ParamReport param)
+        public DataTable ReportsSummaryGetHeaderChart(ParamReportSummary param)
         {
             DataTable dt = new DataTable();
 
@@ -4882,6 +4882,7 @@ namespace ProjectXYZAPI.Repository
                 cmd.Parameters.AddWithValue("@FilterTime", param.FilterTime);
                 cmd.Parameters.AddWithValue("@TimeFrom", param.TimeFrom);
                 cmd.Parameters.AddWithValue("@TimeTo", param.TimeTo);
+                cmd.Parameters.AddWithValue("@Employee_ID", param.Employee_ID);
 
                 SqlDataAdapter adp = new SqlDataAdapter();
                 adp.SelectCommand = cmd;
@@ -4935,6 +4936,7 @@ namespace ProjectXYZAPI.Repository
                 cmd.Parameters.AddWithValue("@TimeFrom", param.TimeFrom);
                 cmd.Parameters.AddWithValue("@TimeTo", param.TimeTo);
                 cmd.Parameters.AddWithValue("@FilterChart", param.FilterChart);
+                cmd.Parameters.AddWithValue("@Employee_ID", param.Employee_ID);
 
                 SqlDataAdapter adp = new SqlDataAdapter();
                 adp.SelectCommand = cmd;
@@ -4987,6 +4989,7 @@ namespace ProjectXYZAPI.Repository
                 cmd.Parameters.AddWithValue("@FilterTime", param.FilterTime);
                 cmd.Parameters.AddWithValue("@TimeFrom", param.TimeFrom);
                 cmd.Parameters.AddWithValue("@TimeTo", param.TimeTo);
+                cmd.Parameters.AddWithValue("@Employee_ID", param.Employee_ID);
 
                 SqlDataAdapter adp = new SqlDataAdapter();
                 adp.SelectCommand = cmd;

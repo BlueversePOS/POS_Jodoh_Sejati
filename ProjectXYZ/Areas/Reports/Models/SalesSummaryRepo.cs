@@ -52,7 +52,8 @@ namespace ProjectXYZ.Areas.Reports.Models
                     DateTo = model.DateTo,
                     FilterTime = model.FilterTime,
                     TimeFrom = model.TimeFrom,
-                    TimeTo = model.TimeTo
+                    TimeTo = model.TimeTo,
+                    Employee_ID = model.Employee_ID
                 };
 
                 string inputJson = JsonConvert.SerializeObject(param);
@@ -184,7 +185,8 @@ namespace ProjectXYZ.Areas.Reports.Models
                     FilterTime = model.FilterTime,
                     TimeFrom = model.TimeFrom,
                     TimeTo = model.TimeTo,
-                    FilterChart = model.FilterChart
+                    FilterChart = model.FilterChart,
+                    Employee_ID = model.Employee_ID
                 };
 
                 string inputJson = JsonConvert.SerializeObject(param);
@@ -315,7 +317,8 @@ namespace ProjectXYZ.Areas.Reports.Models
                     DateTo = model.DateTo,
                     FilterTime = model.FilterTime,
                     TimeFrom = model.TimeFrom,
-                    TimeTo = model.TimeTo
+                    TimeTo = model.TimeTo,
+                    Employee_ID = model.Employee_ID
                 };
 
                 string inputJson = JsonConvert.SerializeObject(param);

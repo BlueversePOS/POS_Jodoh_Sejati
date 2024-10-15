@@ -1747,7 +1747,7 @@ namespace ProjectXYZAPI.Controllers
 
         [Route("ReportsSummaryGetHeaderChart")]
         [HttpPost]
-        public dynamic ReportsSummaryGetHeaderChart([FromBody] ParamReport param)
+        public dynamic ReportsSummaryGetHeaderChart([FromBody] ParamReportSummary param)
         {
             try
             {

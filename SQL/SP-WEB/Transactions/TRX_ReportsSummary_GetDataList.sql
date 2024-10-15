@@ -4,11 +4,16 @@ create or alter proc TRX_ReportsSummary_GetDataList
 	@DateTo datetime='1900-01-01',
 	@FilterTime int=0,
 	@TimeFrom datetime='1900-01-01',
-	@TimeTo datetime='1900-01-01'
+	@TimeTo datetime='1900-01-01',
+	@Employee_ID varchar(40)=''
 )
 AS
 BEGIN
 	BEGIN TRY
+		declare @UserID varchar(30)
+		select top 1 @UserID=UserID from POS_Employee
+		where Employee_ID=@Employee_ID
+
 		declare @dateNow datetime = SYSDATETIMEOFFSET() AT TIME ZONE 'SE Asia Standard Time'
 		if @DateFrom = '1900-01-01'
 		begin
@@ -55,6 +60,7 @@ BEGIN
 			and (DTL.Created_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date)
 			OR DTL.Modified_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date))
 			AND ((CAST(DTL.Created_time as time) > CAST(@TimeFrom as time) and CAST(DTL.Created_time as time) < CAST(@TimeTo as time)) OR @FilterTime=0)
+			AND (Created_User=@UserID or @UserID='')
 			GROUP BY DOCDATE
 			union 
 			select DOCDATE, 0 Gross_Sales, 0 Net_Sales, 0 CostofGoods, 0 Discount_Amount, 0 Gross_Profit, SUM(RFD.ORIGTOTAL) Refund_Amount
@@ -62,6 +68,7 @@ BEGIN
 			where (RFD.Created_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date)
 			OR RFD.Modified_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date))
 			AND ((CAST(RFD.Created_time as time) > CAST(@TimeFrom as time) and CAST(RFD.Created_time as time) < CAST(@TimeTo as time)) OR @FilterTime=0)
+			AND (Created_User=@UserID or @UserID='')
 			GROUP BY DOCDATE
 		) x on CAST(DT.DateValue as date)=CAST(x.DOCDATE as date)
 		GROUP BY DT.DateValue
