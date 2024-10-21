@@ -182,6 +182,35 @@
         }
     });
 
+    $('#AllStores').on('click', function () {
+        try {
+            var checked = $(this).is(":checked");
+            $("input[type=checkbox][name=cbStores]").prop("checked", checked);
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    });
+
+    $("input[type=checkbox][name=cbStores]").on('click', function () {
+        try {
+            var count = 0;
+            var countAll = 0;
+            $('#AllStores').prop("checked", false);
+            $.each($("ul.allStores > li input[type=checkbox][name=cbStores]"), function () {
+                var checked = $(this).is(":checked");
+                countAll++;
+                if (checked) {
+                    count++;
+                }
+            });
+            if (count - 1 == countAll - 1) {
+                $('#AllStores').prop("checked", true);
+            }
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    });
+
     //#endregion
 
 });

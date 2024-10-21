@@ -93,8 +93,34 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-2 col-md-12 pl-0 pt-lg-0 pt-md-1 pt-2">
-                        <select class="form-control select2" id="stores"></select>
+                    <div class="row mx-0 col-lg-2 col-md-12 col-12 pl-0 pt-lg-0 pt-md-1 pt-2">
+                        <div class="form-group my-0 col-12 px-0">
+                            <div class="row pull-right">
+                                <div class="dropdown col-12">
+                                    <button class="btn btn-default btn-block bg-white dropdown-toggle dropdown-toggle-split text-center" type="button" id="dropdownStores" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="far fa-clock pr-2"></i> <span>All Stores</span>
+                                    </button>
+                                    <ul class="dropdown-menu checkbox-menu allow-focus allStores" aria-labelledby="dropdownStores">
+                                        <li>
+                                            <div class="col-12">
+                                                <input type="checkbox" name="cbAllStores" id="AllStores" /> All Stores
+                                            </div>
+                                            <hr style="height:0.1px;border-width:0;color:gray;background-color:gray; margin: 8px 0px 8px 0px" />
+                                        </li>
+                                        <li>
+                                            <div class="col-12">
+                                                <input type="checkbox" name="cbStores" id="Retail" /> Retail
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="col-12">
+                                                <input type="checkbox" name="cbStores" id="Signature" /> Signature
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-lg-3 col-md-12 pl-0 pt-lg-0 pt-md-1 pt-2">
                         <select class="form-control select2" id="employees"></select>
