@@ -17,8 +17,11 @@
         },
         function (start, end) {
             $('#reportrange span').html(start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY'));
+            GetData();
         }
     );
+
+    var dataId = 0;
 
     Clear();
 
@@ -31,8 +34,9 @@
         $('#starttime').val(moment(new Date()).format('LT'));
         $('#endtime').val(moment(new Date()).format('LT'));
         $('#reportrange span').html(moment().subtract('days', 29).format('DD/MM/YYYY') + ' - ' + moment().format('DD/MM/YYYY'));
+        $('.titleChart#0').trigger('click').addClass("active-title");
         
-        GetData();
+        GetData(dataId);
     }
 
     function emptyStr(str) {
@@ -57,7 +61,7 @@
         return curr;
     }
 
-    function GetData() {
+    function GetData(status) {
         try {
             var startDate = $('#reportrange').data('daterangepicker').startDate._d;
             var endDate = $('#reportrange').data('daterangepicker').endDate._d;
@@ -74,7 +78,8 @@
                 'TimeFrom': TimeFrom,
                 'TimeTo': TimeTo,
                 'Employee_ID': Employee_ID,
-                'Store_ID': ""
+                'Store_ID': "",
+                'Status': status
             }
 
             $('#table_export tbody').empty();
@@ -160,6 +165,24 @@
                     searchPlaceholder: 'Cari...',
                     sEmptyTable: "No Data",
                     processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span>'
+                },
+                initComplete: function (settings, json) {
+                    var countAll = 0;
+                    var countSales = 0;
+                    var countRefund = 0;
+                    dtTable.column(0).nodes().to$().each(function (index) {
+                        var currow = $(this).closest("tr");
+                        var trxType = emptyStr(currow.find("td:eq(5)").text()) ? "" : currow.find("td:eq(5)").text().trim();
+                        if (trxType.toUpperCase() == "SALE") {
+                            countSales++;
+                        } else if (trxType.toUpperCase() == "REFUND") {
+                            countRefund++;
+                        }
+                        countAll++;
+                    });
+                    $("#Sales").text(countSales);
+                    $("#Refund").text(countRefund);
+                    $("#allReceipt").text(countAll);
                 }
             });
             $('#table_export').attr('style', 'width: 100%');
@@ -196,7 +219,7 @@
 
     $('.datetimepicker-input').on('hide.datetimepicker', function () {
         try {
-            //GetDataTop5();
+            GetData(dataId);
         } catch (err) {
             swal({ type: "error", title: "Error", text: err.message });
         }
@@ -216,7 +239,7 @@
                     $('#starttime').val(endtime);
                 }
             }
-            //GetDataTop5();
+            GetData(dataId);
         } catch (err) {
             swal({ type: "error", title: "Error", text: err.message });
         }
@@ -226,11 +249,11 @@
         try {
             var title = $(this).find('p').html();
             var id = $(this).attr('id');
-            FilterChart = id;
+            dataId = id;
             $("#titleChart").html(title);
             $('.titleChart').removeClass("active-title");
             $(this).addClass("active-title");
-            GetDataChart();
+            GetData(dataId);
         } catch (err) {
             swal({ type: "error", title: "Error", text: err.message });
         }

@@ -54,7 +54,8 @@ namespace ProjectXYZ.Areas.Reports.Models
                     TimeFrom = model.TimeFrom,
                     TimeTo = model.TimeTo,
                     Employee_ID = model.Employee_ID,
-                    Store_ID = model.Store_ID
+                    Store_ID = model.Store_ID,
+                    Status = model.Status
                 };
 
                 string inputJson = JsonConvert.SerializeObject(param);

@@ -5044,6 +5044,7 @@ namespace ProjectXYZAPI.Repository
                 cmd.Parameters.AddWithValue("@TimeTo", param.TimeTo);
                 cmd.Parameters.AddWithValue("@Employee_ID", param.Employee_ID);
                 cmd.Parameters.AddWithValue("@Store_ID", param.Store_ID);
+                cmd.Parameters.AddWithValue("@Status", param.Status);
 
                 SqlDataAdapter adp = new SqlDataAdapter();
                 adp.SelectCommand = cmd;
