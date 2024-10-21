@@ -29,7 +29,7 @@ BEGIN
 			set @TimeTo = CAST(@dateNow as datetime)
 		end
 
-		select x.DOCNUMBER, x.DOCDATE, x.Store_ID, x.Store_Name, x.Employee_Name, x.Customer, x.TrxType, x. Total
+		select x.DOCNUMBER, x.DOCDATE, x.Store_ID, x.Store_Name, x.Employee_Name, x.Customer, x.TrxType, x.Total
 		from (
 			select DTL.DOCNUMBER, DTL.DOCDATE, DTL.Store_ID, ISNULL(ST.Store_Name, '') Store_Name, 
 			ISNULL(EMP.Employee_Name, '') Employee_Name, '' Customer, 'Sale' TrxType, (DTL.Item_Price * DTL.Quantity) Total

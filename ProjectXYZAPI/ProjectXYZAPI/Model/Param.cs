@@ -548,6 +548,18 @@ namespace ProjectXYZAPI.Model
         public string Employee_ID { get; set; }
     }
 
+    public class ParamReportReceipt
+    {
+        public DateTime DateFrom { get; set; }
+        public DateTime DateTo { get; set; }
+        public int FilterTime { get; set; }
+        public DateTime TimeFrom { get; set; }
+        public DateTime TimeTo { get; set; }
+        public int FilterChart { get; set; }
+        public string Employee_ID { get; set; }
+        public string Store_ID { get; set; }
+    }
+
     public class GenerateNumber
     {
         public string DOCID { get; set; }

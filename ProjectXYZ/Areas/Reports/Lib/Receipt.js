@@ -32,7 +32,7 @@
         $('#endtime').val(moment(new Date()).format('LT'));
         $('#reportrange span').html(moment().subtract('days', 29).format('DD/MM/YYYY') + ' - ' + moment().format('DD/MM/YYYY'));
         
-        //GetData();
+        GetData();
     }
 
     function emptyStr(str) {
@@ -55,6 +55,117 @@
             curr = curr.replace(".", "");
         }
         return curr;
+    }
+
+    function GetData() {
+        try {
+            var startDate = $('#reportrange').data('daterangepicker').startDate._d;
+            var endDate = $('#reportrange').data('daterangepicker').endDate._d;
+            startDate = moment(startDate).format('YYYY-MM-DD');
+            endDate = moment(endDate).format('YYYY-MM-DD');
+            var TimeFrom = moment($('#starttime').val(), 'LT').format('HH:mm:ss');
+            var TimeTo = moment($('#endtime').val(), 'LT').format('HH:mm:ss');
+            var AllDay = $('input#AllDay').is(':checked');
+            var Employee_ID = emptyStr($('#employees').val()) ? "" : $('#employees').val();
+            var model = {
+                'DateFrom': startDate,
+                'DateTo': endDate,
+                'FilterTime': AllDay,
+                'TimeFrom': TimeFrom,
+                'TimeTo': TimeTo,
+                'Employee_ID': Employee_ID,
+                'Store_ID': ""
+            }
+
+            $('#table_export tbody').empty();
+            $('#table_export').DataTable().destroy();
+
+            dtTable = $('#table_export').DataTable({
+                processing: true,
+                retrieve: true,
+                paging: true,
+                lengthMenu: [[10, 25, 50], [10, 25, 50]],
+                responsive: true,
+                searchable: true,
+                ajax: {
+                    type: "POST",
+                    url: rootUrl + 'Reports/Receipt/ReportsReceiptGetDataList',
+                    "datatype": "json",
+                    //async: false,
+                    data: { 'model': model },
+                    beforeSend: function () {
+                        $("#loading").show();
+                    },
+                    complete: function () {
+                        $("#loading").hide();
+                    },
+                    error: function (xhr) {
+                        var doc = $.parseHTML(xhr.responseText);
+                        if (!emptyStr(doc)) {
+                            var titleNode = doc.filter(function (node) {
+                                return node.localName === "title";
+                            });
+                            var msg = titleNode[0].textContent;
+                            swal("Error", "Error : " + msg, "error");
+                        }
+                        else {
+                            if (xhr.statusText.toUpperCase().trim() != "OK") {
+                                swal({ type: "error", title: "Error", text: xhr.statusText });
+                            }
+                        }
+                    }
+                },
+                columns: [
+                    { data: 'DOCNUMBER' },
+                    {
+                        data: 'DOCDATE',
+                        className: 'no-wrap',
+                        render: function (data, type, row) {
+                            return moment(data).format("MMM DD, YYYY");
+                        }
+                    },
+                    { data: 'Store_Name' },
+                    { data: 'Employee_Name' },
+                    { data: 'Customer' },
+                    { data: 'TrxType' },
+                    {
+                        data: 'Total',
+                        className: "text-right no-wrap",
+                        render: function (data, type, row) {
+                            var amount = emptyStr(data) ? 0 : data;
+                            return formatCurrency(amount);
+                        }
+                    }
+                ],
+                order: [],
+                buttons: [
+                    {
+                        extend: 'excel',
+                        className: 'hidden',
+                        text: '',
+                        exportOptions: {
+                            modifier: {
+                                page: 'all',
+                                order: 'index',
+                                search: 'none'
+                            },
+                        }
+                    }
+                ],
+                dom: "<'row'<'col-6 col-sm-6 col-md-6 col-lg-6'l><'col-6 col-sm-6 col-md-6 col-lg-6'f>>" +
+                    "<'row'<'col-lg-12 col-md-12 col-sm-12 col-12'tr>>" +
+                    "<'row'<'col-6 col-sm-6 col-md-6 col-lg-6'i><'col-6 col-sm-6 col-md-6 col-lg-6'p>>",
+                language: {
+                    search: '',
+                    searchPlaceholder: 'Cari...',
+                    sEmptyTable: "No Data",
+                    processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span>'
+                }
+            });
+            $('#table_export').attr('style', 'width: 100%');
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
     }
 
     //#endregion

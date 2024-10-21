@@ -1808,6 +1808,27 @@ namespace ProjectXYZAPI.Controllers
             }
         }
 
+        [Route("ReportsReceiptGetDataList")]
+        [HttpPost]
+        public dynamic ReportsReceiptGetDataList([FromBody] ParamReportReceipt param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.ReportsReceiptGetDataList(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
         #endregion
 
         #endregion
