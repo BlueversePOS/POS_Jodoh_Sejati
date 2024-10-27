@@ -45,8 +45,51 @@ namespace ProjectXYZ.Areas.Reports.Controllers
                                 Store_ID = ro["Store_ID"],
                                 Store_Name = ro["Store_Name"],
                                 Employee_Name = ro["Employee_Name"],
-                                Customer = ro["Customer"],
+                                CustName = ro["CustName"],
                                 TrxType = ro["TrxType"],
+                                Total = ro["Total"]
+                            }).ToList();
+
+                success = true;
+                var jsonResult = Json(new { success = success, data = list }, JsonRequestBehavior.AllowGet);
+                jsonResult.MaxJsonLength = int.MaxValue;
+                return jsonResult;
+            }
+            catch (Exception ex)
+            {
+
+                var jsonResult = Json(new { success = success, message = ex.Message }, JsonRequestBehavior.AllowGet);
+                jsonResult.MaxJsonLength = int.MaxValue;
+                return jsonResult;
+            }
+        }
+
+        [AuthorizeActionFilterAttribute]
+        [HttpPost]
+
+        public JsonResult ReportsReceiptGetDetail(string DOCNUMBER)
+        {
+            bool success = false;
+            try
+            {
+                DataTable ObjList = repo.ReportsReceiptGetDetail(DOCNUMBER);
+                List<DataRow> rows = ObjList.Select().ToList();
+
+                var list = (from DataRow ro in rows
+                            select new
+                            {
+                                DOCNUMBER = ro["DOCNUMBER"],
+                                DOCDATE = ro["DOCDATE"],
+                                Item_Description = ro["Item_Description"],
+                                Store_ID = ro["Store_ID"],
+                                Store_Name = ro["Store_Name"],
+                                Employee_Name = ro["Employee_Name"],
+                                CustName = ro["CustName"],
+                                TrxType = ro["TrxType"],
+                                Quantity = ro["Quantity"],
+                                Item_Price = ro["Item_Price"],
+                                Discount_Amount = ro["Discount_Amount"],
+                                Subtotal = ro["Subtotal"],
                                 Total = ro["Total"]
                             }).ToList();
 

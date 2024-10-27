@@ -30,19 +30,18 @@ BEGIN
 			set @TimeTo = CAST(@dateNow as datetime)
 		end
 
-		select x.DOCNUMBER, x.DOCDATE, x.Store_ID, x.Store_Name, x.Employee_Name, x.Customer, x.TrxType, x.Total
+		select x.DOCNUMBER, x.DOCDATE, x.Store_ID, x.Store_Name, x.Employee_Name, x.CustName, x.TrxType, x.Total
 		from (
-			select DTL.DOCNUMBER, DTL.DOCDATE, DTL.Store_ID, ISNULL(ST.Store_Name, '') Store_Name, 
-			ISNULL(EMP.Employee_Name, '') Employee_Name, '' Customer, 'Sale' TrxType, (DTL.Item_Price * DTL.Quantity) Total
-			from POS_TrxDetail_HIST DTL
-			left join POS_Set_Stores ST ON DTL.Store_ID=ST.Store_ID
-			left join POS_Employee EMP ON DTL.Created_User=EMP.UserID
-			where DTL.DOCNUMBER not in(SELECT DISTINCT RFD.DOCNUMBER FROM POS_TrxRefund_HIST RFD)
-			and DTL.Quantity > 0
-			and (DTL.Created_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date)
-			OR DTL.Modified_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date))
-			AND ((CAST(DTL.Created_time as time) > CAST(@TimeFrom as time) and CAST(DTL.Created_time as time) < CAST(@TimeTo as time)) OR @FilterTime=0)
-			AND (DTL.Created_User=@UserID or @Employee_ID='') AND (DTL.Store_ID=@Store_ID or @Store_ID='')
+			select HDR.DOCNUMBER, HDR.DOCDATE, HDR.Store_ID, ISNULL(ST.Store_Name, '') Store_Name, 
+			ISNULL(EMP.Employee_Name, '') Employee_Name, HDR.CustName, 'Sale' TrxType, HDR.ORIGTOTAL Total
+			from POS_TrxHeader_HIST HDR with(nolock)
+			left join POS_Set_Stores ST ON HDR.Store_ID=ST.Store_ID
+			left join POS_Employee EMP ON HDR.Created_User=EMP.UserID
+			where HDR.DOCNUMBER not in(SELECT DISTINCT RFD.DOCNUMBER FROM POS_TrxRefund_HIST RFD)
+			and (HDR.Created_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date)
+			OR HDR.Modified_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date))
+			AND ((CAST(HDR.Created_time as time) > CAST(@TimeFrom as time) and CAST(HDR.Created_time as time) < CAST(@TimeTo as time)) OR @FilterTime=0)
+			AND (HDR.Created_User=@UserID or @Employee_ID='') AND (HDR.Store_ID=@Store_ID or @Store_ID='')
 			and (@Status=1 or @Status=0)
 			union 
 			select RFD.REFUNDNUMBER, RFD.Refund_Date, RFD.Store_ID, ISNULL(ST.Store_Name, '') Store_Name, 

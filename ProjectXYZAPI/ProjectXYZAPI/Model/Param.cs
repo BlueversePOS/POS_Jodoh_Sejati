@@ -550,6 +550,7 @@ namespace ProjectXYZAPI.Model
 
     public class ParamReportReceipt
     {
+        public string DOCNUMBER { get; set; } = string.Empty;
         public DateTime DateFrom { get; set; }
         public DateTime DateTo { get; set; }
         public int FilterTime { get; set; }

@@ -193,9 +193,53 @@
                                         <th style="vertical-align:middle;">Total</th>
                                     </tr>
                                 </thead>
+                                <tbody></tbody>
                             </table>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="myModalDetail" data-backdrop="static">
+            <div class="modal-dialog float-right" style="top: 120px; min-width: 406px; min-height: 600px;">
+                <div class="modal-content" style="min-height: 600px;">
+                    <div class="modal-header bg-transparent py-1">
+                        <h2 data-dismiss="modal" style="color: black !important; cursor: pointer;">&times;</h2>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card-body px-0 py-1">
+                            <div class="col-12 px-0 text-right" id="DocType"></div>
+                            <div class="col-12 px-0 text-center">
+                                <h2 id="amount" class="w-100">Rp18.000</h2>
+                                <span class="w-100">Total</span>
+                            </div>
+                            <hr />
+                            <div class="col-12 px-0">
+                                <div class="w-100">Employee: <span id="Employee_Name"></span></div>
+                                <div class="w-100">POS: <span id="Store_ID"></span></div>
+                            </div>
+                            <hr />
+                            <div class="col-12 px-0">
+                                <table id="table_bill"><tbody></tbody></table>
+                            </div>
+                            <hr />
+                            <div class="col-12 px-0">
+                                <div class="row mx-0 justify-content-between">
+                                    <span>Total</span>
+                                    <span id="TotalBill">Rp18.000</span>
+                                </div>
+                                <div class="row mx-0 justify-content-between detailPayment">
+                                    <span>Card</span>
+                                    <span id="TotalBill">Rp18.000</span>
+                                </div>
+                                <hr />
+                                <div class="row mx-0 justify-content-between detailPayment">
+                                    <span id="DOCDATE"></span>
+                                    <span id="DOCNUMBER"></span>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
                 </div>
             </div>
         </div>

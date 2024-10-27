@@ -131,7 +131,7 @@
                     },
                     { data: 'Store_Name' },
                     { data: 'Employee_Name' },
-                    { data: 'Customer' },
+                    { data: 'CustName' },
                     { data: 'TrxType' },
                     {
                         data: 'Total',
@@ -340,6 +340,15 @@
             if (count - 1 == countAll - 1) {
                 $('#AllStores').prop("checked", true);
             }
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    });
+
+    $("#table_export tbody").on("dblclick", "tr", function () {
+        try {
+            var currow = $(this).closest("tr");
+            $("#myModalDetail").modal();
         } catch (err) {
             swal({ type: "error", title: "Error", text: err.message });
         }
