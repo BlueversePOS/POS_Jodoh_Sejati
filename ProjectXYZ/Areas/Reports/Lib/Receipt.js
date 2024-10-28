@@ -194,6 +194,8 @@
     function GetDataDetail() {
         try {
             var DOCNUMBER = emptyStr($("#DOCNUMBER").val()) ? "" : $("#DOCNUMBER").val();
+            $("#table_bill tbody").find("tr").remove();
+            $("#table_bill tbody").empty();
             $.ajax({
                 url: rootUrl + "Reports/Receipt/ReportsReceiptGetDetail",
                 type: "POST",

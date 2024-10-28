@@ -14,7 +14,7 @@ BEGIN
 		CASE WHEN LEN(RTRIM(Postal_Code)) > 0 THEN ', ' + Postal_Code ELSE '' END,
 		ISNULL(PD.POS_Device_Name, '') POS_Device_Name
 		FROM POS_Set_Stores SS
-		left join POS_Device PD ON SS.Store_Name=PD.Store_ID
+		left join POS_Device PD ON SS.Store_ID=PD.Store_ID
 		WHERE SS.Store_ID=@Store_ID or @Store_ID = ''
 	END TRY
 	BEGIN	CATCH

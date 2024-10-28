@@ -27,6 +27,10 @@ BEGIN
 			left join POS_Employee EMP ON RFD.Refund_User=EMP.UserID
 			where RFD.REFUNDNUMBER=@DOCNUMBER
 		) x
+		
+		--select DOCNUMBER, Payment_ID, Payment_Type, ORIGTOTAL 
+		--from POS_TrxPayTypes_HIST
+		--where DOCNUMBER=@DOCNUMBER
 
 	END TRY
 	BEGIN CATCH
