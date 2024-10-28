@@ -191,6 +191,86 @@
         }
     }
 
+    function GetDataDetail() {
+        try {
+            var DOCNUMBER = emptyStr($("#DOCNUMBER").val()) ? "" : $("#DOCNUMBER").val();
+            $.ajax({
+                url: rootUrl + "Reports/Receipt/ReportsReceiptGetDetail",
+                type: "POST",
+                dataType: "json",
+                data: { DOCNUMBER: DOCNUMBER },
+                success: function (result) {
+                    if (result.success) {
+                        $.each(result.data, function (index, value) {
+                            var DOCNUMBER = emptyStr(value.DOCNUMBER) ? "" : value.DOCNUMBER.trim(),
+                                DOCDATE = moment(value.DOCDATE).format("MMM DD, YYYY"),
+                                Item_Description = emptyStr(value.Item_Description) ? "" : value.Item_Description.trim(),
+                                Store_Name = emptyStr(value.Store_Name) ? "" : value.Store_Name.trim(),
+                                Employee_Name = emptyStr(value.Employee_Name) ? "" : value.Employee_Name.trim(),
+                                CustName = emptyStr(value.CustName) ? "" : value.CustName.trim(),
+                                TrxType = emptyStr(value.TrxType) ? "" : value.TrxType.trim(),
+                                Quantity = emptyStr(value.Quantity) ? 0 : value.Quantity,
+                                Item_Price = emptyStr(value.Item_Price) ? 0 : value.Item_Price,
+                                Discount_Amount = emptyStr(value.Discount_Amount) ? 0 : value.Discount_Amount,
+                                Subtotal = emptyStr(value.Subtotal) ? 0 : value.Subtotal,
+                                Total = emptyStr(value.Total) ? 0 : value.Total;
+                            var colorTxt = "black";
+                            if (TrxType.toLowerCase() == "refund") {
+                                colorTxt = "red";
+                            }
+                            var discTxt = "";
+                            if (Discount_Amount > 0) {
+                                discTxt = '<br /><span>' + formatCurrency(Discount_Amount) + '</span>';
+                            }
+                            var tbody =
+                                '<tr>' +
+                                '<td class="pb-1" style="width: 70%;">' +
+                                '<div class="col-12 px-0">' +
+                                '<span class="w-100">' + Item_Description + '</span>' +
+                                '<br /><span class="w-100 text-gray">' + Quantity.toString() + ' x ' + formatCurrency(Item_Price) + '</span>' +
+                                discTxt +
+                                '</div>' +
+                                '</td>' +
+                                '<td class="pb-1 float-right no-wrap">' + formatCurrency(Subtotal) + '</td>' +
+                                '</tr>';
+                            $("#table_bill").append(tbody);
+
+                            $("#DocType").html(TrxType).prop("style", "color: " + colorTxt);
+                            $("#Amount").html(formatCurrency(Total));
+                            $("#Employee_Name").html(Employee_Name);
+                            $("#Store_ID").html(Store_Name);
+                            $("#TotalBill").html(formatCurrency(Total));
+                            $("#DOCDATE").html(DOCDATE);
+                            $("#DOCNUMBER_txt").html(DOCNUMBER);
+                        });
+                    }
+                    else {
+                        swal({ type: "error", title: "Error", text: result.message });
+                    }
+                },
+                error: function (xhr) {
+                    if (xhr.status != "200") {
+                        var doc = $.parseHTML(xhr.responseText);
+                        if (!emptyStr(doc)) {
+                            var titleNode = doc.filter(function (node) {
+                                return node.localName === "title";
+                            });
+                            var msg = titleNode[0].textContent;
+                            swal("Error", "Error : " + msg, "error");
+                        }
+                        else {
+                            if (xhr.statusText.toUpperCase().trim() != "OK") {
+                                swal({ type: "error", title: "Error", text: xhr.statusText });
+                            }
+                        }
+                    }
+                }
+            });
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    };
+
     //#endregion
 
     //#region EVENT
@@ -348,7 +428,18 @@
     $("#table_export tbody").on("dblclick", "tr", function () {
         try {
             var currow = $(this).closest("tr");
+            var DOCNUMBER = emptyStr(currow.find("td:eq(0)").text()) ? "" : currow.find("td:eq(0)").text().trim();
+            $("#myModalDetail").find("#DOCNUMBER").val(DOCNUMBER);
+            GetDataDetail();
             $("#myModalDetail").modal();
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    });
+
+    $('.allStores.show').on('hide', function () {
+        try {
+            GetData(dataId);
         } catch (err) {
             swal({ type: "error", title: "Error", text: err.message });
         }

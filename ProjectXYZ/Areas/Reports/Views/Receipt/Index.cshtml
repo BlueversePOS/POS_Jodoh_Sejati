@@ -201,16 +201,17 @@
             </div>
         </div>
         <div class="modal fade" id="myModalDetail" data-backdrop="static">
-            <div class="modal-dialog float-right" style="top: 120px; min-width: 406px; min-height: 600px;">
+            <div class="modal-dialog float-right" style="min-width: 406px; min-height: 600px;">
                 <div class="modal-content" style="min-height: 600px;">
                     <div class="modal-header bg-transparent py-1">
                         <h2 data-dismiss="modal" style="color: black !important; cursor: pointer;">&times;</h2>
                     </div>
                     <div class="modal-body">
                         <div class="card-body px-0 py-1">
-                            <div class="col-12 px-0 text-right" id="DocType"></div>
+                            <input type="hidden" id="DOCNUMBER" value="" />
+                            <span class="col-12 px-0 text-right float-right" id="DocType"></span>
                             <div class="col-12 px-0 text-center">
-                                <h2 id="amount" class="w-100">Rp18.000</h2>
+                                <h2 id="Amount" class="w-100"></h2>
                                 <span class="w-100">Total</span>
                             </div>
                             <hr />
@@ -220,13 +221,13 @@
                             </div>
                             <hr />
                             <div class="col-12 px-0">
-                                <table id="table_bill"><tbody></tbody></table>
+                                <table id="table_bill" class="w-100"><tbody></tbody></table>
                             </div>
                             <hr />
                             <div class="col-12 px-0">
                                 <div class="row mx-0 justify-content-between">
-                                    <span>Total</span>
-                                    <span id="TotalBill">Rp18.000</span>
+                                    <label>Total</label>
+                                    <label id="TotalBill"></label>
                                 </div>
                                 <div class="row mx-0 justify-content-between detailPayment">
                                     <span>Card</span>
@@ -234,8 +235,8 @@
                                 </div>
                                 <hr />
                                 <div class="row mx-0 justify-content-between detailPayment">
-                                    <span id="DOCDATE"></span>
-                                    <span id="DOCNUMBER"></span>
+                                    <span id="DOCDATE" class="text-gray"></span>
+                                    <span id="DOCNUMBER_txt" class="text-gray"></span>
                                 </div>
                             </div>
                         </div>
