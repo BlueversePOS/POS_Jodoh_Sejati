@@ -447,6 +447,14 @@
         }
     });
 
+    $("#employees").on("change", function () {
+        try {
+            GetData(dataId);
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    });
+
     //#endregion
 
 });

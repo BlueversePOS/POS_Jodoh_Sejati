@@ -11,9 +11,12 @@ BEGIN
 	BEGIN TRY
 		SELECT DISTINCT TOP 5 *
 		FROM(
-			SELECT DISTINCT DTL.Item_Number, DTL.Item_Description, DTL.DOCDATE, COALESCE(ITM.Item_Color, '') Item_Color, SUM(DTL.Item_Price - ISNULL(DTL.Discount_Amount, 0)) Net_Sales
+			SELECT DISTINCT DTL.Item_Number, DTL.Item_Description, DTL.DOCDATE, COALESCE(ITM.Item_Color, '') Item_Color, SUM((DTL.Item_Price * DTL.Quantity) - ISNULL(DTL.Discount_Amount, 0)) Net_Sales
 			FROM POS_TrxDetail_HIST DTL with (nolock)
-			LEFT JOIN POS_Item ITM with (nolock) ON DTL.Item_Number=ITM.Item_Number
+			LEFT JOIN (
+				select distinct Item_Number, Item_Description, Item_Color
+				from POS_Item with (nolock)
+			) ITM ON DTL.Item_Number=ITM.Item_Number
 			WHERE DTL.DOCNUMBER not in(SELECT DISTINCT RFD.DOCNUMBER FROM POS_TrxRefund_HIST RFD with (nolock))
 			AND (DTL.Created_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date)
 			OR DTL.Modified_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date))
