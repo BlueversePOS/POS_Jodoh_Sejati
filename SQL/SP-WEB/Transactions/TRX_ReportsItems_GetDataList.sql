@@ -21,7 +21,7 @@ BEGIN
 		LEFT JOIN POS_CategoryItem CAT with (nolock) ON ITM.Category_ID=CAT.Category_ID
 		OUTER APPLY(
 			select Item_Number, 0 LineItem_Option, SUM(Quantity) Quantity, SUM((Item_Price * Quantity) - ISNULL(Discount_Amount, 0)) Gross_Sales, SUM((Item_Price * Quantity) - ISNULL(Discount_Amount, 0))/1.11 Net_Sales,
-			SUM(Item_Cost * Quantity) CostofGoods, (SUM((Item_Price * Quantity) - ISNULL(Discount_Amount, 0))/1.11) - SUM(Item_Cost * Quantity) Gross_Profit
+			SUM(Item_Cost * Quantity) CostofGoods, (SUM((Item_Price * Quantity) - ISNULL(Discount_Amount, 0))) - SUM(Item_Cost * Quantity) Gross_Profit
 			from POS_TrxDetail_HIST DTL
 			where DTL.DOCNUMBER not in(SELECT DISTINCT RFD.DOCNUMBER FROM POS_TrxRefund_HIST RFD with (nolock))
 			and DTL.Item_Number=ITM.Item_Number
@@ -31,7 +31,7 @@ BEGIN
 			GROUP BY Item_Number
 			UNION
 			select Item_Number, LineItem_Option, SUM(Quantity) Quantity, SUM((Item_Price * Quantity) - ISNULL(Discount_Amount, 0)) Gross_Sales, SUM((Item_Price * Quantity) - ISNULL(Discount_Amount, 0))/1.11 Net_Sales,
-			SUM(Item_Cost * Quantity) CostofGoods, (SUM((Item_Price * Quantity) - ISNULL(Discount_Amount, 0) * Quantity)/1.11) - SUM(Item_Cost * Quantity) Gross_Profit
+			SUM(Item_Cost * Quantity) CostofGoods, (SUM((Item_Price * Quantity) - ISNULL(Discount_Amount, 0))) - SUM(Item_Cost * Quantity) Gross_Profit
 			from POS_TrxDetail_HIST DTL
 			where DTL.DOCNUMBER not in(SELECT DISTINCT RFD.DOCNUMBER FROM POS_TrxRefund_HIST RFD with (nolock))
 			and DTL.Item_Number=ITM.Item_Number and DTL.LineItem_Option=IVR.LineItem_Option

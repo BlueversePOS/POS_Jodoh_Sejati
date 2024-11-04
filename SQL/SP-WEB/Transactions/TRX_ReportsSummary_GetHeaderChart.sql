@@ -32,7 +32,7 @@ BEGIN
 		SUM(ISNULL(Discount_Amount, 0)) Discount_Amount, SUM(ISNULL(Net_Sales, 0)) Net_Sales, SUM(ISNULL(Gross_Profit, 0)) Gross_Profit
 		from(
 			select SUM(HDR.ORIGTOTAL) Gross_Sales, SUM(HDR.SUBTOTAL) Net_Sales, SUM(HDR.Discount_Amount) Discount_Amount, 
-			SUM(HDR.SUBTOTAL) - SUM(ISNULL(DTL.Item_Cost, 0)) Gross_Profit, 0 Refund_Amount
+			SUM(HDR.ORIGTOTAL) - SUM(ISNULL(DTL.Item_Cost, 0)) Gross_Profit, 0 Refund_Amount
 			from POS_TrxHeader_HIST HDR
 			left join (
 				select DOCNUMBER, SUM(Item_Cost * Quantity) Item_Cost

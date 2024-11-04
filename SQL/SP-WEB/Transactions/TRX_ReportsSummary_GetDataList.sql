@@ -53,7 +53,7 @@ BEGIN
 		from @temp DT
 		left join (
 			select HDR.DOCDATE, SUM(HDR.ORIGTOTAL) Gross_Sales, SUM(HDR.SUBTOTAL) Net_Sales, SUM(ISNULL(DTL.Item_Cost, 0)) CostofGoods,
-			SUM(HDR.Discount_Amount) Discount_Amount, SUM(HDR.SUBTOTAL) - SUM(ISNULL(DTL.Item_Cost, 0)) Gross_Profit, 0 Refund_Amount
+			SUM(HDR.Discount_Amount) Discount_Amount, SUM(HDR.ORIGTOTAL) - SUM(ISNULL(DTL.Item_Cost, 0)) Gross_Profit, 0 Refund_Amount
 			from POS_TrxHeader_HIST HDR
 			left join (
 				select DOCNUMBER, SUM(Item_Cost * Quantity) Item_Cost
