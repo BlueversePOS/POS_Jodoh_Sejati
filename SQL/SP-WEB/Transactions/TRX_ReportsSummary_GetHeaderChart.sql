@@ -28,25 +28,33 @@ BEGIN
 			set @TimeTo = CAST(@dateNow as datetime)
 		end
 
-		select SUM(ISNULL(Quantity, 0)) Quantity, SUM(ISNULL(Gross_Sales, 0)) Gross_Sales, SUM(ISNULL(Refund_Amount, 0)) Refund_Amount, 
+		select 0 Quantity, SUM(ISNULL(Gross_Sales, 0)) Gross_Sales, SUM(ISNULL(Refund_Amount, 0)) Refund_Amount, 
 		SUM(ISNULL(Discount_Amount, 0)) Discount_Amount, SUM(ISNULL(Net_Sales, 0)) Net_Sales, SUM(ISNULL(Gross_Profit, 0)) Gross_Profit
 		from(
-			select SUM(Quantity) Quantity, SUM(Item_Price * Quantity) Gross_Sales, SUM((Item_Price * Quantity) - (ISNULL(Discount_Amount, 0) * Quantity)) Net_Sales,
-			SUM(Discount_Amount) Discount_Amount, SUM((Item_Price * Quantity) - (ISNULL(Discount_Amount, 0) * Quantity)) - SUM(Item_Cost * Quantity) Gross_Profit, 0 Refund_Amount
-			from POS_TrxDetail_HIST DTL
-			where DTL.DOCNUMBER not in(SELECT DISTINCT RFD.DOCNUMBER FROM POS_TrxRefund_HIST RFD)
-			and DTL.Quantity > 0
-			and (DTL.Created_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date)
-			OR DTL.Modified_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date))
-			AND ((CAST(DTL.Created_time as time) > CAST(@TimeFrom as time) and CAST(DTL.Created_time as time) < CAST(@TimeTo as time)) OR @FilterTime=0)
-			AND (Created_User=@UserID or ISNULL(@UserID, '')='')
+			select SUM(HDR.ORIGTOTAL) Gross_Sales, SUM(HDR.SUBTOTAL) Net_Sales, SUM(HDR.Discount_Amount) Discount_Amount, 
+			SUM(HDR.SUBTOTAL) - SUM(ISNULL(DTL.Item_Cost, 0)) Gross_Profit, 0 Refund_Amount
+			from POS_TrxHeader_HIST HDR
+			left join (
+				select DOCNUMBER, SUM(Item_Cost * Quantity) Item_Cost
+				from POS_TrxDetail_HIST
+				GROUP BY DOCNUMBER
+			) DTL ON HDR.DOCNUMBER=DTL.DOCNUMBER
+			left join POS_Account ACC ON HDR.Created_User=ACC.UserID
+			left join POS_Employee EMP ON HDR.Created_User=EMP.UserID or EMP.UserID=ACC.Business_Name
+			where HDR.DOCNUMBER not in(SELECT DISTINCT RFD.DOCNUMBER FROM POS_TrxRefund_HIST RFD)
+			and (HDR.Created_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date)
+			OR HDR.Modified_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date))
+			AND ((CAST(HDR.Created_time as time) > CAST(@TimeFrom as time) and CAST(HDR.Created_time as time) < CAST(@TimeTo as time)) OR @FilterTime=0)
+			AND (HDR.Created_User=@UserID or EMP.Employee_ID=@Employee_ID or ISNULL(@UserID, '')='')
 			union 
-			select 0 Quantity, 0 Gross_Sales, 0 Net_Sales, 0 Discount_Amount, 0 Gross_Profit, SUM(RFD.ORIGTOTAL) ORIGTOTAL
+			select 0 Gross_Sales, 0 Net_Sales, 0 Discount_Amount, 0 Gross_Profit, SUM(RFD.ORIGTOTAL) ORIGTOTAL
 			from POS_TrxRefund_HIST RFD
+			left join POS_Account ACC ON RFD.Created_User=ACC.UserID
+			left join POS_Employee EMP ON RFD.Created_User=EMP.UserID or EMP.UserID=ACC.Business_Name
 			where (RFD.Created_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date)
 			OR RFD.Modified_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date))
 			AND ((CAST(RFD.Created_time as time) > CAST(@TimeFrom as time) and CAST(RFD.Created_time as time) < CAST(@TimeTo as time)) OR @FilterTime=0)
-			AND (Created_User=@UserID or ISNULL(@UserID, '')='')
+			AND (RFD.Created_User=@UserID or EMP.Employee_ID=@Employee_ID or ISNULL(@UserID, '')='')
 		) x
 	END TRY
 	BEGIN CATCH

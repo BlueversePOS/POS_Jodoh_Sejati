@@ -36,22 +36,24 @@ BEGIN
 			ISNULL(EMP.Employee_Name, '') Employee_Name, HDR.CustName, 'Sale' TrxType, HDR.ORIGTOTAL Total
 			from POS_TrxHeader_HIST HDR with(nolock)
 			left join POS_Set_Stores ST ON HDR.Store_ID=ST.Store_ID
-			left join POS_Employee EMP ON HDR.Created_User=EMP.UserID
+			left join POS_Account ACC ON HDR.Created_User=ACC.UserID
+			left join POS_Employee EMP ON HDR.Created_User=EMP.UserID or EMP.UserID=ACC.Business_Name
 			where HDR.DOCNUMBER not in(SELECT DISTINCT RFD.DOCNUMBER FROM POS_TrxRefund_HIST RFD)
 			and (HDR.Created_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date)
 			OR HDR.Modified_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date))
 			AND ((CAST(HDR.Created_time as time) > CAST(@TimeFrom as time) and CAST(HDR.Created_time as time) < CAST(@TimeTo as time)) OR @FilterTime=0)
-			AND (HDR.Created_User=@UserID or @Employee_ID='') AND (HDR.Store_ID=@Store_ID or @Store_ID='')
+			AND (HDR.Created_User=@UserID or EMP.Employee_ID=@Employee_ID or @Employee_ID='') AND (HDR.Store_ID=@Store_ID or @Store_ID='')
 			and (@Status=1 or @Status=0)
 			union 
 			select RFD.REFUNDNUMBER, RFD.Refund_Date, RFD.Store_ID, ISNULL(ST.Store_Name, '') Store_Name, 
 			ISNULL(EMP.Employee_Name, '') Employee_Name, RFD.CustName, 'Refund' TrxType, RFD.SUBTOTAL Total
 			from POS_TrxRefund_HIST RFD
 			left join POS_Set_Stores ST ON RFD.Store_ID=ST.Store_ID
-			left join POS_Employee EMP ON RFD.Refund_User=EMP.UserID
+			left join POS_Account ACC ON RFD.Created_User=ACC.UserID
+			left join POS_Employee EMP ON RFD.Refund_User=EMP.UserID or EMP.UserID=ACC.Business_Name
 			where RFD.Refund_Date BETWEEN CAST(@DateFrom as date) and CAST(@DateTo as date)
 			AND ((CAST(RFD.Refund_Time as time) > CAST(@TimeFrom as time) and CAST(RFD.Created_time as time) < CAST(@TimeTo as time)) OR @FilterTime=0)
-			AND (RFD.Refund_User=@UserID or @Employee_ID='') AND (RFD.Store_ID=@Store_ID or @Store_ID='')
+			AND (RFD.Refund_User=@UserID or EMP.Employee_ID=@Employee_ID or @Employee_ID='') AND (RFD.Store_ID=@Store_ID or @Store_ID='')
 			and (@Status=2 or @Status=0)
 		) x
 

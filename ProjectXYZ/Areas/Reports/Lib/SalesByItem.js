@@ -25,6 +25,7 @@
         function (start, end) {
             $('#reportrange span').html(start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY'));
             GetDataTop5();
+            GetDataChart();
             GetData();
         }
     );
@@ -39,6 +40,7 @@
         $('#starttime').val(moment(new Date()).format('LT'));
         $('#endtime').val(moment(new Date()).format('LT'));
         GetDataTop5();
+        GetDataChart();
         GetData();
     }
 
@@ -138,9 +140,6 @@
                 'TimeFrom': TimeFrom,
                 'TimeTo': TimeTo
             }
-            xValues.length = 0;
-            cValues.length = 0;
-            rawData.length = 0;
 
             $("#table_netSales").find("tbody tr").remove();
             $("#table_netSales").find("tbody").empty();
@@ -154,7 +153,6 @@
                         $.each(result.data, function (index, value) {
                             var Item_Number = emptyStr(value.Item_Number) ? "" : value.Item_Number.trim(),
                                 Item_Description = emptyStr(value.Item_Description) ? "" : value.Item_Description.trim(),
-                                DOCDATE = moment(value.DOCDATE).format("YYYY MMM DD"),
                                 Item_Color = emptyStr(value.Item_Color) ? "" : value.Item_Color.trim(),
                                 Net_Sales = emptyStr(value.Net_Sales) ? "" : value.Net_Sales;
                             maxValue = index == 0 || Net_Sales > maxValue ? value.Net_Sales : maxValue;
@@ -167,6 +165,70 @@
                                 '<td class="pb-1 text-right" style="width: 30%;">' + formatCurrency(Net_Sales) + '</td>' +
                                 '</tr>';
                             $("#table_netSales").append(tbody);
+                        });
+                    }
+                    else {
+                        swal({ type: "error", title: "Error", text: result.message });
+                    }
+                },
+                error: function (xhr) {
+                    if (xhr.status != "200") {
+                        var doc = $.parseHTML(xhr.responseText);
+                        if (!emptyStr(doc)) {
+                            var titleNode = doc.filter(function (node) {
+                                return node.localName === "title";
+                            });
+                            var msg = titleNode[0].textContent;
+                            swal("Error", "Error : " + msg, "error");
+                        }
+                        else {
+                            if (xhr.statusText.toUpperCase().trim() != "OK") {
+                                swal({ type: "error", title: "Error", text: xhr.statusText });
+                            }
+                        }
+                    }
+                }
+            });
+        } catch (err) {
+            swal({ type: "error", title: "Error", text: err.message });
+        }
+    };
+
+    function GetDataChart() {
+        try {
+            var startDate = $('#reportrange').data('daterangepicker').startDate._d;
+            var endDate = $('#reportrange').data('daterangepicker').endDate._d;
+            startDate = moment(startDate).format('YYYY-MM-DD');
+            endDate = moment(endDate).format('YYYY-MM-DD');
+            var TimeFrom = moment($('#starttime').val(), 'LT').format('HH:mm:ss');
+            var TimeTo = moment($('#endtime').val(), 'LT').format('HH:mm:ss');
+            var AllDay = $('input#AllDay').is(':checked');
+            var maxValue = 1000000;
+            var model = {
+                'DateFrom': startDate,
+                'DateTo': endDate,
+                'FilterTime': AllDay,
+                'TimeFrom': TimeFrom,
+                'TimeTo': TimeTo
+            }
+            xValues.length = 0;
+            cValues.length = 0;
+            rawData.length = 0;
+            
+            $.ajax({
+                url: rootUrl + "Reports/SalesByItem/ReportsItemsGetDataChart",
+                type: "POST",
+                dataType: "json",
+                data: { model: model },
+                success: function (result) {
+                    if (result.success) {
+                        $.each(result.data, function (index, value) {
+                            var Item_Number = emptyStr(value.Item_Number) ? "" : value.Item_Number.trim(),
+                                Item_Description = emptyStr(value.Item_Description) ? "" : value.Item_Description.trim(),
+                                DOCDATE = moment(value.DOCDATE).format("YYYY MMM DD"),
+                                Item_Color = emptyStr(value.Item_Color) ? "" : value.Item_Color.trim(),
+                                Net_Sales = emptyStr(value.Net_Sales) ? "" : value.Net_Sales;
+                            maxValue = index == 0 || Net_Sales > maxValue ? value.Net_Sales : maxValue;
 
                             cValues.push(getColor(Item_Color.replace("bg-", "")));
                             rawData.push({
@@ -388,6 +450,8 @@
     $('.datetimepicker-input').on('hide.datetimepicker', function () {
         try {
             GetDataTop5();
+            GetDataChart();
+            GetData();
         } catch (err) {
             swal({ type: "error", title: "Error", text: err.message });
         }
@@ -408,6 +472,8 @@
                 }
             }
             GetDataTop5();
+            GetDataChart();
+            GetData();
         } catch (err) {
             swal({ type: "error", title: "Error", text: err.message });
         }

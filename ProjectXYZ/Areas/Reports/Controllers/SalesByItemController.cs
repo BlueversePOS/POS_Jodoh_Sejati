@@ -42,6 +42,40 @@ namespace ProjectXYZ.Areas.Reports.Controllers
                             {
                                 Item_Number = ro["Item_Number"],
                                 Item_Description = ro["Item_Description"],
+                                Net_Sales = ro["Net_Sales"],
+                                Item_Color = ro["Item_Color"]
+                            }).ToList();
+
+                success = true;
+                var jsonResult = Json(new { success = success, data = list }, JsonRequestBehavior.AllowGet);
+                jsonResult.MaxJsonLength = int.MaxValue;
+                return jsonResult;
+            }
+            catch (Exception ex)
+            {
+
+                var jsonResult = Json(new { success = success, message = ex.Message }, JsonRequestBehavior.AllowGet);
+                jsonResult.MaxJsonLength = int.MaxValue;
+                return jsonResult;
+            }
+        }
+
+        [AuthorizeActionFilterAttribute]
+        [HttpPost]
+
+        public JsonResult ReportsItemsGetDataChart(SalesByItem model)
+        {
+            bool success = false;
+            try
+            {
+                DataTable ObjList = repo.ReportsItemsGetDataChart(model);
+                List<DataRow> rows = ObjList.Select().ToList();
+
+                var list = (from DataRow ro in rows
+                            select new
+                            {
+                                Item_Number = ro["Item_Number"],
+                                Item_Description = ro["Item_Description"],
                                 DOCDATE = ro["DOCDATE"],
                                 Net_Sales = ro["Net_Sales"],
                                 Item_Color = ro["Item_Color"]

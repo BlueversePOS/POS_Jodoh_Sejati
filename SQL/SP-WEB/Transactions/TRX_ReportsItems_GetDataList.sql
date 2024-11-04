@@ -20,8 +20,8 @@ BEGIN
 		INNER JOIN POS_ItemVariant IVR with (nolock) ON ITM.Item_Number=IVR.Item_Number
 		LEFT JOIN POS_CategoryItem CAT with (nolock) ON ITM.Category_ID=CAT.Category_ID
 		OUTER APPLY(
-			select Item_Number, 0 LineItem_Option, SUM(Quantity) Quantity, SUM(Item_Price * Quantity) Gross_Sales, SUM((Item_Price * Quantity) - ISNULL(Discount_Amount, 0)) Net_Sales,
-			SUM(Item_Cost * Quantity) CostofGoods, SUM((Item_Price * Quantity) - ISNULL(Discount_Amount, 0)) - SUM(Item_Cost * Quantity) Gross_Profit
+			select Item_Number, 0 LineItem_Option, SUM(Quantity) Quantity, SUM((Item_Price * Quantity) - ISNULL(Discount_Amount, 0)) Gross_Sales, SUM((Item_Price * Quantity) - ISNULL(Discount_Amount, 0))/1.11 Net_Sales,
+			SUM(Item_Cost * Quantity) CostofGoods, (SUM((Item_Price * Quantity) - ISNULL(Discount_Amount, 0))/1.11) - SUM(Item_Cost * Quantity) Gross_Profit
 			from POS_TrxDetail_HIST DTL
 			where DTL.DOCNUMBER not in(SELECT DISTINCT RFD.DOCNUMBER FROM POS_TrxRefund_HIST RFD with (nolock))
 			and DTL.Item_Number=ITM.Item_Number
@@ -30,8 +30,8 @@ BEGIN
 			AND ((CAST(DTL.Created_time as time) > CAST(@TimeFrom as time) and CAST(DTL.Created_time as time) < CAST(@TimeTo as time)) OR @FilterTime=0)
 			GROUP BY Item_Number
 			UNION
-			select Item_Number, LineItem_Option, SUM(Quantity) Quantity, SUM(Item_Price * Quantity) Gross_Sales, SUM((Item_Price * Quantity) - ISNULL(Discount_Amount, 0) * Quantity) Net_Sales,
-			SUM(Item_Cost * Quantity) CostofGoods, SUM((Item_Price * Quantity) - ISNULL(Discount_Amount, 0) * Quantity) - SUM(Item_Cost * Quantity) Gross_Profit
+			select Item_Number, LineItem_Option, SUM(Quantity) Quantity, SUM((Item_Price * Quantity) - ISNULL(Discount_Amount, 0)) Gross_Sales, SUM((Item_Price * Quantity) - ISNULL(Discount_Amount, 0))/1.11 Net_Sales,
+			SUM(Item_Cost * Quantity) CostofGoods, (SUM((Item_Price * Quantity) - ISNULL(Discount_Amount, 0) * Quantity)/1.11) - SUM(Item_Cost * Quantity) Gross_Profit
 			from POS_TrxDetail_HIST DTL
 			where DTL.DOCNUMBER not in(SELECT DISTINCT RFD.DOCNUMBER FROM POS_TrxRefund_HIST RFD with (nolock))
 			and DTL.Item_Number=ITM.Item_Number and DTL.LineItem_Option=IVR.LineItem_Option

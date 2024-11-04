@@ -1724,6 +1724,27 @@ namespace ProjectXYZAPI.Controllers
             }
         }
 
+        [Route("ReportsItemsGetDataChart")]
+        [HttpPost]
+        public dynamic ReportsItemsGetDataChart([FromBody] ParamReport param)
+        {
+            try
+            {
+                DataTable dt = null;
+                dt = repo.ReportsItemsGetDataChart(param);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                dynamic result = new
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    desc = ex.Message.ToString()
+                };
+                return result;
+            }
+        }
+
         [Route("ReportsItemsGetDataList")]
         [HttpPost]
         public dynamic ReportsItemsGetDataList([FromBody] ParamReport param)
