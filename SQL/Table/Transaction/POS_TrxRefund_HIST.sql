@@ -31,7 +31,7 @@ CREATE TABLE POS_TrxRefund_HIST
 	DOCNUMBER nvarchar(20) NOT NULL, 
 	DOCTYPE int NOT NULL,
 	DOCDATE DATETIME NOT NULL,
-	Refund_Date int NOT NULL,
+	Refund_Date DATETIME NOT NULL,
 	Refund_Time DATETIME NOT NULL,
 	Refund_User nvarchar(100) NOT NULL, 
 	Store_ID nvarchar(20) NOT NULL, 
