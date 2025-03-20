@@ -179,7 +179,7 @@ namespace ProjectXYZ.Areas.Items.Models
                     UserID = USERID,
                     Item_Number = model.Item_Number,
                     Category_ID = model.Category_ID,
-                    LowStock = model.LowStock
+                    Item_Name = model.Item_Name
                 };
 
                 string inputJson = JsonConvert.SerializeObject(param);

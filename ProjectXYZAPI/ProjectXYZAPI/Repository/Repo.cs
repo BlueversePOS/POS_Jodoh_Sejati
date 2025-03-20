@@ -1515,7 +1515,7 @@ namespace ProjectXYZAPI.Repository
                 cmd.CommandTimeout = 0;
                 cmd.Parameters.AddWithValue("@Item_Number", param.Item_Number ?? "");
                 cmd.Parameters.AddWithValue("@Category_ID", param.Category_ID ?? "");
-                cmd.Parameters.AddWithValue("@StockAlert", param.LowStock);
+                cmd.Parameters.AddWithValue("@Item_Name", param.Item_Name ?? "");
 
                 SqlDataAdapter adp = new SqlDataAdapter();
                 adp.SelectCommand = cmd;

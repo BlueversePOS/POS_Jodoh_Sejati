@@ -94,12 +94,12 @@
         try {
             var Item_Number = emptyStr($('#Item_Number').val()) ? "" : $('#Item_Number').val(),
                 Category_ID = emptyStr($("#FILTER_CATEGORY :selected").val()) ? "" : $("#FILTER_CATEGORY :selected").val(),
-                LowStock = emptyStr($("#FILTER_STOCK :selected").val()) ? "" : $("#FILTER_STOCK :selected").val();
+                Item_Name = emptyStr($("#FILTER_NAME").val()) ? "" : $("#FILTER_NAME").val();
 
             var model = {
                 Item_Number: Item_Number,
                 Category_ID: Category_ID,
-                LowStock: LowStock
+                Item_Name: Item_Name
             }
 
             $('#table_items tbody').empty();
@@ -210,10 +210,9 @@
                         }
                     }
                 ],
-                dom: "<'row'<'col-12'>>" +
+                dom: "<'row'<'col-12'l>>" +
                     "<'row'<'col-lg-12 col-md-12 col-sm-12 col-12'tr>>" +
-                    "<'row'<'col-12'>>",
-                    //"<'row'<'col-12 col-sm-12 col-md-4 col-lg-4'i><'col-12 col-sm-12 col-md-4 col-lg-4'l><'col-12 col-sm-12 col-md-4 col-lg-4'p>>",
+                    "<'row'<'col-12 col-sm-12 col-md-6 col-lg-6'i><'col-12 col-sm-12 col-md-6 col-lg-6'p>>",
                 language: {
                     search: '',
                     searchPlaceholder: 'Cari...',
@@ -1324,14 +1323,6 @@
                 }
             }
         }
-    });
-
-    $("#FILTER_STOCK").select2({
-        dropdownParent: $("#FILTER_STOCK").parent(),
-        placeholder: "All items",
-        multiple: false,
-        allowClear: true,
-        width: "100%"
     });
 
     $("#FILTER_SEARCH").on("click", function () {

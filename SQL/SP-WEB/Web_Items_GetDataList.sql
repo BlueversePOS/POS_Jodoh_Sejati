@@ -2,7 +2,7 @@ CREATE OR ALTER proc [dbo].[Web_Items_GetDataList]
 (
 @Item_Number nvarchar(20),
 @Category_ID nvarchar(20),
-@StockAlert int
+@Item_Name nvarchar(100)
 )
 AS
 BEGIN
@@ -18,9 +18,8 @@ BEGIN
 		and (CASE WHEN LEN(RTRIM(@Item_Number)) > 0 THEN A.Item_Number ELSE '' END = 
 		CASE WHEN LEN(RTRIM(@Item_Number)) > 0 THEN @Item_Number ELSE '' END
 		and CASE WHEN LEN(RTRIM(@Category_ID)) > 0 THEN A.Category_ID ELSE '' END = 
-		CASE WHEN LEN(RTRIM(@Category_ID)) > 0 THEN @Category_ID ELSE '' END
-		and CASE WHEN @StockAlert > 0 THEN A.LowStock ELSE 0 END = 
-		CASE WHEN @StockAlert > 0 THEN @StockAlert ELSE 0 END)
+		CASE WHEN LEN(RTRIM(@Category_ID)) > 0 THEN @Category_ID ELSE '' END)
+		and A.Item_Name like '%' + @Item_Name + '%'
 		ORDER BY Item_Number asc
 	END TRY
 	BEGIN	CATCH

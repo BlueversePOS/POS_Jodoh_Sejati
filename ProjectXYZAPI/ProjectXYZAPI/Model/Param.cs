@@ -110,7 +110,7 @@ namespace ProjectXYZAPI.Model
         public string UserID { get; set; }
         public string Item_Number { get; set; } = string.Empty;
         public string Category_ID { get; set; } = string.Empty;
-        public int LowStock { get; set; }
+        public string Item_Name { get; set; } = string.Empty;
     }
 
     public class ItemList

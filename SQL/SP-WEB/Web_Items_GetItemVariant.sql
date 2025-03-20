@@ -7,8 +7,8 @@ BEGIN
 	BEGIN TRY
 		SELECT A.*, COALESCE(B.Item_Name, '') Item_Name, COALESCE(B.Item_Description, '') Item_Description, 0 FLAG
 		FROM POS_ItemVariant A
-		LEFT JOIN POS_Item B ON A.Item_Number=B.Item_Number
-		WHERE RTRIM(A.Item_Number) = RTRIM(@Item_Number)
+		LEFT JOIN POS_Item B ON A.Item_Number=B.Item_Number and A.Site_ID=B.Site_ID
+		WHERE RTRIM(A.Item_Number) = RTRIM(@Item_Number) and A.Site_ID in(select Site_ID from POS_Set_Site where DefaultSite=1)
 		ORDER BY Item_Number asc
 	END TRY
 	BEGIN	CATCH
